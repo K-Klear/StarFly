@@ -5,12 +5,12 @@ M.nameList = {}
 M.nameList.male = {
 	"Mal", "Wash", "Simon", "Jean-Luc", "Wolf", "Wesley", "Crusher", "Chekov", "Geordi", "Scott", "Odo",
 	"Quark", "Garrus", "Korben", "Cornelius", "Ziggy", "Tom", "Reed", "Flash",
-	"Gordon", "Memnon", "Cutter", "Mathesar", "Rimmer", "Lister", "Spiff", "Ijon"
+	"Gordon", "Memnon", "Cutter", "Mathesar", "Rimmer", "Lister", "Spiff", "Ijon", "Kaidan", "Jacob"
 }
 
 M.nameList.female = {
 	"Nyota", "Deanna", "Kira", "Kim", "Cat", "Holly", "Tali", "Ruby", "Beverley", "Jinx",
-	"Jovia", "Inara", "Kaylee", "Zoe", "River", "Tawny", "Trishka"
+	"Jovia", "Inara", "Kaylee", "Zoe", "River", "Tawny", "Trishka", "Miranda", "Kasumi", "Kelly"
 }
 
 M.nameList.both = {
@@ -19,7 +19,9 @@ M.nameList.both = {
 	"Ashley", "Brannigan", "Solo", "Carlissan", "Jameson", "Ripcord", "Archer", "Quill", "Buzz", "Eisenhorn",
 	"Gaunt", "Sanchez", "Batty", "Richards", "Storm", "Grimm", "Vanderbeam", "Edgewise", "Quine", "Starr",
 	"Taggart", "Madison", "Lazarus", "Chen", "Laredo", "Sarris", "Grayson", "Hunt", "Sarrano", "Novak", "Sato",
-	"Troi", "Adama", "Thrace", "Tichy"
+	"Troi", "Adama", "Thrace", "Tichy", "Lawson", "Chakwas", "Moreau", "Taylor", "Goto", "Massani", "Chambers", "Vega", "Cortez",
+	"Traynor"
+	
 }
 
 local namesUsed = {male = {}, female = {}, both = {}}
