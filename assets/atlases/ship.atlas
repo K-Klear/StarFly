@@ -1,0 +1,21 @@
+images {
+  image: "/assets/images/Ship/hallway.png"
+}
+images {
+  image: "/assets/images/Ship/hallwayDoor.png"
+}
+images {
+  image: "/assets/images/Ship/hallwayLadderBoth.png"
+}
+images {
+  image: "/assets/images/Ship/hallwayLadderDown.png"
+}
+images {
+  image: "/assets/images/Ship/hallwayLadderUp.png"
+}
+images {
+  image: "/assets/images/Ship/hallwayLight.png"
+}
+margin: 1
+extrude_borders: 0
+inner_padding: 0

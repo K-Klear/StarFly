@@ -1,0 +1,6 @@
+images {
+  image: "/builtins/graphics/particle_blob.png"
+}
+margin: 0
+extrude_borders: 2
+inner_padding: 0
