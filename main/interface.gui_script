@@ -1,5 +1,7 @@
 local text = require("main.text")
 local FPlanet = require("main.planet")
+local DH = require("main.dialogHelper")
+
 local COLOR_SELECTION = vmath.vector4(0.5, 1, 0.5, 1)
 local COLOR_BUTTONS = vmath.vector4(0.5, 0.75, 1, 1)
 local COLOR_DISABLED = vmath.vector4(0.4, 0.4, 0.4, 1)
@@ -28,10 +30,13 @@ local lbl = {
 	planet = {}
 }
 
-local dialog = {
+local dialog = {}
+--[[
 	buy = {},
-	recruit = {}
+	recruit = {},
+	travel = {}
 }
+--]]
 
 local fuelBought = MAXFUEL - cargo.fuel
 local rationsBought = MAXRATIONS - cargo.rations
@@ -43,38 +48,14 @@ local selectedCrew
 local selectedRecruit
 
 function init(self)
-	dialog.recruit.frame = gui.new_box_node(vmath.vector3(640, 360, 0), vmath.vector3(400, 200, 0))
 	
-	dialog.recruit.label = gui.new_text_node(vmath.vector3(0, 86, 0), "RECRUIT")
-	dialog.recruit.nobody = gui.new_text_node(vmath.vector3(0, 0, 0), "There are no recruits available.")
-	dialog.recruit.hire = gui.new_text_node(vmath.vector3(-50, -70, 0), "HIRE")
-	dialog.recruit.cancel = gui.new_text_node(vmath.vector3(50, -70, 0), "CLOSE")
+	dialog.travel = DH.newDialog("travel")
+	dialog.recruit = DH.newDialog("recruit")
+	dialog.buy = DH.newDialog("buy")
 	
-	for x = 1, 5 do
-		dialog.recruit[x] = {}
-		dialog.recruit[x].face = gui.new_box_node(vmath.vector3(-180, 90 - 20 * x, 0), vmath.vector3(16, 16, 0))
-		gui.set_texture(dialog.recruit[x].face, hash("faces"))
-		gui.set_parent(dialog.recruit[x].face, dialog.recruit.frame)
-		dialog.recruit[x].name = gui.new_text_node(vmath.vector3(-160, 90 - 20 * x, 0), "Recruit name")
-		gui.set_parent(dialog.recruit[x].name, dialog.recruit.frame)
-		gui.set_pivot(dialog.recruit[x].name, gui.PIVOT_W)
-	end
-	for key, val in pairs(dialog.recruit) do
-		if type(val) == "userdata" then
-			if key == "frame" then
-				gui.set_scale(val, vmath.vector3(2, 2, 1))
-				gui.set_texture(val, hash("dialog"))
-				gui.set_slice9(val, vmath.vector4(32, 32, 32, 32))
-				gui.set_enabled(val, false)
-			else
-				gui.set_parent(val, dialog.recruit.frame)
-			end
-			gui.set_layer(val, "dialog")
-		end
-	end
+	print("All works fine")
 
-	
-	dialog.buy.frame = gui.new_box_node(vmath.vector3(640, 360, 0), vmath.vector3(400, 200, 0))
+
 	dialog.buy.label = gui.new_text_node(vmath.vector3(0, 86, 0), "RESTOCK")
 	gui.set_color(dialog.buy.label, COLOR_BUTTONS)
 	dialog.buy.fuelLbl = gui.new_text_node(vmath.vector3(-150, 70, 0), "FUEL: ")
@@ -139,8 +120,8 @@ function init(self)
 	gui.set_color(btn.actions.recruit, COLOR_BUTTONS)
 	btn.actions.work = gui.new_text_node(vmath.vector3(625, 100, 0), "FIND WORK")
 	gui.set_color(btn.actions.work, COLOR_BUTTONS)
-	btn.actions.leave = gui.new_text_node(vmath.vector3(700, 100, 0), "LEAVE")
-	gui.set_color(btn.actions.leave, COLOR_BUTTONS)
+	btn.actions.travel = gui.new_text_node(vmath.vector3(700, 100, 0), "TRAVEL")
+	gui.set_color(btn.actions.travel, COLOR_BUTTONS)
 
 	lbl.planet.region = gui.new_text_node(vmath.vector3(1000, 700, 0), planet.region)
 	lbl.planet.settlement = gui.new_text_node(vmath.vector3(1000, 680, 0), planet.settlement)
