@@ -1,0 +1,23 @@
+			for key, val in pairs(btn.crew) do
+				if gui.pick_node(val, action.x, action.y) then
+					if selectedCrew then gui.set_color(btn.crew[selectedCrew], CON.COLOR_DESELECTED) end
+					selectedCrew = key
+					gui.set_color(btn.crew[selectedCrew], CON.COLOR_SELECTION)
+					msg.post(".", "updateCrewDetail")
+				end
+			end
+			for key, val in pairs(btn.role) do
+				if gui.pick_node(val, action.x, action.y) then
+					if role[key] == selectedCrew then
+						crew[selectedCrew].role = ""
+						role[key] = nil
+					else
+						if role[key] then
+							crew[role[key]].role = ""
+						end
+						crew[selectedCrew].role = key
+						role[key] = selectedCrew
+					end
+					msg.post(".", "updateCrew")
+				end
+			end
