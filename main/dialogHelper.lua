@@ -1,4 +1,5 @@
 local M = {}
+local CON = require("main.constants")
 
 local sizeX = {
 	travel = 250,
@@ -51,8 +52,8 @@ function M.newDialog(kind)
 			
 		}
 		dialog.btn = {
-			confirm = gui.new_text_node(vmath.vector3(-50, -70, 0), "HIRE"),
-			cancel = gui.new_text_node(vmath.vector3(50, -70, 0), "CLOSE")
+			confirm = gui.new_text_node(vmath.vector3(-50, -70, 0), "PURCHASE")
+			cancel = gui.new_text_node(vmath.vector3(50, -70, 0), "CANCEL")
 		}
 	end
 
