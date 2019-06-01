@@ -1,6 +1,12 @@
 images {
   image: "/assets/images/face.png"
 }
-margin: 0
+images {
+  image: "/assets/images/Faces/base1.png"
+}
+images {
+  image: "/assets/images/Faces/hair1.png"
+}
+margin: 1
 extrude_borders: 0
-inner_padding: 0
+inner_padding: 1

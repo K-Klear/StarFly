@@ -1,6 +1,6 @@
 			for key, val in pairs(btn.crew) do
 				if gui.pick_node(val, action.x, action.y) then
-					if selectedCrew then gui.set_color(btn.crew[selectedCrew], CON.COLOR_DESELECTED) end
+					if selectedCrew then gui.set_color(btn.crew[selectedCrew], CON.COLOR_DEFAULT) end
 					selectedCrew = key
 					gui.set_color(btn.crew[selectedCrew], CON.COLOR_SELECTION)
 					msg.post(".", "updateCrewDetail")

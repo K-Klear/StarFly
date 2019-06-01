@@ -66,6 +66,7 @@ function M.newDialog(kind)
 				name = gui.new_text_node(vmath.vector3(-160, 90 - 20 * x, 0), "Recruit name")
 			}
 			gui.set_texture(dialog.btn[x].face, hash("faces"))
+			gui.play_flipbook(dialog.btn[x].face, hash("face"))
 			gui.set_parent(dialog.btn[x].face, dialog.frame)
 			gui.set_parent(dialog.btn[x].name, dialog.frame)
 			gui.set_pivot(dialog.btn[x].name, gui.PIVOT_W)

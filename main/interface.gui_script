@@ -6,6 +6,8 @@ local CON = require("main.constants")
 local focus = {action = true}
 
 local planet = FPlanet.generatePlanet("Frontier", true)
+local mission = {}
+
 
 local btn = {
 	crew = {},
@@ -30,6 +32,30 @@ local statsOrder = {pilot = 1, mech = 2, comms = 3, gunnery = 4, medic = 5, figh
 
 local selectedCrew
 local selectedRecruit
+local selectedTravel
+
+local face = {}
+
+function face.f()
+	face.background = gui.new_box_node(vmath.vector3(500, 500, 0), vmath.vector3(64, 64, 0))
+	gui.set_color(face.background, vmath.vector4(0.5, 0.5, 0.5, 1))
+	
+	face.base = gui.new_box_node(vmath.vector3(500, 500, 0), vmath.vector3(17, 17, 0))
+	gui.set_texture(face.base, hash("faces"))
+	gui.play_flipbook(face.base, hash("base1"))
+	gui.set_scale(face.base, vmath.vector3(4, 4, 0))
+	
+	gui.set_color(face.base, CON.SKINTONE[math.random(1, #CON.SKINTONE)])
+
+	face.hair = gui.new_box_node(vmath.vector3(500, 500, 0), vmath.vector3(17, 17, 0))
+	gui.set_texture(face.hair, hash("faces"))
+	gui.play_flipbook(face.hair, hash("hair1"))
+	gui.set_scale(face.hair, vmath.vector3(4, 4, 0))
+
+	gui.set_color(face.hair, CON.HAIRCOLOR[math.random(1, #CON.HAIRCOLOR)])
+
+end
+
 
 local function updateDialog(dialogID)
 	if dialogID == "buy" then
@@ -88,7 +114,27 @@ local function updateDialog(dialogID)
 		end
 		if selectedCrew then gui.set_color(btn.crew[selectedCrew], CON.COLOR_SELECTION) end
 	elseif dialogID == "travel" then
-		
+		gui.set_color(dialog.travel.btn.missionCore, CON.COLOR_DISABLED)
+		gui.set_color(dialog.travel.btn.missionFrontier, CON.COLOR_DISABLED)
+		gui.set_color(dialog.travel.btn.missionRim, CON.COLOR_DISABLED)
+		gui.set_color(dialog.travel.btn.exploreCore, CON.COLOR_DEFAULT)
+		gui.set_color(dialog.travel.btn.exploreFrontier, CON.COLOR_DEFAULT)
+		gui.set_color(dialog.travel.btn.exploreRim, CON.COLOR_DEFAULT)
+		for key, val in ipairs(mission) do
+			if val.region == "core" then
+				gui.set_color(dialog.travel.btn.missionCore, CON.COLOR_DEFAULT)
+			elseif val.region == "frontier" then
+				gui.set_color(dialog.travel.btn.missionFrontier, CON.COLOR_DEFAULT)
+			elseif val.region == "rim" then
+				gui.set_color(dialog.travel.btn.missionRim, CON.COLOR_DEFAULT)
+			end
+		end
+		if selectedTravel then
+			gui.set_color(dialog.travel.btn.confirm, CON.COLOR_DEFAULT)
+			gui.set_color(selectedTravel, CON.COLOR_SELECTION)
+		else
+			gui.set_color(dialog.travel.btn.confirm, CON.COLOR_DISABLED)
+		end
 	end
 end
 
@@ -100,9 +146,9 @@ function init(self)
 	dialog.action = DH.newDialog("action")
 	dialog.info = DH.newDialog("info")
 
-	gui.set_enabled(dialog.travel.frame, true)
-
 	updateDialog("info")
+
+	face.f()
 	
 	lbl.crewStats.title = gui.new_text_node(vmath.vector3(250, 700, 0), "SKILLS:")
 	gui.set_pivot(lbl.crewStats.title, gui.PIVOT_W)
@@ -122,9 +168,7 @@ function init(self)
 end
 
 function on_message(self, message_id, message, sender)
-	if message_id == hash("updateCrew") then
-		
-	elseif message_id == hash("updateCrewDetail") and selectedCrew then
+	if message_id == hash("updateCrewDetail") and selectedCrew then
 		for key, val in pairs(lbl.crewStats.skills) do
 			gui.delete_node(val)
 		end
@@ -218,21 +262,21 @@ function on_input(self, action_id, action)
 				for key, val in pairs(dialog.recruit.btn) do
 					if type(val) == "userdata" and gui.pick_node(val, action.x, action.y) then
 						if key == "cancel" then
-							if selectedRecruit then gui.set_color(dialog.recruit.btn[selectedRecruit].name, CON.COLOR_DESELECTED) end
+							if selectedRecruit then gui.set_color(dialog.recruit.btn[selectedRecruit].name, CON.COLOR_DEFAULT) end
 							selectedRecruit = nil
 							gui.set_enabled(dialog.recruit.frame, false)
 							focus = {action = true}
 						elseif key == "confirm" and selectedRecruit then
 							table.insert(crew, planet.recruits[selectedRecruit])
 							table.remove(planet.recruits, selectedRecruit)
-							gui.set_color(dialog.recruit.btn[selectedRecruit].name, CON.COLOR_DESELECTED)
+							gui.set_color(dialog.recruit.btn[selectedRecruit].name, CON.COLOR_DEFAULT)
 							selectedRecruit = nil
 							updateDialog("recruit")
 							updateDialog("crew")
 						end
 					elseif type(val) == "table" then
 						if (gui.pick_node(val.name, action.x, action.y) or gui.pick_node(val.face, action.x, action.y)) and gui.is_enabled(val.name) then
-							if selectedRecruit then gui.set_color(dialog.recruit.btn[selectedRecruit].name, CON.COLOR_DESELECTED) end
+							if selectedRecruit then gui.set_color(dialog.recruit.btn[selectedRecruit].name, CON.COLOR_DEFAULT) end
 							selectedRecruit = key
 							gui.set_color(val.name, CON.COLOR_SELECTION)
 							gui.set_color(dialog.recruit.btn.confirm, CON.COLOR_ENABLED)
@@ -242,12 +286,20 @@ function on_input(self, action_id, action)
 			elseif k == "travel" then
 				for key, val in pairs(dialog.travel.btn) do
 					if gui.pick_node(val, action.x, action.y) then
-						if key == "confirm" then
+						if key == "confirm" and selectedTravel then
+							selectedTravel = nil
 							gui.set_enabled(dialog.travel.frame, false)
 							focus = {action = true}
 						elseif key == "cancel" then
+							selectedTravel = nil
 							gui.set_enabled(dialog.travel.frame, false)
 							focus = {action = true}
+						elseif key == "exploreCore" or key == "exploreFrontier" or key == "exploreRim" then
+							selectedTravel = val
+							updateDialog("travel")
+						elseif (key == "missionCore" or key == "missionFrontier" or key == "missionRim") and gui.get_color(val) == CON.COLOR_DEFAULT then
+							selectedTravel = val
+							updateDialog("travel")
 						end
 					end
 				end
