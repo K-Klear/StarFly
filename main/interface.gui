@@ -5,11 +5,11 @@ fonts {
 }
 textures {
   name: "faces"
-  texture: "/assets/atlases/faces.atlas"
+  texture: "/assets/images/faces.atlas"
 }
 textures {
   name: "dialog"
-  texture: "/assets/atlases/dialog.atlas"
+  texture: "/assets/images/dialog.atlas"
 }
 background_color {
   x: 0.0
