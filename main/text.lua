@@ -80,4 +80,8 @@ function M.skillText(value)
 	end
 end
 
+function M.getName(crew)
+	return M.nameList[crew.name.gender][crew.name.key]
+end
+
 return M

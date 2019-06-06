@@ -2,6 +2,8 @@ local text = require("main.text")
 local FPlanet = require("main.planet")
 local DH = require("main.dialogHelper")
 local CON = require("main.constants")
+local EVENTS = require("main.events")
+local faceTest = require("main.faceTest")
 
 local focus = {action = true}
 
@@ -44,7 +46,7 @@ local function updateDialog(dialogID)
 		else
 			for x = 1, 5 do
 				if #planet.recruits >= x then
-					gui.set_text(dialog.recruit.btn[x].name, text.nameList[planet.recruits[x].name.gender][planet.recruits[x].name.key])
+					gui.set_text(dialog.recruit.btn[x].name, text.getName(planet.recruits[x]))
 					gui.set_enabled(dialog.recruit.btn[x].face, true)
 					gui.set_enabled(dialog.recruit.btn[x].name, true)
 				else
@@ -67,18 +69,21 @@ local function updateDialog(dialogID)
 		gui.set_text(dialog.info.lbl.settlement, planet.settlement)
 		gui.set_text(dialog.info.lbl.government, planet.government)
 	elseif dialogID == "crew" then
-		for key, val in pairs(btn.crew) do
-			gui.delete_node(val)
-		end
 		local y = 1
 		for key, val in ipairs(crew) do
 			if val.active then
-				btn.crew[key] = gui.new_text_node(vmath.vector3(50, 700 - 20 * y, 0), y..") "..text.nameList[val.name.gender][val.name.key].." "..val.role)
-				gui.set_pivot(btn.crew[key], gui.PIVOT_W)
+				gui.set_text(dialog.crew.btn[y].name, text.getName(val))
+				gui.set_enabled(dialog.crew.btn[y].name, true)
+				gui.set_enabled(dialog.crew.btn[y].face, true)
+				y = y + 1
 			end
-			y = y + 1
 		end
-		if selectedCrew then gui.set_color(btn.crew[selectedCrew], CON.COLOR_SELECTION) end
+		if y < #dialog.crew.btn then
+			for x = y, #dialog.crew.btn do
+				gui.set_enabled(dialog.crew.btn[x].name, false)
+				gui.set_enabled(dialog.crew.btn[x].face, false)
+			end
+		end
 	elseif dialogID == "travel" then
 		gui.set_color(dialog.travel.btn.missionCore, CON.COLOR_DISABLED)
 		gui.set_color(dialog.travel.btn.missionFrontier, CON.COLOR_DISABLED)
@@ -109,8 +114,10 @@ function init(self)
 	dialog.travel = DH.newDialog("travel")
 	dialog.recruit = DH.newDialog("recruit")
 	dialog.buy = DH.newDialog("buy")
-	dialog.action = DH.newDialog("action")
-	dialog.info = DH.newDialog("info")
+	dialog.action = DH.newDialog("action", true)
+	dialog.info = DH.newDialog("info", true)
+	dialog.warning = DH.newDialog("warning")
+	dialog.crew = DH.newDialog("crew", true)
 
 	updateDialog("info")
 
@@ -215,7 +222,22 @@ function on_input(self, action_id, action)
 						if key == "confirm" and selectedTravel then
 							selectedTravel = nil
 							gui.set_enabled(dialog.travel.frame, false)
-							focus = {action = true}
+							if cargo.fuel < 1 then
+								gui.set_text(dialog.warning.lbl.text, "You don't have enough fuel!")
+								gui.set_enabled(dialog.warning.frame, true)
+								focus = {warning = true}
+							elseif cargo.rations < 1 then
+								gui.set_text(dialog.warning.lbl.text, "You don't have any rations!")
+								gui.set_enabled(dialog.warning.frame, true)
+								focus = {warning = true}
+							elseif #crew == 0 then
+								gui.set_text(dialog.warning.lbl.text, "You don't have any crew!")
+								gui.set_enabled(dialog.warning.frame, true)
+								focus = {warning = true}
+							else
+								focus = {action = true}
+								print(EVENTS.getEvent())
+							end
 						elseif key == "cancel" then
 							selectedTravel = nil
 							gui.set_enabled(dialog.travel.frame, false)
@@ -229,9 +251,13 @@ function on_input(self, action_id, action)
 						end
 					end
 				end
+			elseif k == "warning" then
+				gui.set_enabled(dialog.warning.frame, false)
+				focus = {action = true}
 			end
 		end
 	elseif action_id == hash("enter") and action.pressed then
-		face.refresh()
+		if not faceTest.face.chin then faceTest.face.f() end
+		faceTest.face.refresh()
 	end
 end

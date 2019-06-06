@@ -6,7 +6,9 @@ local size = {
 	recruit = {x = 400, y = 200},
 	buy = {x = 400, y = 200},
 	action = {x = 640, y = 64},
-	info = {x = 256, y = 96}
+	info = {x = 256, y = 96},
+	warning = {x = 280, y = 88},
+	crew = {x = 128, y = 256}
 }
 
 local pos = {
@@ -14,20 +16,23 @@ local pos = {
 	recruit = {x = 640, y = 360},
 	buy = {x = 640, y = 360},
 	action = {x = 640, y = 50},
-	info = {x = 1280, y = 710}
+	info = {x = 1280, y = 710},
+	warning = {x = 640, y = 360},
+	crew = {x = 6, y = 710}
 }
 
 local pivot = {
-	info = gui.PIVOT_NE
+	info = gui.PIVOT_NE,
+	crew = gui.PIVOT_NW
 }
 
-function M.newDialog(kind)
+function M.newDialog(kind, show)
 	local dialog = {lbl = {}, btn = {}}
 	dialog.frame = gui.new_box_node(vmath.vector3(pos[kind].x, pos[kind].y, 0), vmath.vector3(size[kind].x, size[kind].y, 0))
 	gui.set_scale(dialog.frame, vmath.vector3(2, 2, 1))
 	gui.set_texture(dialog.frame, hash("dialog"))
 	gui.set_slice9(dialog.frame, vmath.vector4(32, 32, 32, 32))
-	gui.set_enabled(dialog.frame, false)
+	gui.set_enabled(dialog.frame, show)
 	gui.set_pivot(dialog.frame, pivot[kind] or gui.PIVOT_CENTER)
 
 	if kind == "travel" then
@@ -93,7 +98,6 @@ function M.newDialog(kind)
 		}
 	elseif kind == "action" then
 		gui.set_scale(dialog.frame, vmath.vector3(1, 1, 1))
-		gui.set_enabled(dialog.frame, true)
 		dialog.btn = {
 			buy = gui.new_text_node(vmath.vector3(-270, 6, 0), "BUY"),
 			repair = gui.new_text_node(vmath.vector3(-200, 6, 0), "REPAIR"),
@@ -104,7 +108,6 @@ function M.newDialog(kind)
 		}
 	elseif kind == "info" then
 		gui.set_scale(dialog.frame, vmath.vector3(1, 1, 1))
-		gui.set_enabled(dialog.frame, true)
 
 		dialog.lbl = {
 			fuel = gui.new_text_node(vmath.vector3(-32, -20, 0), "FUEL: XX"),
@@ -120,6 +123,32 @@ function M.newDialog(kind)
 		gui.set_pivot(dialog.lbl.region, gui.PIVOT_W)
 		gui.set_pivot(dialog.lbl.settlement, gui.PIVOT_W)
 		gui.set_pivot(dialog.lbl.government, gui.PIVOT_W)
+	elseif kind == "crew" then
+		gui.set_scale(dialog.frame, vmath.vector3(1, 1, 1))
+
+		dialog.lbl = {
+			title = gui.new_text_node(vmath.vector3(60, -16, 0), "CREW"),
+		}
+		for x = 1, 10 do
+			dialog.btn[x] = {
+				face = gui.new_box_node(vmath.vector3(16, -16 - 20 * x, 0), vmath.vector3(16, 16, 0)),
+				name = gui.new_text_node(vmath.vector3(32, -16 - 20 * x, 0), "Crewman")
+			}
+			gui.set_texture(dialog.btn[x].face, hash("faces"))
+			gui.play_flipbook(dialog.btn[x].face, hash("face"))
+			gui.set_parent(dialog.btn[x].face, dialog.frame)
+			gui.set_parent(dialog.btn[x].name, dialog.frame)
+			gui.set_pivot(dialog.btn[x].name, gui.PIVOT_W)
+			gui.set_enabled(dialog.btn[x].name, false)
+			gui.set_enabled(dialog.btn[x].face, false)
+		end
+	elseif kind == "warning" then
+		dialog.lbl = {
+			text = gui.new_text_node(vmath.vector3(0, 20, 0), "You can't leave without fuel!")
+		}
+		dialog.btn = {
+			confirm = gui.new_text_node(vmath.vector3(0, -10, 0), "OK")
+		}
 	end
 
 	for key, val in pairs(dialog.lbl) do
