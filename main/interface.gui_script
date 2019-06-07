@@ -10,7 +10,6 @@ local focus = {action = true}
 local planet = FPlanet.generatePlanet("Frontier", true)
 local mission = {}
 
-
 local dialog = {}
 
 local fuelBought = CON.MAXFUEL - cargo.fuel
@@ -120,6 +119,9 @@ function init(self)
 	dialog.crew = DH.newDialog("crew", true)
 
 	updateDialog("info")
+
+	local testPlanet = FPlanet.generatePlanet("Rim")
+	pprint(testPlanet.missions)
 
 end
 
