@@ -91,11 +91,11 @@ local function updateDialog(dialogID)
 		gui.set_color(dialog.travel.btn.exploreFrontier, CON.COLOR_DEFAULT)
 		gui.set_color(dialog.travel.btn.exploreRim, CON.COLOR_DEFAULT)
 		for key, val in ipairs(mission) do
-			if val.region == "core" then
+			if val.target == "core" then
 				gui.set_color(dialog.travel.btn.missionCore, CON.COLOR_DEFAULT)
-			elseif val.region == "frontier" then
+			elseif val.target == "frontier" then
 				gui.set_color(dialog.travel.btn.missionFrontier, CON.COLOR_DEFAULT)
-			elseif val.region == "rim" then
+			elseif val.target == "rim" then
 				gui.set_color(dialog.travel.btn.missionRim, CON.COLOR_DEFAULT)
 			end
 		end
@@ -117,11 +117,11 @@ function init(self)
 	dialog.info = DH.newDialog("info", true)
 	dialog.warning = DH.newDialog("warning")
 	dialog.crew = DH.newDialog("crew", true)
+	dialog.job = DH.newDialog("job")
 
 	updateDialog("info")
 
-	local testPlanet = FPlanet.generatePlanet("Rim")
-	pprint(testPlanet.missions)
+	gui.set_enabled(dialog.job.frame, true)
 
 end
 

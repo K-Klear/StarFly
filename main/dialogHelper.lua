@@ -8,7 +8,8 @@ local size = {
 	action = {x = 640, y = 64},
 	info = {x = 256, y = 96},
 	warning = {x = 280, y = 88},
-	crew = {x = 128, y = 256}
+	crew = {x = 128, y = 256},
+	job = {x = 256, y = 140}
 }
 
 local pos = {
@@ -18,7 +19,8 @@ local pos = {
 	action = {x = 640, y = 50},
 	info = {x = 1280, y = 710},
 	warning = {x = 640, y = 360},
-	crew = {x = 6, y = 710}
+	crew = {x = 6, y = 710},
+	job = {x = 640, y = 360}
 }
 
 local pivot = {
@@ -95,6 +97,18 @@ function M.newDialog(kind, show)
 			fuelMinus = gui.new_text_node(vmath.vector3(-35, 70, 0), "-"),
 			rationsPlus = gui.new_text_node(vmath.vector3(-65, 50, 0), "+"),
 			rationsMinus = gui.new_text_node(vmath.vector3(-35, 50, 0), "-"),
+		}
+	elseif kind == "job" then
+		dialog.lbl = {
+			title = gui.new_text_node(vmath.vector3(0, 54, 0), "JOBS"),
+		}
+		dialog.btn = {
+			confirm = gui.new_text_node(vmath.vector3(-50, -40, 0), "ACCEPT"),
+			cancel = gui.new_text_node(vmath.vector3(50, -40, 0), "CANCEL"),
+			job1 = gui.new_text_node(vmath.vector3(-80, 38, 0), "JOB 1"),
+			job2 = gui.new_text_node(vmath.vector3(-80, 18, 0), "JOB 2"),
+			job3 = gui.new_text_node(vmath.vector3(-80, -2, 0), "JOB 3"),
+			job4 = gui.new_text_node(vmath.vector3(-80, -22, 0), "JOB 3"),
 		}
 	elseif kind == "action" then
 		gui.set_scale(dialog.frame, vmath.vector3(1, 1, 1))

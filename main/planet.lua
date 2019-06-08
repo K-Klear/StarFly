@@ -20,6 +20,21 @@ local regionStats = {
 	}
 }
 
+local missionStats = {
+	target = {"core", "frontier", "rim"},
+	type = {"delivery", "smuggling", "passage", "assasination", "espionage"}
+}
+
+
+local function generateMission()
+	local mission = {
+		target = missionStats.target[math.random(1, #missionStats.target)],
+		type = missionStats.type[math.random(1, #missionStats.target)],
+		wage = math.random(1, 20) * 100,
+	}
+	return mission
+end
+
 function F.generatePlanet(region, start)
 	local planet
 	if start then
@@ -31,10 +46,14 @@ function F.generatePlanet(region, start)
 			region = region,
 			settlement = "Outpost",
 			government = "Federation",
-			recruits = {}
+			recruits = {},
+			missions = {}
 		}
 		for x = 1, 4 do
 			table.insert(planet.recruits, FCrew.generateCrew())
+		end
+		for x = 1, 3 do
+			table.insert(planet.missions, generateMission())
 		end
 	else
 		planet = {
@@ -43,7 +62,8 @@ function F.generatePlanet(region, start)
 				rations = 20
 			},
 			region = region,
-			recruits = {}
+			recruits = {},
+			missions = {}
 		}
 		planet.government = regionStats[region].government[math.random(1, #regionStats[region].government)]
 		planet.settlement = regionStats[region].settlement[math.random(1, #regionStats[region].settlement)]
@@ -51,13 +71,12 @@ function F.generatePlanet(region, start)
 		for x = 1, recruitsCount do
 			table.insert(planet.recruits, FCrew.generateCrew())
 		end
+		for x = 1, math.random(1, 4) do
+			table.insert(planet.missions, generateMission())
+		end
 	end
 	return planet
 end
 
-local function generateMission()
-
-	return mission
-end
 
 return F
