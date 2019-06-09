@@ -34,6 +34,21 @@ images {
 images {
   image: "/assets/images/Faces/nose2.png"
 }
+images {
+  image: "/assets/images/Faces/nose3.png"
+}
+images {
+  image: "/assets/images/Faces/eyes1.png"
+}
+images {
+  image: "/assets/images/Faces/iris1.png"
+}
+images {
+  image: "/assets/images/Faces/forehead1.png"
+}
+images {
+  image: "/assets/images/Faces/forehead2.png"
+}
 margin: 1
 extrude_borders: 0
 inner_padding: 1

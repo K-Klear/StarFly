@@ -9,7 +9,7 @@ local size = {
 	info = {x = 256, y = 96},
 	warning = {x = 280, y = 88},
 	crew = {x = 128, y = 256},
-	job = {x = 256, y = 140}
+	work = {x = 300, y = 188}
 }
 
 local pos = {
@@ -20,7 +20,7 @@ local pos = {
 	info = {x = 1280, y = 710},
 	warning = {x = 640, y = 360},
 	crew = {x = 6, y = 710},
-	job = {x = 640, y = 360}
+	work = {x = 640, y = 360}
 }
 
 local pivot = {
@@ -98,18 +98,32 @@ function M.newDialog(kind, show)
 			rationsPlus = gui.new_text_node(vmath.vector3(-65, 50, 0), "+"),
 			rationsMinus = gui.new_text_node(vmath.vector3(-35, 50, 0), "-"),
 		}
-	elseif kind == "job" then
+	elseif kind == "work" then
 		dialog.lbl = {
-			title = gui.new_text_node(vmath.vector3(0, 54, 0), "JOBS"),
+			title = gui.new_text_node(vmath.vector3(0, 76, 0), "AVAILABLE JOBS"),
+			type = gui.new_text_node(vmath.vector3(-120, 56, 0), "TYPE"),
+			target = gui.new_text_node(vmath.vector3(10, 56, 0), "REGION"),
+			wage = gui.new_text_node(vmath.vector3(80, 56, 0), "WAGE"),
+			none = gui.new_text_node(vmath.vector3(0, 0, 0), "There are no missions available.")
 		}
 		dialog.btn = {
-			confirm = gui.new_text_node(vmath.vector3(-50, -40, 0), "ACCEPT"),
-			cancel = gui.new_text_node(vmath.vector3(50, -40, 0), "CANCEL"),
-			job1 = gui.new_text_node(vmath.vector3(-80, 38, 0), "JOB 1"),
-			job2 = gui.new_text_node(vmath.vector3(-80, 18, 0), "JOB 2"),
-			job3 = gui.new_text_node(vmath.vector3(-80, -2, 0), "JOB 3"),
-			job4 = gui.new_text_node(vmath.vector3(-80, -22, 0), "JOB 3"),
+			confirm = gui.new_text_node(vmath.vector3(-50, -66, 0), "ACCEPT"),
+			cancel = gui.new_text_node(vmath.vector3(50, -66, 0), "CANCEL"),
 		}
+		for x = 1, 5 do
+			dialog.btn[x] = {
+				type = gui.new_text_node(vmath.vector3(-136, 54 - 20 * x, 0), "Assassination"),
+				target = gui.new_text_node(vmath.vector3(-20, 54 - 20 * x, 0), "Frontier"),
+				wage = gui.new_text_node(vmath.vector3(60, 54 - 20 * x, 0), "2000")
+			}
+			gui.set_parent(dialog.btn[x].type, dialog.frame)
+			gui.set_parent(dialog.btn[x].target, dialog.frame)
+			gui.set_parent(dialog.btn[x].wage, dialog.frame)
+			gui.set_pivot(dialog.btn[x].type, gui.PIVOT_W)
+			gui.set_pivot(dialog.btn[x].target, gui.PIVOT_W)
+			gui.set_pivot(dialog.btn[x].wage, gui.PIVOT_W)
+		end
+		
 	elseif kind == "action" then
 		gui.set_scale(dialog.frame, vmath.vector3(1, 1, 1))
 		dialog.btn = {

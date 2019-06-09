@@ -21,8 +21,8 @@ local regionStats = {
 }
 
 local missionStats = {
-	target = {"core", "frontier", "rim"},
-	type = {"delivery", "smuggling", "passage", "assasination", "espionage"}
+	target = {"Core", "Frontier", "Rim"},
+	type = {"Delivery", "Smuggling", "Passage", "Assasination", "Espionage"}
 }
 
 

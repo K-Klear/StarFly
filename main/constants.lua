@@ -31,6 +31,11 @@ table.insert(M.HAIRCOLOR, vmath.vector4(0.04, 0.03, 0.02, 1))
 table.insert(M.HAIRCOLOR, vmath.vector4(0.2, 0.8, 0.2, 1))
 table.insert(M.HAIRCOLOR, vmath.vector4(0.15, 0.1, 0.7, 1))
 
+M.EYECOLOR = {}
+table.insert(M.EYECOLOR, vmath.vector4(0.12, 0.28, 0.6, 1))
+table.insert(M.EYECOLOR, vmath.vector4(0.33, 0.13, 0, 1))
+table.insert(M.EYECOLOR, vmath.vector4(0.27, 0.72, 0.29, 1))
+table.insert(M.EYECOLOR, vmath.vector4(0.58, 0.68, 0.71, 1))
 
 M.MAXFUEL = 5
 M.MAXRATIONS = 20

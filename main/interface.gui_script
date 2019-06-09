@@ -21,6 +21,7 @@ local statsOrder = {pilot = 1, mech = 2, comms = 3, gunnery = 4, medic = 5, figh
 local selectedCrew
 local selectedRecruit
 local selectedTravel
+local selection
 
 
 
@@ -91,11 +92,11 @@ local function updateDialog(dialogID)
 		gui.set_color(dialog.travel.btn.exploreFrontier, CON.COLOR_DEFAULT)
 		gui.set_color(dialog.travel.btn.exploreRim, CON.COLOR_DEFAULT)
 		for key, val in ipairs(mission) do
-			if val.target == "core" then
+			if val.target == "Core" then
 				gui.set_color(dialog.travel.btn.missionCore, CON.COLOR_DEFAULT)
-			elseif val.target == "frontier" then
+			elseif val.target == "Frontier" then
 				gui.set_color(dialog.travel.btn.missionFrontier, CON.COLOR_DEFAULT)
-			elseif val.target == "rim" then
+			elseif val.target == "Rim" then
 				gui.set_color(dialog.travel.btn.missionRim, CON.COLOR_DEFAULT)
 			end
 		end
@@ -104,6 +105,36 @@ local function updateDialog(dialogID)
 			gui.set_color(selectedTravel, CON.COLOR_SELECTION)
 		else
 			gui.set_color(dialog.travel.btn.confirm, CON.COLOR_DISABLED)
+		end
+	elseif dialogID == "work" then
+		if #planet.missions == 0 then
+			for x = 1, 5 do
+				gui.set_enabled(dialog.work.btn[x].type, false)
+				gui.set_enabled(dialog.work.btn[x].target, false)
+				gui.set_enabled(dialog.work.btn[x].wage, false)
+			end
+			gui.set_enabled(dialog.work.lbl.none, true)
+		else
+			for x = 1, 5 do
+				if #planet.missions >= x then
+					gui.set_text(dialog.work.btn[x].type, planet.missions[x].type)
+					gui.set_text(dialog.work.btn[x].target, planet.missions[x].target)
+					gui.set_text(dialog.work.btn[x].wage, planet.missions[x].wage)
+					gui.set_enabled(dialog.work.btn[x].type, true)
+					gui.set_enabled(dialog.work.btn[x].target, true)
+					gui.set_enabled(dialog.work.btn[x].wage, true)
+				else
+					gui.set_enabled(dialog.work.btn[x].type, false)
+					gui.set_enabled(dialog.work.btn[x].target, false)
+					gui.set_enabled(dialog.work.btn[x].wage, false)
+				end
+			end
+			gui.set_enabled(dialog.work.lbl.none, false)
+		end
+		if selection then
+			gui.set_color(dialog.work.btn.confirm, CON.COLOR_ENABLED)
+		else
+			gui.set_color(dialog.work.btn.confirm, CON.COLOR_DISABLED)
 		end
 	end
 end
@@ -117,15 +148,9 @@ function init(self)
 	dialog.info = DH.newDialog("info", true)
 	dialog.warning = DH.newDialog("warning")
 	dialog.crew = DH.newDialog("crew", true)
-	dialog.job = DH.newDialog("job")
+	dialog.work = DH.newDialog("work")
 
 	updateDialog("info")
-
-	gui.set_enabled(dialog.job.frame, true)
-
-end
-
-function on_message(self, message_id, message, sender)
 
 end
 
@@ -152,6 +177,10 @@ function on_input(self, action_id, action)
 							gui.set_enabled(dialog.travel.frame, true)
 							focus = {travel = true}
 							updateDialog("travel")
+						elseif key == "work" then
+							gui.set_enabled(dialog.work.frame, true)
+							focus = {work = true}
+							updateDialog("work")
 						end
 					end
 				end
@@ -250,6 +279,43 @@ function on_input(self, action_id, action)
 						elseif (key == "missionCore" or key == "missionFrontier" or key == "missionRim") and gui.get_color(val) == CON.COLOR_DEFAULT then
 							selectedTravel = val
 							updateDialog("travel")
+						end
+					end
+				end
+			elseif k == "work" then
+				for key, val in pairs(dialog.work.btn) do
+					if type(val) == "userdata" and gui.pick_node(val, action.x, action.y) then
+						if key == "cancel" then
+							if selection then
+								gui.set_color(dialog.work.btn[selection].type, CON.COLOR_DEFAULT)
+								gui.set_color(dialog.work.btn[selection].target, CON.COLOR_DEFAULT)
+								gui.set_color(dialog.work.btn[selection].wage, CON.COLOR_DEFAULT)
+							end
+							selection = nil
+							gui.set_enabled(dialog.work.frame, false)
+							focus = {action = true}
+						elseif key == "confirm" and selection then
+							table.insert(mission, planet.missions[selection])
+							table.remove(planet.missions, selection)
+							gui.set_color(dialog.work.btn[selection].type, CON.COLOR_DEFAULT)
+							gui.set_color(dialog.work.btn[selection].target, CON.COLOR_DEFAULT)
+							gui.set_color(dialog.work.btn[selection].wage, CON.COLOR_DEFAULT)
+							selection = nil
+							gui.set_enabled(dialog.work.frame, false)
+							focus = {action = true}
+						end
+					elseif type(val) == "table" then
+						if (gui.pick_node(val.type, action.x, action.y) or gui.pick_node(val.target, action.x, action.y) or gui.pick_node(val.wage, action.x, action.y)) and gui.is_enabled(val.type) then
+							if selection then
+								gui.set_color(dialog.work.btn[selection].type, CON.COLOR_DEFAULT)
+								gui.set_color(dialog.work.btn[selection].target, CON.COLOR_DEFAULT)
+								gui.set_color(dialog.work.btn[selection].wage, CON.COLOR_DEFAULT)
+							end
+							selection = key
+							gui.set_color(val.type, CON.COLOR_SELECTION)
+							gui.set_color(val.target, CON.COLOR_SELECTION)
+							gui.set_color(val.wage, CON.COLOR_SELECTION)
+							gui.set_color(dialog.work.btn.confirm, CON.COLOR_ENABLED)
 						end
 					end
 				end
