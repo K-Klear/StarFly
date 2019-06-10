@@ -57,6 +57,10 @@ function M.face.f()
 end
 
 function M.face.refresh()
+	local skinTone = CON.SKINTONE[math.random(1, #CON.SKINTONE)]
+	gui.set_color(M.face.base, skinTone)
+	gui.set_color(M.face.chin, skinTone)
+	gui.set_color(M.face.forehead, skinTone)
 	local rand = math.random(1, 4)
 	if rand == 1 then
 		gui.play_flipbook(M.face.mouth, hash("mouth1"))
