@@ -3,7 +3,9 @@ local FPlanet = require("main.planet")
 local DH = require("main.dialogHelper")
 local CON = require("main.constants")
 local EVENTS = require("main.events")
-local faceTest = require("main.faceTest")
+local FCrew = require("main.functionsCrew")
+local FACE = require("main.face")
+
 
 local focus = {action = true}
 
@@ -188,6 +190,12 @@ function init(self)
 	gui.set_text(dialog.missions.lbl.title, "CHOOSE A MISSION")
 
 	updateDialog("info")
+
+	for x = 1, 9 do
+		table.insert(crew, FCrew.generateCrew())
+		text.setNameAvailability(crew[#crew].name.gender, crew[#crew].name.key, true)
+	end
+	updateDialog("crew")
 
 end
 
@@ -448,7 +456,10 @@ function on_input(self, action_id, action)
 			end
 		end
 	elseif action_id == hash("enter") and action.pressed then
-		if not faceTest.face.chin then faceTest.face.f() end
-		faceTest.face.refresh()
+		for y = 500, 300, -100 do
+			for x = 300, 1200, 100 do
+				pprint(FACE.drawFace(FACE.createFace(), vmath.vector3(x, y, 0), 2))
+			end
+		end
 	end
 end

@@ -8,7 +8,7 @@ local size = {
 	action = {x = 640, y = 64},
 	info = {x = 256, y = 96},
 	warning = {x = 280, y = 88},
-	crew = {x = 128, y = 256},
+	crew = {x = 256, y = 328},
 	work = {x = 300, y = 188}
 }
 
@@ -155,12 +155,20 @@ function M.newDialog(kind, show)
 		gui.set_scale(dialog.frame, vmath.vector3(1, 1, 1))
 
 		dialog.lbl = {
-			title = gui.new_text_node(vmath.vector3(60, -16, 0), "CREW"),
+			title = gui.new_text_node(vmath.vector3(106, -16, 0), "CREW"),
+			pilot = gui.new_text_node(vmath.vector3(6, -36, 0), "PILOT"),
+			comms = gui.new_text_node(vmath.vector3(6, -56, 0), "COMMS"),
+			mech = gui.new_text_node(vmath.vector3(6, -76, 0), "ENGINEER"),
+			gunner = gui.new_text_node(vmath.vector3(6, -96, 0), "GUNNER"),
+			medic = gui.new_text_node(vmath.vector3(6, -116, 0), "MEDIC"),
 		}
-		for x = 1, 10 do
+		for key, val in pairs(dialog.lbl) do
+			gui.set_pivot(val, gui.PIVOT_W)
+		end
+		for x = 1, 9 do
 			dialog.btn[x] = {
-				face = gui.new_box_node(vmath.vector3(16, -16 - 20 * x, 0), vmath.vector3(16, 16, 0)),
-				name = gui.new_text_node(vmath.vector3(32, -16 - 20 * x, 0), "Crewman")
+				face = gui.new_box_node(vmath.vector3(16, -116 - 20 * x, 0), vmath.vector3(16, 16, 0)),
+				name = gui.new_text_node(vmath.vector3(32, -116 - 20 * x, 0), "Crewman")
 			}
 			gui.set_texture(dialog.btn[x].face, hash("faces"))
 			gui.play_flipbook(dialog.btn[x].face, hash("face"))

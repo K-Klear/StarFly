@@ -49,6 +49,9 @@ images {
 images {
   image: "/assets/images/Faces/forehead2.png"
 }
+images {
+  image: "/assets/images/Faces/hair2.png"
+}
 margin: 1
 extrude_borders: 0
 inner_padding: 1

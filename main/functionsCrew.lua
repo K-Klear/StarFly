@@ -1,4 +1,6 @@
 local text = require("main.text")
+local FACE = require("main.face")
+
 local F = {}
 
 function F.normalDist(factor, zeroMean)
