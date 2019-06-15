@@ -1,5 +1,7 @@
 local M = {}
 
+M.MAXCREW = 9
+
 M.COLOR_SELECTION = vmath.vector4(0.5, 1, 0.5, 1)
 M.COLOR_BUTTONS = vmath.vector4(0.5, 0.75, 1, 1)
 M.COLOR_DISABLED = vmath.vector4(0.4, 0.4, 0.4, 1)

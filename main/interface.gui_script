@@ -35,24 +35,34 @@ local function updateDialog(dialogID)
 			gui.set_color(dialog.buy.btn.confirm, CON.COLOR_ENABLED)
 		end
 	elseif dialogID == "recruit" then
+		for key, val in ipairs(dialog.recruit.ico) do
+			for k, v in pairs(val) do
+				gui.delete_node(v)
+			end
+		end
+		dialog.recruit.ico = {}
 		if #planet.recruits == 0 then
 			for x = 1, 5 do
-				gui.set_enabled(dialog.recruit.btn[x].face, false)
-				gui.set_enabled(dialog.recruit.btn[x].name, false)
+				gui.set_enabled(dialog.recruit.btn["recruit"..x], false)
 			end
 			gui.set_enabled(dialog.recruit.lbl.nobody, true)
 		else
 			for x = 1, 5 do
 				if #planet.recruits >= x then
-					gui.set_text(dialog.recruit.btn[x].name, text.getName(planet.recruits[x]))
-					gui.set_enabled(dialog.recruit.btn[x].face, true)
-					gui.set_enabled(dialog.recruit.btn[x].name, true)
+					gui.set_text(dialog.recruit.btn["recruit"..x], text.getName(planet.recruits[x]))
+					gui.set_enabled(dialog.recruit.btn["recruit"..x], true)
+					table.insert(dialog.recruit.ico, FACE.drawFace(planet.recruits[x].face, vmath.vector3(-180, 90 - 20 * x, 0), 1))
 				else
-					gui.set_enabled(dialog.recruit.btn[x].face, false)
-					gui.set_enabled(dialog.recruit.btn[x].name, false)
+					gui.set_enabled(dialog.recruit.btn["recruit"..x], false)
 				end
 			end
 			gui.set_enabled(dialog.recruit.lbl.nobody, false)
+			for key, val in ipairs(dialog.recruit.ico) do
+				for k, v in pairs(val) do
+					gui.set_parent(v, dialog.recruit.frame)
+				end
+				gui.move_above(val.hair, val.forehead)
+			end
 		end
 		if selection then
 			gui.set_color(dialog.recruit.btn.confirm, CON.COLOR_ENABLED)
@@ -67,20 +77,48 @@ local function updateDialog(dialogID)
 		gui.set_text(dialog.info.lbl.settlement, planet.settlement)
 		gui.set_text(dialog.info.lbl.government, planet.government)
 	elseif dialogID == "crew" then
+		if selection then gui.set_color(dialog.crew.btn["crew"..selection], CON.COLOR_DEFAULT) end
+		local iconPos = {
+			pilot = vmath.vector3(6, -36, 0),
+			comms = vmath.vector3(6, -56, 0),
+			mech = vmath.vector3(6, -76, 0),
+			gunner = vmath.vector3(6, -96, 0),
+			medic = vmath.vector3(6, -116, 0)
+		}
+		for key, val in ipairs(dialog.crew.ico) do
+			for k, v in pairs(val) do
+				gui.delete_node(v)
+			end
+		end
+		dialog.crew.ico = {}
+		for key, val in pairs(dialog.crew.btn) do
+			if string.sub(key, 1, 4) == "crew" then
+				gui.set_enabled(val, false)
+			end
+		end
+		gui.set_enabled(dialog.crew.btn.pilot, false)
+		gui.set_enabled(dialog.crew.btn.comms, false)
+		gui.set_enabled(dialog.crew.btn.mech, false)
+		gui.set_enabled(dialog.crew.btn.medic, false)
+		gui.set_enabled(dialog.crew.btn.gunner, false)
 		local y = 1
 		for key, val in ipairs(crew) do
-			if val.active then
-				gui.set_text(dialog.crew.btn[y].name, text.getName(val))
-				gui.set_enabled(dialog.crew.btn[y].name, true)
-				gui.set_enabled(dialog.crew.btn[y].face, true)
+			if val.role then
+				gui.set_text(dialog.crew.btn[val.role], text.getName(val))
+				gui.set_enabled(dialog.crew.btn[val.role], true)
+				table.insert(dialog.crew.ico, FACE.drawFace(val.face, iconPos[val.role], 1))
+			else
+				gui.set_text(dialog.crew.btn["crew"..y], text.getName(val))
+				gui.set_enabled(dialog.crew.btn["crew"..y], true)
+				table.insert(dialog.crew.ico, FACE.drawFace(val.face, vmath.vector3(16, -116 - 20 * y, 0), 1))
 				y = y + 1
 			end
 		end
-		if y < #dialog.crew.btn then
-			for x = y, #dialog.crew.btn do
-				gui.set_enabled(dialog.crew.btn[x].name, false)
-				gui.set_enabled(dialog.crew.btn[x].face, false)
+		for key, val in ipairs(dialog.crew.ico) do
+			for k, v in pairs(val) do
+				gui.set_parent(v, dialog.crew.frame)
 			end
+			gui.move_above(val.hair, val.forehead)
 		end
 	elseif dialogID == "travel" then
 		gui.set_color(dialog.travel.btn.missionCore, CON.COLOR_DISABLED)
@@ -191,7 +229,7 @@ function init(self)
 
 	updateDialog("info")
 
-	for x = 1, 9 do
+	for x = 1, 5 do
 		table.insert(crew, FCrew.generateCrew())
 		text.setNameAvailability(crew[#crew].name.gender, crew[#crew].name.key, true)
 	end
@@ -205,6 +243,8 @@ function on_input(self, action_id, action)
 			if k == "action" then
 				for key, val in pairs(dialog.action.btn) do
 					if gui.pick_node(val, action.x, action.y) then
+						updateDialog("crew")
+						selection = nil
 						if key == "buy" then
 							fuelBought = CON.MAXFUEL - cargo.fuel
 							rationsBought = CON.MAXRATIONS - cargo.rations
@@ -228,6 +268,22 @@ function on_input(self, action_id, action)
 						end
 					end
 				end
+				for key, val in pairs(dialog.crew.btn) do
+					if gui.pick_node(val, action.x, action.y) and gui.is_enabled(val) then
+						for x = 1, 9 do
+							if key == "crew"..x and gui.is_enabled(val) then
+								if selection then gui.set_color(dialog.crew.btn["crew"..selection], CON.COLOR_DEFAULT) end
+								selection = x
+								gui.set_color(val, CON.COLOR_SELECTION)
+							end
+						end
+						if selection and gui.pick_node(dialog.crew.btn.pilotR, action.x, action.y) then
+							print("pilot!")
+							print(selection)
+						end
+					end
+				end
+					
 			elseif k == "buy" then
 				for key, val in pairs(dialog.buy.btn) do
 					if gui.pick_node(val, action.x, action.y) then
@@ -268,26 +324,36 @@ function on_input(self, action_id, action)
 				end
 			elseif k == "recruit" then
 				for key, val in pairs(dialog.recruit.btn) do
-					if type(val) == "userdata" and gui.pick_node(val, action.x, action.y) then
+					if gui.pick_node(val, action.x, action.y) then
 						if key == "cancel" then
-							if selection then gui.set_color(dialog.recruit.btn[selection].name, CON.COLOR_DEFAULT) end
+							if selection then gui.set_color(dialog.recruit.btn["recruit"..selection], CON.COLOR_DEFAULT) end
 							selection = nil
 							gui.set_enabled(dialog.recruit.frame, false)
 							focus = {action = true}
 						elseif key == "confirm" and selection then
-							table.insert(crew, planet.recruits[selection])
-							table.remove(planet.recruits, selection)
-							gui.set_color(dialog.recruit.btn[selection].name, CON.COLOR_DEFAULT)
-							selection = nil
-							updateDialog("recruit")
-							updateDialog("crew")
-						end
-					elseif type(val) == "table" then
-						if (gui.pick_node(val.name, action.x, action.y) or gui.pick_node(val.face, action.x, action.y)) and gui.is_enabled(val.name) then
-							if selection then gui.set_color(dialog.recruit.btn[selection].name, CON.COLOR_DEFAULT) end
-							selection = key
-							gui.set_color(val.name, CON.COLOR_SELECTION)
-							gui.set_color(dialog.recruit.btn.confirm, CON.COLOR_ENABLED)
+							if selection then gui.set_color(dialog.recruit.btn["recruit"..selection], CON.COLOR_DEFAULT) end
+							if #crew >= CON.MAXCREW then
+								selection = nil
+								gui.set_enabled(dialog.recruit.frame, false)
+								gui.set_text(dialog.warning.lbl.text, "You can't have more than "..CON.MAXCREW.." crew!")
+								gui.set_enabled(dialog.warning.frame, true)
+								focus = {warning = true}
+							else
+								table.insert(crew, planet.recruits[selection])
+								table.remove(planet.recruits, selection)
+								selection = nil
+								updateDialog("recruit")
+								updateDialog("crew")
+							end
+						else
+							for x = 1, 5 do
+								if key == "recruit"..x and gui.is_enabled(val) then
+									if selection then gui.set_color(dialog.recruit.btn["recruit"..selection], CON.COLOR_DEFAULT) end
+									selection = x
+									gui.set_color(val, CON.COLOR_SELECTION)
+									gui.set_color(dialog.recruit.btn.confirm, CON.COLOR_ENABLED)
+								end
+							end
 						end
 					end
 				end
@@ -456,10 +522,14 @@ function on_input(self, action_id, action)
 			end
 		end
 	elseif action_id == hash("enter") and action.pressed then
-		for y = 500, 300, -100 do
-			for x = 300, 1200, 100 do
-				pprint(FACE.drawFace(FACE.createFace(), vmath.vector3(x, y, 0), 2))
+		if tempface then
+			for key, val in pairs(tempface) do
+				gui.delete_node(val)
+			
 			end
+			tempface = nil
+		else
+			tempface = FACE.drawFace(FACE.createFace(), vmath.vector3(500, 500, 0), 2)
 		end
 	end
 end

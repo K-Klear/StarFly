@@ -8,10 +8,11 @@ local parts = {
 	{"nose1", "nose2", "nose3"},
 	{"eyes1"},
 	{"iris1"},
-	{"hair1", "hair2"}
+	{"hair1", "hair2", "hair3"},
+	{"whites"}
 }
 
-local partList = {"chin", "forehead", "mouth", "nose", "eyes", "iris", "hair"}
+local partList = {"chin", "forehead", "mouth", "eyes", "nose", "iris", "hair", "whites"}
 
 function M.createFace()
 	local face = {
@@ -24,7 +25,8 @@ function M.createFace()
 		nose = parts[4][math.random(1, #parts[4])],
 		eyes = parts[5][math.random(1, #parts[5])],
 		iris = parts[6][math.random(1, #parts[6])],
-		hair = parts[7][math.random(1, #parts[7])]
+		hair = parts[7][math.random(1, #parts[7])],
+		whites = parts[8][1]
 	}
 	return face
 end
@@ -32,11 +34,6 @@ end
 function M.drawFace(faceData, position, scale)
 	if not scale then scale = 4 end
 	local nodes = {}
-	--[[
-	nodes.background = gui.new_box_node(position, vmath.vector3(17, 25, 0))
-	gui.set_scale(nodes.background, vmath.vector3(scale, scale, 0))
-	gui.set_color(nodes.background, vmath.vector4(0.5, 0.5, 0.5, 1))
-	--]]
 	for key, val in ipairs(partList) do
 		nodes[val] = gui.new_box_node(position, vmath.vector3(17, 25, 0))
 		gui.set_texture(nodes[val], hash("faces"))
@@ -45,6 +42,7 @@ function M.drawFace(faceData, position, scale)
 	end
 	gui.set_color(nodes.chin, faceData.skinTone)
 	gui.set_color(nodes.forehead, faceData.skinTone)
+	gui.set_color(nodes.eyes, faceData.skinTone)
 	gui.set_color(nodes.hair, faceData.hairColor)
 	gui.set_color(nodes.iris, faceData.eyeColor)
 	return nodes

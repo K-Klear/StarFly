@@ -59,6 +59,7 @@ function M.newDialog(kind, show)
 			missionRim = gui.new_text_node(vmath.vector3(70, 0, 0), "MISSION"),
 		}
 	elseif kind == "recruit" then
+		dialog.ico = {}
 		dialog.lbl = {
 			title = gui.new_text_node(vmath.vector3(0, 86, 0), "RECRUIT"),
 			nobody = gui.new_text_node(vmath.vector3(0, 0, 0), "There are no recruits available.")
@@ -68,15 +69,8 @@ function M.newDialog(kind, show)
 			cancel = gui.new_text_node(vmath.vector3(50, -70, 0), "CLOSE")
 		}
 		for x = 1, 5 do
-			dialog.btn[x] = {
-				face = gui.new_box_node(vmath.vector3(-180, 90 - 20 * x, 0), vmath.vector3(16, 16, 0)),
-				name = gui.new_text_node(vmath.vector3(-160, 90 - 20 * x, 0), "Recruit name")
-			}
-			gui.set_texture(dialog.btn[x].face, hash("faces"))
-			gui.play_flipbook(dialog.btn[x].face, hash("face"))
-			gui.set_parent(dialog.btn[x].face, dialog.frame)
-			gui.set_parent(dialog.btn[x].name, dialog.frame)
-			gui.set_pivot(dialog.btn[x].name, gui.PIVOT_W)
+			dialog.btn["recruit"..x] = gui.new_text_node(vmath.vector3(-160, 90 - 20 * x, 0), "Recruit name")
+			gui.set_pivot(dialog.btn["recruit"..x], gui.PIVOT_W)
 		end
 	elseif kind == "buy" then
 		dialog.lbl = {
@@ -153,30 +147,27 @@ function M.newDialog(kind, show)
 		gui.set_pivot(dialog.lbl.government, gui.PIVOT_W)
 	elseif kind == "crew" then
 		gui.set_scale(dialog.frame, vmath.vector3(1, 1, 1))
-
+		dialog.ico = {}
 		dialog.lbl = {
-			title = gui.new_text_node(vmath.vector3(106, -16, 0), "CREW"),
-			pilot = gui.new_text_node(vmath.vector3(6, -36, 0), "PILOT"),
-			comms = gui.new_text_node(vmath.vector3(6, -56, 0), "COMMS"),
-			mech = gui.new_text_node(vmath.vector3(6, -76, 0), "ENGINEER"),
-			gunner = gui.new_text_node(vmath.vector3(6, -96, 0), "GUNNER"),
-			medic = gui.new_text_node(vmath.vector3(6, -116, 0), "MEDIC"),
+			title = gui.new_text_node(vmath.vector3(128, -16, 0), "CREW")
 		}
-		for key, val in pairs(dialog.lbl) do
-			gui.set_pivot(val, gui.PIVOT_W)
-		end
+		dialog.btn = {
+			pilotR = gui.new_text_node(vmath.vector3(6, -36, 0), "PILOT"),
+			commsR = gui.new_text_node(vmath.vector3(6, -56, 0), "COMMS"),
+			mechR = gui.new_text_node(vmath.vector3(6, -76, 0), "ENGINEER"),
+			gunnerR = gui.new_text_node(vmath.vector3(6, -96, 0), "GUNNER"),
+			medicR = gui.new_text_node(vmath.vector3(6, -116, 0), "MEDIC"),
+		}
 		for x = 1, 9 do
-			dialog.btn[x] = {
-				face = gui.new_box_node(vmath.vector3(16, -116 - 20 * x, 0), vmath.vector3(16, 16, 0)),
-				name = gui.new_text_node(vmath.vector3(32, -116 - 20 * x, 0), "Crewman")
-			}
-			gui.set_texture(dialog.btn[x].face, hash("faces"))
-			gui.play_flipbook(dialog.btn[x].face, hash("face"))
-			gui.set_parent(dialog.btn[x].face, dialog.frame)
-			gui.set_parent(dialog.btn[x].name, dialog.frame)
-			gui.set_pivot(dialog.btn[x].name, gui.PIVOT_W)
-			gui.set_enabled(dialog.btn[x].name, false)
-			gui.set_enabled(dialog.btn[x].face, false)
+			dialog.btn["crew"..x] = gui.new_text_node(vmath.vector3(32, -116 - 20 * x, 0), "Crewman")
+		end
+		dialog.btn.pilot = gui.new_text_node(vmath.vector3(100, -36, 0), "Name of Pilot")
+		dialog.btn.comms = gui.new_text_node(vmath.vector3(100, -56, 0), "Name of Comms")
+		dialog.btn.mech = gui.new_text_node(vmath.vector3(100, -76, 0), "Name of Mech")
+		dialog.btn.gunner = gui.new_text_node(vmath.vector3(100, -96, 0), "Name of Guner")
+		dialog.btn.medic = gui.new_text_node(vmath.vector3(100, -116, 0), "Name of Medic")
+		for key, val in pairs(dialog.btn) do
+			gui.set_pivot(val, gui.PIVOT_W)
 		end
 	elseif kind == "warning" then
 		dialog.lbl = {

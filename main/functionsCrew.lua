@@ -3,6 +3,8 @@ local FACE = require("main.face")
 
 local F = {}
 
+local IDCount = 0
+
 function F.normalDist(factor, zeroMean)
 	local value = 0
 	for x = 1, factor do
@@ -16,10 +18,13 @@ function F.normalDist(factor, zeroMean)
 end
 
 function F.generateCrew()
+	IDCount = IDCount + 1
 	local gender
 	if math.random(0, 1) == 0 then gender = "male" else gender = "female" end
 	local name = text.pickName(gender)
 	text.setNameAvailability(name.gender, name.key, false)
+
+	local face = FACE.createFace()
 
 	local skills = {
 		medic = F.normalDist(2, true),
@@ -82,7 +87,7 @@ function F.generateCrew()
 
 	return {
 		gender = gender, name = name, skills = skills, stats = stats, attributes = attributes,
-		knowledge = knowledge, role = "", active = true
+		knowledge = knowledge, face = face, ID = IDCount
 	}
 end
 

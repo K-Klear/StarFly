@@ -52,6 +52,12 @@ images {
 images {
   image: "/assets/images/Faces/hair2.png"
 }
+images {
+  image: "/assets/images/Faces/whites.png"
+}
+images {
+  image: "/assets/images/Faces/hair3.png"
+}
 margin: 1
 extrude_borders: 0
 inner_padding: 1
