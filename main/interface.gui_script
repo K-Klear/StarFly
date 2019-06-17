@@ -77,13 +77,15 @@ local function updateDialog(dialogID)
 		gui.set_text(dialog.info.lbl.settlement, planet.settlement)
 		gui.set_text(dialog.info.lbl.government, planet.government)
 	elseif dialogID == "crew" then
-		if selection then gui.set_color(dialog.crew.btn["crew"..selection], CON.COLOR_DEFAULT) end
+		if selection then gui.set_color(dialog.crew.btn[selection], CON.COLOR_DEFAULT) end
+		selection = nil
+		dialog.crew.selection = {}		-- used to assign crewembers to different dialogs
 		local iconPos = {
-			pilot = vmath.vector3(6, -36, 0),
-			comms = vmath.vector3(6, -56, 0),
-			mech = vmath.vector3(6, -76, 0),
-			gunner = vmath.vector3(6, -96, 0),
-			medic = vmath.vector3(6, -116, 0)
+			pilot = vmath.vector3(86, -36, 0),
+			comms = vmath.vector3(86, -56, 0),
+			mech = vmath.vector3(86, -76, 0),
+			gunner = vmath.vector3(86, -96, 0),
+			medic = vmath.vector3(86, -116, 0)
 		}
 		for key, val in ipairs(dialog.crew.ico) do
 			for k, v in pairs(val) do
@@ -107,10 +109,12 @@ local function updateDialog(dialogID)
 				gui.set_text(dialog.crew.btn[val.role], text.getName(val))
 				gui.set_enabled(dialog.crew.btn[val.role], true)
 				table.insert(dialog.crew.ico, FACE.drawFace(val.face, iconPos[val.role], 1))
+				dialog.crew.selection[val.role] = key
 			else
 				gui.set_text(dialog.crew.btn["crew"..y], text.getName(val))
 				gui.set_enabled(dialog.crew.btn["crew"..y], true)
 				table.insert(dialog.crew.ico, FACE.drawFace(val.face, vmath.vector3(16, -116 - 20 * y, 0), 1))
+				dialog.crew.selection["crew"..y] = key
 				y = y + 1
 			end
 		end
@@ -271,15 +275,39 @@ function on_input(self, action_id, action)
 				for key, val in pairs(dialog.crew.btn) do
 					if gui.pick_node(val, action.x, action.y) and gui.is_enabled(val) then
 						for x = 1, 9 do
-							if key == "crew"..x and gui.is_enabled(val) then
-								if selection then gui.set_color(dialog.crew.btn["crew"..selection], CON.COLOR_DEFAULT) end
-								selection = x
+							if key == "crew"..x then
+								if selection then gui.set_color(dialog.crew.btn[selection], CON.COLOR_DEFAULT) end
+								selection = "crew"..x
 								gui.set_color(val, CON.COLOR_SELECTION)
 							end
 						end
-						if selection and gui.pick_node(dialog.crew.btn.pilotR, action.x, action.y) then
-							print("pilot!")
-							print(selection)
+						if key == "pilot" or key == "mech" or key == "comms" or key == "medic" or key == "gunner" then
+							if selection then gui.set_color(dialog.crew.btn[selection], CON.COLOR_DEFAULT) end
+							selection = key
+							gui.set_color(val, CON.COLOR_SELECTION)
+						end
+						if selection then
+							if key == "pilotR" then
+								if dialog.crew.selection.pilot then crew[dialog.crew.selection.pilot].role = nil end
+								crew[dialog.crew.selection[selection]].role = "pilot"
+								updateDialog("crew")
+							elseif key == "commsR" then
+								if dialog.crew.selection.comms then crew[dialog.crew.selection.comms].role = nil end
+								crew[dialog.crew.selection[selection]].role = "comms"
+								updateDialog("crew")
+							elseif key == "mechR" then
+								if dialog.crew.selection.mech then crew[dialog.crew.selection.mech].role = nil end
+								crew[dialog.crew.selection[selection]].role = "mech"
+								updateDialog("crew")
+							elseif key == "medicR" then
+								if dialog.crew.selection.medic then crew[dialog.crew.selection.medic].role = nil end
+								crew[dialog.crew.selection[selection]].role = "medic"
+								updateDialog("crew")
+							elseif key == "gunnerR" then
+								if dialog.crew.selection.gunner then crew[dialog.crew.selection.gunner].role = nil end
+								crew[dialog.crew.selection[selection]].role = "gunner"
+								updateDialog("crew")
+							end
 						end
 					end
 				end
