@@ -1,3 +1,6 @@
+math.randomseed(os.time())
+math.random(); math.random(); math.random()
+
 local text = require("main.text")
 local FPlanet = require("main.planet")
 local DH = require("main.dialogHelper")
@@ -5,12 +8,18 @@ local CON = require("main.constants")
 local EVENTS = require("main.events")
 local FCrew = require("main.functionsCrew")
 local FACE = require("main.face")
-
+local UPG = require("main.upgrades")
+local DICE = require("main.dice")
 
 local focus = {action = true}
 
 local planet = FPlanet.generatePlanet("Frontier", true)
 local mission = {}
+
+crew = {}
+crew[0] = {skills = {medic = 0, mech = 0, gunner = 0, comms = 0, pilot = 0, fight = 0}}
+
+cargo = {fuel = 5, rations = 20, money = 1000}
 
 local dialog = {}
 
@@ -18,7 +27,7 @@ local fuelBought = CON.MAXFUEL - cargo.fuel
 local rationsBought = CON.MAXRATIONS - cargo.rations
 local totalPrice
 
-local statsOrder = {pilot = 1, mech = 2, comms = 3, gunnery = 4, medic = 5, fight = 6}
+local statsOrder = {pilot = 1, mech = 2, comms = 3, gunner = 4, medic = 5, fight = 6}
 
 local selection
 local currentMission
@@ -218,6 +227,8 @@ local function checkMission(target)
 end
 
 function init(self)
+
+	msg.post(".", "acquire_input_focus")
 	
 	dialog.travel = DH.newDialog("travel")
 	dialog.recruit = DH.newDialog("recruit")
@@ -550,14 +561,7 @@ function on_input(self, action_id, action)
 			end
 		end
 	elseif action_id == hash("enter") and action.pressed then
-		if tempface then
-			for key, val in pairs(tempface) do
-				gui.delete_node(val)
-			
-			end
-			tempface = nil
-		else
-			tempface = FACE.drawFace(FACE.createFace(), vmath.vector3(500, 500, 0), 2)
-		end
+		print(DICE.skillCheck("shoot"))
+		print("____")
 	end
 end

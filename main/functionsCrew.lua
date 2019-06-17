@@ -5,6 +5,15 @@ local F = {}
 
 local IDCount = 0
 
+function F.getRole(role)
+	for key, val in ipairs(crew) do
+		if val.role == role then
+			return key
+		end
+	end
+	return 0
+end
+
 function F.normalDist(factor, zeroMean)
 	local value = 0
 	for x = 1, factor do
@@ -29,7 +38,7 @@ function F.generateCrew()
 	local skills = {
 		medic = F.normalDist(2, true),
 		mech = F.normalDist(2, true),
-		gunnery = F.normalDist(2, true),
+		gunner = F.normalDist(2, true),
 		comms = F.normalDist(2, true),
 		pilot = F.normalDist(2, true),
 		fight = F.normalDist(2, true)
