@@ -63,15 +63,34 @@ function F.generateCrew()
 		factions = F.normalDist(2, true)
 	}
 
+	local goalList = {
+		"fun",
+		"travel",
+		"work",
+		"home",
+		"running",
+		"spy",
+		"sabotage"
+	}
+
+	local goal = goalList[math.random(1, #goalList)]
+	
 	--[[
+	Goals:
+	Have a home
+	Be a good crew
+	Win affection of crewman
+	Get to a planet with conditions
+	Have a story to tell
+	Hide from someone
+	
 	Forgiveness/grudges
 	Anger
 	Bounty
 
 	Attitude towards rest of the crew
 	Trust
-
-
+	
 	Talents/limitations
 
 	Respects:
@@ -81,21 +100,11 @@ function F.generateCrew()
 	Diplomacy
 	Authority
 
-	Goals:
-	Sabotage ship
-	Spy
-	Earn money
-	Have a home
-	Be a good crew
-	Win affection of crewman
-	Get to a planet with conditions
-	Have a story to tell
-	Hide from someone
 	--]]
 
 	return {
 		gender = gender, name = name, skills = skills, stats = stats, attributes = attributes,
-		knowledge = knowledge, face = face, ID = IDCount
+		knowledge = knowledge, face = face, ID = IDCount, goal = goal
 	}
 end
 

@@ -1,3 +1,5 @@
+local FACE = require("main.face")
+local Ftext = require("main.text")
 M = {}
 
 local qualifier = {
@@ -19,7 +21,24 @@ local jobs = {
 	fight = {"fighting off boarders", "fighting", "keeping everyone safe"}
 }
 
-local qualityList = {"top", "great", "good", "average", "poor", "terrible", "none"}
+local greeting = {"Hello!", "Greetings.", "Nice to meet you.", "Hello there!"}
+local myNameIs = {"I'm", "You can call me", "My name is", "They call me"}
+
+local qualityList = {"top", "great", "good", "average", "poor", "terrible"}
+
+local goal = {
+	fun = {"This place is boring. I want to have some fun.", "I need some excitement. You wouldn't believe how boring colony life can be."},
+	travel = {"I want to see all the universe has to offer.", "I just want to see the stars."},
+	work = {"It's impossible to find a job here. Joining your crew might be my last chance.", "Frankly? I'm after the money. I will get paid, right?", "Honest work for honest pay, that's what I'm looking for."},
+	home = {"I want to find a place where I belong. A place I could call a home."},
+	running = {"Someone is after me. I need to vanish.", "I've crossed someone. I need to get far away from here."},
+	spy = {"I'm going to spy on you and lying isn't yet implemented, so... please hire me anyway?"},
+	sabotage = {"I'm going to sabotage your ship. Lying isn't yet implemented, but then again, neither are sabotages."},
+}
+
+local function pickLine(table)
+	return table[math.random(1, #table)]
+end
 
 function M.skills(crewID)
 	levels = {
@@ -31,8 +50,8 @@ function M.skills(crewID)
 		great = {},
 		top = {}
 	}
-	for key, val in pairs(crew[crewID].skills) do
-		local eval = val + ((crew[crewID].attributes.confidence - 0.5) * 0.4)
+	for key, val in pairs(crewID.skills) do
+		local eval = val + ((crewID.attributes.confidence - 0.5) * 0.4)
 		if eval < 0 then eval = 0 elseif eval > 1 then eval = 1 end
 		if eval < 0.1 then
 			table.insert(levels.none, key)
@@ -53,10 +72,10 @@ function M.skills(crewID)
 	local string = ""
 	for k, v in ipairs(qualityList) do
 		if #levels[v] > 0 then
-			string = string.."I"..qualifier[v][math.random(1, #qualifier[v])]
+			string = string.."I"..pickLine(qualifier[v])
 			local count = #levels[v]
 			for key, val in pairs(levels[v]) do
-				string = string.." "..jobs[val][math.random(1, #jobs[val])]
+				string = string.." "..pickLine(jobs[val])
 				if count == 1 then
 					string = string..". "
 				elseif count == 2 then
@@ -68,10 +87,47 @@ function M.skills(crewID)
 			end
 		end
 	end
-	return
+	return string
 end
 
+function M.intro(crewID)
+	local string = pickLine(greeting).." "..pickLine(myNameIs).." "..Ftext.getName(crewID)..". "
+	string = string..pickLine(goal[crewID.goal])
+	return string
+end
 
-
+function M.openDialog(dialog, talker, text, reply1, reply2, reply3)
+	for key, val in ipairs(dialog.ico) do
+		for k, v in pairs(val) do
+			gui.delete_node(v)
+		end
+	end
+	dialog.ico = {}
+	table.insert(dialog.ico, FACE.drawFace(talker.face, vmath.vector3(-120, 130, 0), 2))
+	for key, val in ipairs(dialog.ico) do
+		for k, v in pairs(val) do
+			gui.set_parent(v, dialog.frame)
+		end
+		gui.move_above(val.hair, val.forehead)
+	end
+	gui.set_text(dialog.lbl.text, text)
+	gui.set_text(dialog.lbl.name, Ftext.getName(talker).." says:")
+	if reply1 then
+		gui.set_text(dialog.btn.reply1, reply1)
+	else
+		gui.set_enabled(dialog.btn.reply1, false)
+	end
+	if reply2 then
+		gui.set_text(dialog.btn.reply2, reply2)
+	else
+		gui.set_enabled(dialog.btn.reply2, false)
+	end
+	if reply3 then
+		gui.set_text(dialog.btn.reply3, reply3)
+	else
+		gui.set_enabled(dialog.btn.reply3, false)
+	end
+	gui.set_enabled(dialog.frame, true)
+end
 
 return M

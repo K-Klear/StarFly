@@ -71,9 +71,10 @@ function M.newDialog(kind, show)
 			cancel = gui.new_text_node(vmath.vector3(50, -70, 0), "CLOSE")
 		}
 		for x = 1, 5 do
-			dialog.btn["recruit"..x] = gui.new_text_node(vmath.vector3(-160, 90 - 20 * x, 0), "Recruit name")
+			dialog.btn["recruit"..x] = gui.new_text_node(vmath.vector3(-160, 88 - 20 * x, 0), "Recruit name")
 			gui.set_pivot(dialog.btn["recruit"..x], gui.PIVOT_W)
-			dialog.btn["skills"..x] = gui.new_text_node(vmath.vector3(-40, 90 - 20 * x, 0), "SKILLS")
+			dialog.btn["about"..x] = gui.new_text_node(vmath.vector3(-40, 88 - 20 * x, 0), "ABOUT")
+			dialog.btn["skills"..x] = gui.new_text_node(vmath.vector3(20, 88 - 20 * x, 0), "SKILLS")
 		end
 	elseif kind == "buy" then
 		dialog.lbl = {
@@ -189,10 +190,11 @@ function M.newDialog(kind, show)
 		gui.set_line_break(dialog.lbl.text, true)
 		
 		dialog.btn = {
-			reply1 = gui.new_text_node(vmath.vector3(0, -126, 0), "OK"),
-			reply2 = gui.new_text_node(vmath.vector3(-80, -126, 0), "NO!"),
+			reply1 = gui.new_text_node(vmath.vector3(-80, -126, 0), "OK"),
+			reply2 = gui.new_text_node(vmath.vector3(0, -126, 0), "NO!"),
 			reply3 = gui.new_text_node(vmath.vector3(80, -126, 0), "Whatever.")
 		}
+		dialog.ico = {}
 	end
 
 	for key, val in pairs(dialog.lbl) do
