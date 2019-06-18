@@ -22,6 +22,9 @@ function M.skillCheck(action, success)
 			result = result * (crew[FCrew.getRole("pilot")].skills.pilot + 0.5)
 		end
 		result = result * (crew[FCrew.getRole("gunner")].skills.gunner * 2)
+	elseif action == "detect" then
+		result = UPG.list.comms[UPG.fitted.comms].strength
+		result = result * (crew[FCrew.getRole("comms")].skills.comms * 2)
 	end
 	if success then
 		if result > success then

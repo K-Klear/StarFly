@@ -7,6 +7,7 @@ M.COLOR_BUTTONS = vmath.vector4(0.5, 0.75, 1, 1)
 M.COLOR_DISABLED = vmath.vector4(0.4, 0.4, 0.4, 1)
 M.COLOR_ENABLED = vmath.vector4(0.5, 1, 0.7, 1)
 M.COLOR_DEFAULT = vmath.vector4(1, 1, 1, 1)
+M.COLOR_HIGHLIGHT = vmath.vector4(0.7, 1, 0.4, 1)
 
 M.SKINTONE = {}
 table.insert(M.SKINTONE, vmath.vector4(1, 0.85, 0.67, 1))

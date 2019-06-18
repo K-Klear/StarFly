@@ -50,7 +50,6 @@ function F.generateCrew()
 	}
 
 	local attributes = {
-		honesty = F.normalDist(2),
 		confidence = F.normalDist(2),
 		greed = F.normalDist(2),
 		secretiveness = F.normalDist(2),

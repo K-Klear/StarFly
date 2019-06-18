@@ -9,7 +9,8 @@ local size = {
 	info = {x = 256, y = 96},
 	warning = {x = 280, y = 88},
 	crew = {x = 256, y = 328},
-	work = {x = 300, y = 188}
+	work = {x = 300, y = 188},
+	speech = {x = 328, y = 318}
 }
 
 local pos = {
@@ -20,7 +21,8 @@ local pos = {
 	info = {x = 1280, y = 710},
 	warning = {x = 640, y = 360},
 	crew = {x = 6, y = 710},
-	work = {x = 640, y = 360}
+	work = {x = 640, y = 360},
+	speech = {x = 640, y = 380},
 }
 
 local pivot = {
@@ -71,6 +73,7 @@ function M.newDialog(kind, show)
 		for x = 1, 5 do
 			dialog.btn["recruit"..x] = gui.new_text_node(vmath.vector3(-160, 90 - 20 * x, 0), "Recruit name")
 			gui.set_pivot(dialog.btn["recruit"..x], gui.PIVOT_W)
+			dialog.btn["skills"..x] = gui.new_text_node(vmath.vector3(-40, 90 - 20 * x, 0), "SKILLS")
 		end
 	elseif kind == "buy" then
 		dialog.lbl = {
@@ -175,6 +178,20 @@ function M.newDialog(kind, show)
 		}
 		dialog.btn = {
 			confirm = gui.new_text_node(vmath.vector3(0, -10, 0), "OK")
+		}
+	elseif kind == "speech" then
+		dialog.lbl = {
+			name = gui.new_text_node(vmath.vector3(0, 132, 0), "Name of talker says:"),
+			text = gui.new_text_node(vmath.vector3(0, 0, 0), "Blah blah blah blah. Blah blah blah blah. Blah blah blah blah. Blah blah blah blah.")
+		}
+		for x = 1, 23 do gui.set_text(dialog.lbl.text, gui.get_text(dialog.lbl.text).."BLAH BLAH BLAGH!") end
+		gui.set_size(dialog.lbl.text, vmath.vector3(300, 100, 0))
+		gui.set_line_break(dialog.lbl.text, true)
+		
+		dialog.btn = {
+			reply1 = gui.new_text_node(vmath.vector3(0, -126, 0), "OK"),
+			reply2 = gui.new_text_node(vmath.vector3(-80, -126, 0), "NO!"),
+			reply3 = gui.new_text_node(vmath.vector3(80, -126, 0), "Whatever.")
 		}
 	end
 
