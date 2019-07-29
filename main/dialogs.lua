@@ -8,21 +8,21 @@ local size = {
 	action = {x = 640, y = 64},
 	info = {x = 256, y = 96},
 	warning = {x = 280, y = 88},
-	crew = {x = 256, y = 328},
+	crew = {x = 192, y = 328},
 	work = {x = 300, y = 188},
-	speech = {x = 328, y = 318}
+	speech = {x = 384, y = 318}
 }
 
 local pos = {
-	travel = {x = 640, y = 360},
-	recruit = {x = 640, y = 360},
-	buy = {x = 640, y = 360},
+	travel = {x = 640, y = 460},
+	recruit = {x = 640, y = 460},
+	buy = {x = 640, y = 460},
 	action = {x = 640, y = 50},
-	info = {x = 1280, y = 710},
-	warning = {x = 640, y = 360},
-	crew = {x = 6, y = 710},
-	work = {x = 640, y = 360},
-	speech = {x = 640, y = 380},
+	info = {x = 1280, y = 890},
+	warning = {x = 640, y = 460},
+	crew = {x = 6, y = 890},
+	work = {x = 640, y = 460},
+	speech = {x = 640, y = 480},
 }
 
 local pivot = {
@@ -153,7 +153,7 @@ function M.newDialog(kind, show)
 		gui.set_scale(dialog.frame, vmath.vector3(1, 1, 1))
 		dialog.ico = {}
 		dialog.lbl = {
-			title = gui.new_text_node(vmath.vector3(128, -16, 0), "CREW")
+			title = gui.new_text_node(vmath.vector3(96, -16, 0), "CREW")
 		}
 		dialog.btn = {
 			pilotR = gui.new_text_node(vmath.vector3(6, -36, 0), "PILOT"),

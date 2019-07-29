@@ -1,6 +1,6 @@
 image: "/assets/images/Ship/shipTilemap.png"
 tile_width: 32
-tile_height: 64
+tile_height: 32
 tile_margin: 1
 tile_spacing: 1
 collision: ""

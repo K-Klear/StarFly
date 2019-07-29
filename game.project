@@ -11,7 +11,8 @@ use_accelerometer = 0
 
 [display]
 width = 1280
-height = 720
+height = 900
+fullscreen = 0
 
 [script]
 shared_state = 1
