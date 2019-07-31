@@ -1,0 +1,67 @@
+images {
+  image: "/assets/images/Crew/head_idle.png"
+}
+images {
+  image: "/assets/images/Crew/hand_idle.png"
+}
+images {
+  image: "/assets/images/Crew/legs_idle.png"
+}
+images {
+  image: "/assets/images/Crew/torso_idle.png"
+}
+animations {
+  id: "head_walk"
+  images {
+    image: "/assets/images/Crew/head_walk1.png"
+  }
+  images {
+    image: "/assets/images/Crew/head_idle.png"
+  }
+  playback: PLAYBACK_LOOP_FORWARD
+  fps: 3
+  flip_horizontal: 0
+  flip_vertical: 0
+}
+animations {
+  id: "legs_walk"
+  images {
+    image: "/assets/images/Crew/legs_walk1.png"
+  }
+  images {
+    image: "/assets/images/Crew/legs_idle.png"
+  }
+  playback: PLAYBACK_LOOP_FORWARD
+  fps: 3
+  flip_horizontal: 0
+  flip_vertical: 0
+}
+animations {
+  id: "torso_walk"
+  images {
+    image: "/assets/images/Crew/torso_walk1.png"
+  }
+  images {
+    image: "/assets/images/Crew/torso_idle.png"
+  }
+  playback: PLAYBACK_LOOP_FORWARD
+  fps: 3
+  flip_horizontal: 0
+  flip_vertical: 0
+}
+animations {
+  id: "hand_walk"
+  images {
+    image: "/assets/images/Crew/hand_walk1.png"
+  }
+  images {
+    image: "/assets/images/Crew/hand_idle.png"
+  }
+  playback: PLAYBACK_LOOP_FORWARD
+  fps: 3
+  flip_horizontal: 0
+  flip_vertical: 0
+}
+margin: 0
+extrude_borders: 0
+inner_padding: 0

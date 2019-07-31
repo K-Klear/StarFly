@@ -19,6 +19,7 @@ function M.createFace()
 		skinTone = CON.SKINTONE[math.random(1, #CON.SKINTONE)],
 		eyeColor = CON.EYECOLOR[math.random(1, #CON.EYECOLOR)],
 		hairColor = CON.HAIRCOLOR[math.random(1, #CON.HAIRCOLOR)],
+		clothesColor = vmath.vector4(math.random(), math.random(), math.random(), 1),
 		chin = parts[1][math.random(1, #parts[1])],
 		forehead = parts[2][math.random(1, #parts[2])],
 		mouth = parts[3][math.random(1, #parts[3])],

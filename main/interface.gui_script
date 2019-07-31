@@ -255,12 +255,13 @@ function init(self)
 	dialog.speech = DH.newDialog("speech")
 	gui.set_text(dialog.missions.lbl.none, "There are no ongoing jobs.")
 	gui.set_text(dialog.missions.lbl.title, "CHOOSE A MISSION")
-
+	
 	updateDialog("info")
 
 	for x = 1, 5 do
 		table.insert(crew, FCrew.generateCrew())
 		text.setNameAvailability(crew[#crew].name.gender, crew[#crew].name.key, true)
+		crew[#crew].go = factory.create("/ship#spawn_crew", vmath.vector3(math.random(140, 240), 64, 0.1), nil, {crew = #crew, level = 2})
 	end
 	updateDialog("crew")
 
@@ -315,28 +316,32 @@ function on_input(self, action_id, action)
 							if key == "pilotR" then
 								if dialog.crew.selection.pilot then crew[dialog.crew.selection.pilot].role = nil end
 								crew[dialog.crew.selection[selection]].role = "pilot"
+								msg.post(crew[dialog.crew.selection[selection]].go, "move", {target = "COCKPIT"})
 								updateDialog("crew")
 							elseif key == "commsR" then
 								if dialog.crew.selection.comms then crew[dialog.crew.selection.comms].role = nil end
 								crew[dialog.crew.selection[selection]].role = "comms"
+								msg.post(crew[dialog.crew.selection[selection]].go, "move", {target = "COMMS"})
 								updateDialog("crew")
 							elseif key == "mechR" then
 								if dialog.crew.selection.mech then crew[dialog.crew.selection.mech].role = nil end
 								crew[dialog.crew.selection[selection]].role = "mech"
+								msg.post(crew[dialog.crew.selection[selection]].go, "move", {target = "ENGINE2"})
 								updateDialog("crew")
 							elseif key == "medicR" then
 								if dialog.crew.selection.medic then crew[dialog.crew.selection.medic].role = nil end
 								crew[dialog.crew.selection[selection]].role = "medic"
+								msg.post(crew[dialog.crew.selection[selection]].go, "move", {target = "BUNK4"})
 								updateDialog("crew")
 							elseif key == "gunnerR" then
 								if dialog.crew.selection.gunner then crew[dialog.crew.selection.gunner].role = nil end
 								crew[dialog.crew.selection[selection]].role = "gunner"
+								msg.post(crew[dialog.crew.selection[selection]].go, "move", {target = "GUN"})
 								updateDialog("crew")
 							end
 						end
 					end
 				end
-					
 			elseif k == "buy" then
 				for key, val in pairs(dialog.buy.btn) do
 					if gui.pick_node(val, action.x, action.y) then
