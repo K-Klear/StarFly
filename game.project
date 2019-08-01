@@ -27,9 +27,11 @@ app_icon = /assets/app_icons/appicon.icns
 input_method = HiddenInputField
 
 [physics]
-gravity_y = -1000.0
+gravity_y = 0.0
 scale = 0.01
 world_count = 1
+debug = 0
+debug_alpha = 0.5
 
 [graphics]
 default_texture_min_filter = nearest

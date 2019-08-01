@@ -1,0 +1,34 @@
+
+local function die(self)
+	timer.cancel(self.lifespan)
+	go.delete()
+end
+
+function init(self)
+	msg.post("#co1", "disable")
+	local shade = math.random(2, 9) / 10
+	sprite.set_constant("#sprite", "tint", vmath.vector4(shade, shade, shade, 1))
+	local force = vmath.vector3(math.random(1200, 2000), math.random(-500, 500), 0)
+	if math.random() > 0.3 then
+		msg.post("#co", "apply_force", {force = force, position = go.get_world_position() + vmath.vector3(math.random(-5, 5), math.random(-5, 5), 0)})
+	else
+		msg.post("#co1", "enable"); msg.post("#co", "disable")
+		msg.post("#co1", "apply_force", {force = force, position = go.get_world_position() + vmath.vector3(math.random(-5, 5), math.random(-5, 5), 0)})
+		if math.random() > 0.5 then
+			go.set_position(go.get_position() - vmath.vector3(0, 0, 2))
+		end
+	end
+	self.lifespan = timer.delay(8, false, die)
+	self.solid = timer.delay(4, false, function () msg.post("#co1", "enable"); msg.post("#co", "disable"); msg.post("#co1", "apply_force", {force = force, position = go.get_world_position()}) end)
+end
+
+function update(self, dt)
+	local pos = go.get_position()
+	if pos.x < -75 or pos.x > 1300 or pos.y < -50 or pos.y > 1000 then
+		die(self)
+	end
+end
+
+function on_message(self, message_id, message, sender)
+	
+end

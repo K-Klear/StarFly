@@ -1,0 +1,9 @@
+images {
+  image: "/assets/images/background/meteor.png"
+}
+images {
+  image: "/assets/images/background/star.png"
+}
+margin: 0
+extrude_borders: 0
+inner_padding: 0
