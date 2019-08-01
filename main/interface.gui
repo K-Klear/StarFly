@@ -11,6 +11,10 @@ textures {
   name: "dialog"
   texture: "/assets/images/dialog.atlas"
 }
+textures {
+  name: "selection"
+  texture: "/assets/images/selection.atlas"
+}
 background_color {
   x: 0.0
   y: 0.0

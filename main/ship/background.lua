@@ -10,7 +10,7 @@ end
 function background.show(type)
 	if type == hash("space") then
 		particlefx.play("/background#stars")
-		timer_meteor = timer.delay(math.random(4, 15) / 10, false, spawn_meteor)
+		spawn_meteor()
 	end
 end
 

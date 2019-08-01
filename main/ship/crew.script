@@ -68,3 +68,7 @@ function on_message(self, message_id, message, sender)
 		walk(self)
 	end
 end
+
+function update(self, dt)
+	msg.post("/main#interface", "update_position", {pos = go.get_world_position(), crew = self.crew})
+end

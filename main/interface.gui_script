@@ -12,6 +12,7 @@ local UPG = require("main.upgrades")
 local DICE = require("main.dice")
 local TALK = require("main.talk")
 local BACKGROUND = require("main.ship.background")
+local SHIP = require("main.ship.ship_layout")
 
 local focus = {action = true}
 
@@ -33,6 +34,8 @@ local statsOrder = {pilot = 1, mech = 2, comms = 3, gunner = 4, medic = 5, fight
 
 local selection
 local currentMission
+local selector = {}
+local cursor_position = {x = 0, y = 0}
 
 local speechResult = {
 	reply1 = {},
@@ -300,50 +303,66 @@ function on_input(self, action_id, action)
 						end
 					end
 				end
-				for key, val in pairs(dialog.crew.btn) do
-					if gui.pick_node(val, action.x, action.y) and gui.is_enabled(val) then
-						for x = 1, 9 do
-							if key == "crew"..x then
-								if selection then gui.set_color(dialog.crew.btn[selection], CON.COLOR_DEFAULT) end
-								selection = "crew"..x
-								gui.set_color(val, CON.COLOR_SELECTION)
+				if selector.thing then
+					if type(selector.thing) == "number" then
+						if selection then gui.set_color(dialog.crew.btn[selection], CON.COLOR_DEFAULT) end
+						for key, val in pairs(dialog.crew.selection) do
+							if val == selector.thing then
+								selection = key
+								gui.set_color(dialog.crew.btn[selection], CON.COLOR_SELECTION)
+								break
 							end
 						end
-						if key == "pilot" or key == "mech" or key == "comms" or key == "medic" or key == "gunner" then
-							if selection then gui.set_color(dialog.crew.btn[selection], CON.COLOR_DEFAULT) end
-							selection = key
-							gui.set_color(val, CON.COLOR_SELECTION)
-						end
-						if selection then
-							if key == "pilotR" then
-								if dialog.crew.selection.pilot then crew[dialog.crew.selection.pilot].role = nil end
-								crew[dialog.crew.selection[selection]].role = "pilot"
-								msg.post(crew[dialog.crew.selection[selection]].go, "move", {target = "COCKPIT"})
-								updateDialog("crew")
-							elseif key == "commsR" then
-								if dialog.crew.selection.comms then crew[dialog.crew.selection.comms].role = nil end
-								crew[dialog.crew.selection[selection]].role = "comms"
-								msg.post(crew[dialog.crew.selection[selection]].go, "move", {target = "COMMS"})
-								updateDialog("crew")
-							elseif key == "mechR" then
-								if dialog.crew.selection.mech then crew[dialog.crew.selection.mech].role = nil end
-								crew[dialog.crew.selection[selection]].role = "mech"
-								msg.post(crew[dialog.crew.selection[selection]].go, "move", {target = "ENGINE2"})
-								updateDialog("crew")
-							elseif key == "medicR" then
-								if dialog.crew.selection.medic then crew[dialog.crew.selection.medic].role = nil end
-								crew[dialog.crew.selection[selection]].role = "medic"
-								msg.post(crew[dialog.crew.selection[selection]].go, "move", {target = "BUNK4"})
-								updateDialog("crew")
-							elseif key == "gunnerR" then
-								if dialog.crew.selection.gunner then crew[dialog.crew.selection.gunner].role = nil end
-								crew[dialog.crew.selection[selection]].role = "gunner"
-								msg.post(crew[dialog.crew.selection[selection]].go, "move", {target = "GUN"})
-								updateDialog("crew")
+					else
+						start makign this work next
+					end
+				else
+					for key, val in pairs(dialog.crew.btn) do
+						if gui.pick_node(val, action.x, action.y) and gui.is_enabled(val) then
+							for x = 1, 9 do
+								if key == "crew"..x then
+									if selection then gui.set_color(dialog.crew.btn[selection], CON.COLOR_DEFAULT) end
+									selection = "crew"..x
+									gui.set_color(val, CON.COLOR_SELECTION)
+								end
+							end
+							if key == "pilot" or key == "mech" or key == "comms" or key == "medic" or key == "gunner" then
+								if selection then gui.set_color(dialog.crew.btn[selection], CON.COLOR_DEFAULT) end
+								selection = key
+								gui.set_color(val, CON.COLOR_SELECTION)
+							end
+							if selection then
+								if key == "pilotR" then
+									if dialog.crew.selection.pilot then crew[dialog.crew.selection.pilot].role = nil end
+									crew[dialog.crew.selection[selection]].role = "pilot"
+									msg.post(crew[dialog.crew.selection[selection]].go, "move", {target = "COCKPIT"})
+									updateDialog("crew")
+								elseif key == "commsR" then
+									if dialog.crew.selection.comms then crew[dialog.crew.selection.comms].role = nil end
+									crew[dialog.crew.selection[selection]].role = "comms"
+									msg.post(crew[dialog.crew.selection[selection]].go, "move", {target = "COMMS"})
+									updateDialog("crew")
+								elseif key == "mechR" then
+									if dialog.crew.selection.mech then crew[dialog.crew.selection.mech].role = nil end
+									crew[dialog.crew.selection[selection]].role = "mech"
+									msg.post(crew[dialog.crew.selection[selection]].go, "move", {target = "ENGINE2"})
+									updateDialog("crew")
+								elseif key == "medicR" then
+									if dialog.crew.selection.medic then crew[dialog.crew.selection.medic].role = nil end
+									crew[dialog.crew.selection[selection]].role = "medic"
+									msg.post(crew[dialog.crew.selection[selection]].go, "move", {target = "BUNK4"})
+									updateDialog("crew")
+								elseif key == "gunnerR" then
+									if dialog.crew.selection.gunner then crew[dialog.crew.selection.gunner].role = nil end
+									crew[dialog.crew.selection[selection]].role = "gunner"
+									msg.post(crew[dialog.crew.selection[selection]].go, "move", {target = "GUN"})
+									updateDialog("crew")
+								end
 							end
 						end
 					end
 				end
+				if selection then print(selection) else print("not selectino") end
 			elseif k == "buy" then
 				for key, val in pairs(dialog.buy.btn) do
 					if gui.pick_node(val, action.x, action.y) then
@@ -400,6 +419,7 @@ function on_input(self, action_id, action)
 								focus = {warning = true}
 							else
 								table.insert(crew, planet.recruits[selection])
+								crew[#crew].go = factory.create("/ship#spawn_crew", vmath.vector3(math.random(140, 240), 64, 0.1), nil, {crew = #crew, level = 2})
 								table.remove(planet.recruits, selection)
 								selection = nil
 								updateDialog("recruit")
@@ -611,28 +631,78 @@ function on_input(self, action_id, action)
 	elseif action_id == hash("enter") and action.pressed then
 		
 	else
-		for menu in pairs(focus) do
-			for key, val in pairs(dialog[menu].btn) do
-				if type(val) == "table" then
-					for k_, v_ in pairs(val) do
-						if gui.pick_node(v_, action.x, action.y) then
-							gui.set_shadow(v_, CON.COLOR_SELECTION)
-							gui.set_outline(v_, CON.COLOR_SELECTION)
+		cursor_position.x = action.x; cursor_position.y = action.y
+		
+		local _selector
+		for key, val in pairs(SHIP) do
+			if val.pos then
+				if action.x > val.pos.x and action.x < val.pos.x + val.size.x and action.y > val.pos.y and action.y < val.pos.y + val.size.y then
+					_selector = val
+					_thing = key
+				end
+			end
+		end
+		for key, val in pairs(crew) do
+			if val.pos then
+				if action.x > val.pos.x and action.x < val.pos.x + 40 and action.y > val.pos.y and action.y < val.pos.y + 78 then
+					_selector = val
+					_thing = key
+				end
+			end
+		end
+		for k in pairs(focus) do
+			if k == "action" then
+				if selector.frame then gui.delete_node(selector.frame); selector = {} end
+				if _selector then
+					local size = _selector.size or vmath.vector3(40, 78, 0)
+					selector.frame = gui.new_box_node(_selector.pos, size)
+					gui.set_pivot(selector.frame, gui.PIVOT_SW)
+					gui.set_texture(selector.frame, hash("selection"))
+					gui.set_slice9(selector.frame, vmath.vector4(1, 1, 2, 2))
+					selector.thing = _thing
+				end
+				
+				for menu in pairs(focus) do
+					for key, val in pairs(dialog[menu].btn) do
+						if type(val) == "table" then
+							for k_, v_ in pairs(val) do
+								if gui.pick_node(v_, action.x, action.y) then
+									gui.set_shadow(v_, CON.COLOR_SELECTION)
+									gui.set_outline(v_, CON.COLOR_SELECTION)
+								else
+									gui.set_shadow(v_, vmath.vector4(0, 0, 0, 0))
+									gui.set_outline(v_, vmath.vector4(0, 0, 0, 0))
+								end
+							end
 						else
-							gui.set_shadow(v_, vmath.vector4(0, 0, 0, 0))
-							gui.set_outline(v_, vmath.vector4(0, 0, 0, 0))
+							if gui.pick_node(val, action.x, action.y) then
+								gui.set_shadow(val, CON.COLOR_SELECTION)
+								gui.set_outline(val, CON.COLOR_SELECTION)
+							else
+								gui.set_shadow(val, vmath.vector4(0, 0, 0, 0))
+								gui.set_outline(val, vmath.vector4(0, 0, 0, 0))
+							end
 						end
-					end
-				else
-					if gui.pick_node(val, action.x, action.y) then
-						gui.set_shadow(val, CON.COLOR_SELECTION)
-						gui.set_outline(val, CON.COLOR_SELECTION)
-					else
-						gui.set_shadow(val, vmath.vector4(0, 0, 0, 0))
-						gui.set_outline(val, vmath.vector4(0, 0, 0, 0))
 					end
 				end
 			end
+		end
+	end
+end
+
+function on_message(self, message_id, message, sender)
+	if message_id == hash("update_position") then
+		crew[message.crew].pos = message.pos
+		crew[message.crew].pos.x = crew[message.crew].pos.x - 20
+		if cursor_position.x > message.pos.x and cursor_position.x < message.pos.x + 40 and cursor_position.y > message.pos.y and cursor_position.y < message.pos.y + 78 then
+			if selector.frame then gui.delete_node(selector.frame); selector = {} end
+			selector.frame = gui.new_box_node(message.pos, vmath.vector3(40, 78, 0))
+			gui.set_pivot(selector.frame, gui.PIVOT_SW)
+			gui.set_texture(selector.frame, hash("selection"))
+			gui.set_slice9(selector.frame, vmath.vector4(1, 1, 2, 2))
+			selector.thing = message.crew
+		elseif selector.thing == message.crew then
+			gui.delete_node(selector.frame); selector = {}
 		end
 	end
 end
