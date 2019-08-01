@@ -16,7 +16,7 @@ emitters {
   }
   tile_source: "/main/ship/background.atlas"
   animation: "star"
-  material: "/builtins/materials/sprite.material"
+  material: "/builtins/materials/particlefx.material"
   blend_mode: BLEND_MODE_ADD
   particle_orientation: PARTICLE_ORIENTATION_DEFAULT
   inherit_velocity: 0.0
@@ -87,11 +87,11 @@ emitters {
     key: EMITTER_KEY_PARTICLE_SIZE
     points {
       x: 0.0
-      y: 10.0
+      y: 8.0
       t_x: 1.0
       t_y: 0.0
     }
-    spread: 7.0
+    spread: 5.0
   }
   properties {
     key: EMITTER_KEY_PARTICLE_RED
@@ -147,11 +147,11 @@ emitters {
     key: EMITTER_KEY_PARTICLE_STRETCH_FACTOR_X
     points {
       x: 0.0
-      y: 0.0
+      y: 0.3
       t_x: 1.0
       t_y: 0.0
     }
-    spread: 0.0
+    spread: 0.3
   }
   properties {
     key: EMITTER_KEY_PARTICLE_STRETCH_FACTOR_Y

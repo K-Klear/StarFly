@@ -37,11 +37,25 @@ local currentMission
 local selector = {}
 local cursor_position = {x = 0, y = 0}
 
+local tooltip
+local tooltip_visible = false
+
 local speechResult = {
 	reply1 = {},
 	reply2 = {},
 	reply3 = {}
 }
+
+local function getSelectorText(thing)
+	thing = thing or selector.thing
+	local type = type(selector.thing)
+	if type == "string" then
+		return SHIP[thing].name
+	elseif type == "number" then
+		return text.getName(crew[thing])
+	end
+end
+
 
 local function updateDialog(dialogID)
 	if dialogID == "buy" then
@@ -269,6 +283,10 @@ function init(self)
 	end
 	updateDialog("crew")
 
+	tooltip = gui.new_text_node(vmath.vector3(0, 0, 0), "")
+	gui.set_enabled(tooltip, false)
+	gui.set_pivot(tooltip, gui.PIVOT_W)
+	
 	BACKGROUND.show(hash("space"))
 end
 
@@ -314,7 +332,7 @@ function on_input(self, action_id, action)
 							end
 						end
 					else
-						start makign this work next
+						--start makign this work next
 					end
 				else
 					for key, val in pairs(dialog.crew.btn) do
@@ -362,7 +380,6 @@ function on_input(self, action_id, action)
 						end
 					end
 				end
-				if selection then print(selection) else print("not selectino") end
 			elseif k == "buy" then
 				for key, val in pairs(dialog.buy.btn) do
 					if gui.pick_node(val, action.x, action.y) then
@@ -632,7 +649,9 @@ function on_input(self, action_id, action)
 		
 	else
 		cursor_position.x = action.x; cursor_position.y = action.y
-		
+		if tooltip_visible then
+			gui.set_position(tooltip, vmath.vector3(action.x + 16, action.y - 16, 0))
+		end
 		local _selector
 		for key, val in pairs(SHIP) do
 			if val.pos then
@@ -650,6 +669,7 @@ function on_input(self, action_id, action)
 				end
 			end
 		end
+		
 		for k in pairs(focus) do
 			if k == "action" then
 				if selector.frame then gui.delete_node(selector.frame); selector = {} end
@@ -660,6 +680,13 @@ function on_input(self, action_id, action)
 					gui.set_texture(selector.frame, hash("selection"))
 					gui.set_slice9(selector.frame, vmath.vector4(1, 1, 2, 2))
 					selector.thing = _thing
+					gui.set_text(tooltip, getSelectorText())
+					tooltip_visible = true
+					gui.set_enabled(tooltip, true)
+					gui.set_position(tooltip, vmath.vector3(action.x + 16, action.y - 16, 0))
+				else
+					tooltip_visible = false
+					gui.set_enabled(tooltip, false)
 				end
 				
 				for menu in pairs(focus) do

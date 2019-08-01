@@ -9,7 +9,7 @@ function init(self)
 	local shade = math.random(2, 9) / 10
 	sprite.set_constant("#sprite", "tint", vmath.vector4(shade, shade, shade, 1))
 	local force = vmath.vector3(math.random(1200, 2000), math.random(-500, 500), 0)
-	if math.random() > 0.3 then
+	if math.random() > 0.75 then
 		msg.post("#co", "apply_force", {force = force, position = go.get_world_position() + vmath.vector3(math.random(-5, 5), math.random(-5, 5), 0)})
 	else
 		msg.post("#co1", "enable"); msg.post("#co", "disable")
