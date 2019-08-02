@@ -100,6 +100,7 @@ local function updateDialog(dialogID)
 					gui.set_parent(v, dialog.recruit.frame)
 				end
 				gui.move_above(val.hair, val.forehead)
+				gui.move_below(val.body, val.chin)
 			end
 		end
 		if selection then
@@ -161,6 +162,7 @@ local function updateDialog(dialogID)
 				gui.set_parent(v, dialog.crew.frame)
 			end
 			gui.move_above(val.hair, val.forehead)
+			gui.move_below(val.body, val.chin)
 		end
 	elseif dialogID == "travel" then
 		gui.set_color(dialog.travel.btn.missionCore, CON.COLOR_DISABLED)

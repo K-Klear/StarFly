@@ -9,10 +9,11 @@ local parts = {
 	{"eyes1"},
 	{"iris1"},
 	{"hair1", "hair2", "hair3"},
-	{"whites"}
+	{"whites"},
+	{"body1"}
 }
 
-local partList = {"chin", "forehead", "mouth", "eyes", "nose", "iris", "hair", "whites"}
+local partList = {"chin", "forehead", "mouth", "eyes", "nose", "iris", "hair", "whites", "body"}
 
 function M.createFace()
 	local face = {
@@ -27,7 +28,8 @@ function M.createFace()
 		eyes = parts[5][math.random(1, #parts[5])],
 		iris = parts[6][math.random(1, #parts[6])],
 		hair = parts[7][math.random(1, #parts[7])],
-		whites = parts[8][1]
+		whites = parts[8][1],
+		body = parts[9][math.random(1, #parts[9])]
 	}
 	return face
 end
@@ -46,6 +48,7 @@ function M.drawFace(faceData, position, scale)
 	gui.set_color(nodes.eyes, faceData.skinTone)
 	gui.set_color(nodes.hair, faceData.hairColor)
 	gui.set_color(nodes.iris, faceData.eyeColor)
+	gui.set_color(nodes.body, faceData.clothesColor)
 	return nodes
 end
 

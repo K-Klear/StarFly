@@ -16,7 +16,7 @@ emitters {
   }
   tile_source: "/main/ship/background.atlas"
   animation: "star"
-  material: "/builtins/materials/particlefx.material"
+  material: "/assets/particlefx.material"
   blend_mode: BLEND_MODE_ADD
   particle_orientation: PARTICLE_ORIENTATION_DEFAULT
   inherit_velocity: 0.0

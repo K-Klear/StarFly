@@ -2,8 +2,6 @@ go.property("crew", 0)
 go.property("level", 0)
 SHIP = require("main.ship.ship_layout")
 
-local sprite_parts = {"hand", "head", "legs", "torso"}
-
 local function getClosestLadder(target_level, self)
 	local dist = 1/0
 	local best
@@ -24,14 +22,23 @@ end
 local function walk(self)
 	if SHIP[self.destination].level == self.level then
 		if go.get_position().x == SHIP[self.destination].x then
-			for key, val in ipairs(sprite_parts) do
-				sprite.play_flipbook("#"..val, val.."_idle")
+			for key, val in ipairs(self.sprite_parts) do
+				if key == 5 then
+					sprite.play_flipbook("#hair", "idle_"..val)
+				else
+					sprite.play_flipbook("#"..val, val.."_idle")
+				end
 			end
 		else
 			local flip = go.get_position().x < SHIP[self.destination].x
-			for key, val in ipairs(sprite_parts) do
-				sprite.play_flipbook("#"..val, val.."_walk")
-				sprite.set_hflip("#"..val, flip)
+			for key, val in ipairs(self.sprite_parts) do
+				if key == 5 then
+					sprite.play_flipbook("#hair", "walk_"..val)
+					sprite.set_hflip("#hair", flip)
+				else
+					sprite.play_flipbook("#"..val, val.."_walk")
+					sprite.set_hflip("#"..val, flip)
+				end
 			end
 			local duration = math.abs(SHIP[self.destination].x - go.get_position().x) * 0.02
 			go.animate(go.get_id(), "position.x", go.PLAYBACK_ONCE_FORWARD, SHIP[self.destination].x, go.EASING_LINEAR, duration, 0, walk)
@@ -43,9 +50,14 @@ local function walk(self)
 			self.level = ladder.target
 		else
 			local flip = go.get_position().x < ladder.x
-			for key, val in ipairs(sprite_parts) do
-				sprite.play_flipbook("#"..val, val.."_walk")
-				sprite.set_hflip("#"..val, flip)
+			for key, val in ipairs(self.sprite_parts) do
+				if key == 5 then
+					sprite.play_flipbook("#hair", "walk_"..val)
+					sprite.set_hflip("#hair", flip)
+				else
+					sprite.play_flipbook("#"..val, val.."_walk")
+					sprite.set_hflip("#"..val, flip)
+				end
 			end
 			local duration = math.abs(ladder.x - go.get_position().x) * 0.02
 			go.animate(go.get_id(), "position.x", go.PLAYBACK_ONCE_FORWARD, ladder.x, go.EASING_LINEAR, duration, 0, walk)
@@ -54,11 +66,14 @@ local function walk(self)
 end
 
 function init(self)
+	self.sprite_parts = {"hand", "head", "legs", "torso", crew[self.crew].face.hair}
 	go.set_parent(go.get_id(), "/ship")
 	sprite.set_constant("#hand", "tint", crew[self.crew].face.skinTone)
 	sprite.set_constant("#head", "tint", crew[self.crew].face.skinTone)
+	sprite.set_constant("#hair", "tint", crew[self.crew].face.hairColor)
 	sprite.set_constant("#torso", "tint", crew[self.crew].face.clothesColor)
 	sprite.set_constant("#legs", "tint", crew[self.crew].face.clothesColor - vmath.vector4(0.1, 0.1, 0.1, 0))
+	sprite.play_flipbook("#hair", "idle_"..crew[self.crew].face.hair)
 end
 
 

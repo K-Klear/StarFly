@@ -109,6 +109,7 @@ function M.openDialog(dialog, talker, text, reply1, reply2, reply3)
 			gui.set_parent(v, dialog.frame)
 		end
 		gui.move_above(val.hair, val.forehead)
+		gui.move_below(val.body, val.chin)
 	end
 	gui.set_text(dialog.lbl.text, text)
 	gui.set_text(dialog.lbl.name, Ftext.getName(talker).." says:")

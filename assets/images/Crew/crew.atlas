@@ -10,6 +10,15 @@ images {
 images {
   image: "/assets/images/Crew/torso_idle.png"
 }
+images {
+  image: "/assets/images/Crew/idle_hair1.png"
+}
+images {
+  image: "/assets/images/Crew/idle_hair2.png"
+}
+images {
+  image: "/assets/images/Crew/idle_hair3.png"
+}
 animations {
   id: "head_walk"
   images {
@@ -56,6 +65,42 @@ animations {
   }
   images {
     image: "/assets/images/Crew/hand_idle.png"
+  }
+  playback: PLAYBACK_LOOP_FORWARD
+  fps: 3
+  flip_horizontal: 0
+  flip_vertical: 0
+}
+animations {
+  id: "walk_hair1"
+  images {
+    image: "/assets/images/Crew/hair_walk1.png"
+  }
+  images {
+    image: "/assets/images/Crew/idle_hair1.png"
+  }
+  playback: PLAYBACK_LOOP_FORWARD
+  fps: 3
+  flip_horizontal: 0
+  flip_vertical: 0
+}
+animations {
+  id: "walk_hair2"
+  images {
+    image: "/assets/images/Crew/hair_walk2.png"
+  }
+  images {
+    image: "/assets/images/Crew/idle_hair2.png"
+  }
+  playback: PLAYBACK_LOOP_FORWARD
+  fps: 3
+  flip_horizontal: 0
+  flip_vertical: 0
+}
+animations {
+  id: "walk_hair3"
+  images {
+    image: "/assets/images/Crew/idle_hair3.png"
   }
   playback: PLAYBACK_LOOP_FORWARD
   fps: 3
