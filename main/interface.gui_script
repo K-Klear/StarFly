@@ -13,6 +13,8 @@ local DICE = require("main.dice")
 local TALK = require("main.talk")
 local BACKGROUND = require("main.ship.background")
 local SHIP = require("main.ship.ship_layout")
+local TOOL = require("main.selection.tooltips")
+local RET = require("main.selection.reticle")
 
 local focus = {action = true}
 
@@ -34,11 +36,7 @@ local statsOrder = {pilot = 1, mech = 2, comms = 3, gunner = 4, medic = 5, fight
 
 local selection
 local currentMission
-local selector = {}
-local cursor_position = {x = 0, y = 0}
-
-local tooltip
-local tooltip_visible = false
+local cursor_position = vmath.vector3(0, 0, 0)
 
 local speechResult = {
 	reply1 = {},
@@ -46,13 +44,13 @@ local speechResult = {
 	reply3 = {}
 }
 
-local function getSelectorText(thing)
-	thing = thing or selector.thing
-	local type = type(selector.thing)
+local function getSelectorText(target)
+	target = target or RET.target
+	local type = type(target)
 	if type == "string" then
-		return SHIP[thing].name
+		return SHIP[target].name
 	elseif type == "number" then
-		return text.getName(crew[thing])
+		return text.getName(crew[target])
 	end
 end
 
@@ -283,10 +281,8 @@ function init(self)
 	end
 	updateDialog("crew")
 
-	tooltip = gui.new_text_node(vmath.vector3(0, 0, 0), "")
-	gui.set_enabled(tooltip, false)
-	gui.set_pivot(tooltip, gui.PIVOT_W)
-	
+	TOOL.setup()
+	RET.setup()
 	BACKGROUND.show(hash("space"))
 end
 
@@ -321,18 +317,11 @@ function on_input(self, action_id, action)
 						end
 					end
 				end
-				if selector.thing then
-					if type(selector.thing) == "number" then
-						if selection then gui.set_color(dialog.crew.btn[selection], CON.COLOR_DEFAULT) end
-						for key, val in pairs(dialog.crew.selection) do
-							if val == selector.thing then
-								selection = key
-								gui.set_color(dialog.crew.btn[selection], CON.COLOR_SELECTION)
-								break
-							end
-						end
+				if RET.target then
+					if type(RET.target) == "number" then
+						RET.show_permanent(crew[RET.target].pos, nil, RET.target, {{text = "TALK"}, {text = "ASSIGN"}})
 					else
-						--start makign this work next
+						--make this work ASAP
 					end
 				else
 					for key, val in pairs(dialog.crew.btn) do
@@ -649,9 +638,6 @@ function on_input(self, action_id, action)
 		
 	else
 		cursor_position.x = action.x; cursor_position.y = action.y
-		if tooltip_visible then
-			gui.set_position(tooltip, vmath.vector3(action.x + 16, action.y - 16, 0))
-		end
 		local _selector
 		for key, val in pairs(SHIP) do
 			if val.pos then
@@ -672,21 +658,12 @@ function on_input(self, action_id, action)
 		
 		for k in pairs(focus) do
 			if k == "action" then
-				if selector.frame then gui.delete_node(selector.frame); selector = {} end
 				if _selector then
-					local size = _selector.size or vmath.vector3(40, 78, 0)
-					selector.frame = gui.new_box_node(_selector.pos, size)
-					gui.set_pivot(selector.frame, gui.PIVOT_SW)
-					gui.set_texture(selector.frame, hash("selection"))
-					gui.set_slice9(selector.frame, vmath.vector4(1, 1, 2, 2))
-					selector.thing = _thing
-					gui.set_text(tooltip, getSelectorText())
-					tooltip_visible = true
-					gui.set_enabled(tooltip, true)
-					gui.set_position(tooltip, vmath.vector3(action.x + 16, action.y - 16, 0))
+					RET.show(_selector.pos, _selector.size, _thing)
+					TOOL.show(getSelectorText(), cursor_position)
 				else
-					tooltip_visible = false
-					gui.set_enabled(tooltip, false)
+					RET.hide()
+					TOOL.hide()
 				end
 				
 				for menu in pairs(focus) do
@@ -722,14 +699,14 @@ function on_message(self, message_id, message, sender)
 		crew[message.crew].pos = message.pos
 		crew[message.crew].pos.x = crew[message.crew].pos.x - 20
 		if cursor_position.x > message.pos.x and cursor_position.x < message.pos.x + 40 and cursor_position.y > message.pos.y and cursor_position.y < message.pos.y + 78 then
-			if selector.frame then gui.delete_node(selector.frame); selector = {} end
-			selector.frame = gui.new_box_node(message.pos, vmath.vector3(40, 78, 0))
-			gui.set_pivot(selector.frame, gui.PIVOT_SW)
-			gui.set_texture(selector.frame, hash("selection"))
-			gui.set_slice9(selector.frame, vmath.vector4(1, 1, 2, 2))
-			selector.thing = message.crew
-		elseif selector.thing == message.crew then
-			gui.delete_node(selector.frame); selector = {}
+			RET.show(message.pos, vmath.vector3(40, 78, 0), message.crew)
+			TOOL.show(getSelectorText(), cursor_position)
+		elseif RET.target == message.crew then
+			RET.hide()
+			TOOL.hide()
+		end
+		if RET.target_permanent == message.crew then
+			RET.move_permanent(message.pos)
 		end
 	end
 end

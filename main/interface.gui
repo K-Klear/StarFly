@@ -15,6 +15,10 @@ textures {
   name: "selection"
   texture: "/assets/images/selection.atlas"
 }
+textures {
+  name: "selection_permanent"
+  texture: "/assets/images/selection_permanent.atlas"
+}
 background_color {
   x: 0.0
   y: 0.0
