@@ -19,6 +19,9 @@ images {
 images {
   image: "/assets/images/Crew/idle_hair3.png"
 }
+images {
+  image: "/assets/images/Crew/idle_hair4.png"
+}
 animations {
   id: "head_walk"
   images {
@@ -101,6 +104,19 @@ animations {
   id: "walk_hair3"
   images {
     image: "/assets/images/Crew/idle_hair3.png"
+  }
+  playback: PLAYBACK_LOOP_FORWARD
+  fps: 3
+  flip_horizontal: 0
+  flip_vertical: 0
+}
+animations {
+  id: "walk_hair4"
+  images {
+    image: "/assets/images/Crew/walk_hair4.png"
+  }
+  images {
+    image: "/assets/images/Crew/idle_hair4.png"
   }
   playback: PLAYBACK_LOOP_FORWARD
   fps: 3

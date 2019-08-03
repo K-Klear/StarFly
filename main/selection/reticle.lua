@@ -32,6 +32,8 @@ function RET.setup()
 		gui.set_texture(RET.buttons[x].box, hash("selection"))
 		gui.set_slice9(RET.buttons[x].box, vmath.vector4(1, 1, 2, 2))
 		gui.set_pivot(RET.buttons[x].box, button_pivot[x])
+		gui.set_enabled(RET.buttons[x].box, false)
+		gui.set_enabled(RET.buttons[x].text, false)
 	end
 end
 

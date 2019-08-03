@@ -317,6 +317,7 @@ function on_input(self, action_id, action)
 							focus = {work = true}
 							updateDialog("work")
 						end
+						if not focus[k] then RET.hide(); RET.hide_permanent() end
 					end
 				end
 				if RET.target then
@@ -639,27 +640,26 @@ function on_input(self, action_id, action)
 	elseif action_id == hash("enter") and action.pressed then
 		
 	else
-		cursor_position.x = action.x; cursor_position.y = action.y
-		local _selector
-		for key, val in pairs(SHIP) do
-			if val.pos then
-				if action.x > val.pos.x and action.x < val.pos.x + val.size.x and action.y > val.pos.y and action.y < val.pos.y + val.size.y then
-					_selector = val
-					_thing = key
+		for menu in pairs(focus) do
+			if menu == "action" then
+				cursor_position.x = action.x; cursor_position.y = action.y
+				local _selector
+				for key, val in pairs(SHIP) do
+					if val.pos then
+						if action.x > val.pos.x and action.x < val.pos.x + val.size.x and action.y > val.pos.y and action.y < val.pos.y + val.size.y then
+							_selector = val
+							_thing = key
+						end
+					end
 				end
-			end
-		end
-		for key, val in pairs(crew) do
-			if val.pos then
-				if action.x > val.pos.x and action.x < val.pos.x + 40 and action.y > val.pos.y and action.y < val.pos.y + 78 then
-					_selector = val
-					_thing = key
+				for key, val in pairs(crew) do
+					if val.pos then
+						if action.x > val.pos.x and action.x < val.pos.x + 40 and action.y > val.pos.y and action.y < val.pos.y + 78 then
+							_selector = val
+							_thing = key
+						end
+					end
 				end
-			end
-		end
-		
-		for k in pairs(focus) do
-			if k == "action" then
 				if _selector then
 					RET.show(_selector.pos, _selector.size, _thing)
 					TOOL.show(getSelectorText(), cursor_position)
@@ -667,29 +667,35 @@ function on_input(self, action_id, action)
 					RET.hide()
 					TOOL.hide()
 				end
-				
-				for menu in pairs(focus) do
-					for key, val in pairs(dialog[menu].btn) do
-						if type(val) == "table" then
-							for k_, v_ in pairs(val) do
-								if gui.pick_node(v_, action.x, action.y) then
-									gui.set_shadow(v_, CON.COLOR_SELECTION)
-									gui.set_outline(v_, CON.COLOR_SELECTION)
-								else
-									gui.set_shadow(v_, vmath.vector4(0, 0, 0, 0))
-									gui.set_outline(v_, vmath.vector4(0, 0, 0, 0))
-								end
-							end
+			end
+			for key, val in pairs(dialog[menu].btn) do
+				if type(val) == "table" then
+					for k_, v_ in pairs(val) do
+						if gui.pick_node(v_, action.x, action.y) then
+							gui.set_shadow(v_, CON.COLOR_SELECTION)
+							gui.set_outline(v_, CON.COLOR_SELECTION)
 						else
-							if gui.pick_node(val, action.x, action.y) then
-								gui.set_shadow(val, CON.COLOR_SELECTION)
-								gui.set_outline(val, CON.COLOR_SELECTION)
-							else
-								gui.set_shadow(val, vmath.vector4(0, 0, 0, 0))
-								gui.set_outline(val, vmath.vector4(0, 0, 0, 0))
-							end
+							gui.set_shadow(v_, vmath.vector4(0, 0, 0, 0))
+							gui.set_outline(v_, vmath.vector4(0, 0, 0, 0))
 						end
 					end
+				else
+					if gui.pick_node(val, action.x, action.y) then
+						gui.set_shadow(val, CON.COLOR_SELECTION)
+						gui.set_outline(val, CON.COLOR_SELECTION)
+					else
+						gui.set_shadow(val, vmath.vector4(0, 0, 0, 0))
+						gui.set_outline(val, vmath.vector4(0, 0, 0, 0))
+					end
+				end
+			end
+			for key, val in ipairs(RET.buttons) do
+				if gui.is_enabled(val.text) and gui.pick_node(val.text, action.x, action.y) then
+					gui.set_shadow(val.text, CON.COLOR_SELECTION)
+					gui.set_outline(val.text, CON.COLOR_SELECTION)
+				else
+					gui.set_shadow(val.text, vmath.vector4(0, 0, 0, 0))
+					gui.set_outline(val.text, vmath.vector4(0, 0, 0, 0))
 				end
 			end
 		end

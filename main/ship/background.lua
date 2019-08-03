@@ -11,6 +11,7 @@ function background.show(type)
 	if type == hash("space") then
 		particlefx.play("/background#stars")
 		spawn_meteor()
+		particlefx.play("/background#engine")
 	end
 end
 

@@ -8,7 +8,7 @@ local parts = {
 	{"nose1", "nose2", "nose3"},
 	{"eyes1"},
 	{"iris1"},
-	{"hair1", "hair2", "hair3"},
+	{"hair1", "hair2", "hair3", "hair4"},
 	{"whites"},
 	{"body1"}
 }

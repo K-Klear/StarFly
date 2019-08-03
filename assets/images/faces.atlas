@@ -61,6 +61,9 @@ images {
 images {
   image: "/assets/images/Faces/body1.png"
 }
+images {
+  image: "/assets/images/Faces/hair4.png"
+}
 margin: 1
 extrude_borders: 0
 inner_padding: 1
