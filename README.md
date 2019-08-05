@@ -1,6 +1,6 @@
 # StarFly
 
-Version 0.1:
+Version 0.2:
 
-- Spent some time making graphics. Even though I thought it was too soon for that, it actually feels much more like a game, which is nice
-- Decided to scrap the "CREW" dialog and instead make the graphical part interactive
+- Updated graphics a bit. Mostly placeholder, but looking good
+- Crew can now be talked to/assigned positions/ordered around the ship directly through the graphical part.
