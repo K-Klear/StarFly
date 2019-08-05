@@ -1,16 +1,22 @@
+local SHIP = require("main.ship.ship_layout")
+local text = require("main.text")
+
 local RET = {buttons = {}}
-local button_count = 2
+local button_count = 3
 
 local button_offset = {
 	vmath.vector3(-12, 64, 0),
-	vmath.vector3(48, 64, 0)
+	vmath.vector3(48, 64, 0),
+	vmath.vector3(18, 96, 0)
 }
+
+local label_offset = vmath.vector3(18, -16, 0)
 
 local button_pivot = {
 	gui.PIVOT_E,
-	gui.PIVOT_W
+	gui.PIVOT_W,
+	gui.PIVOT_CENTER
 }
-
 
 function RET.setup()
 	RET.frame = gui.new_box_node(vmath.vector3(1, 1, 1), vmath.vector3(1, 1, 1))
@@ -24,17 +30,15 @@ function RET.setup()
 	gui.set_slice9(RET.frame_permanent, vmath.vector4(1, 1, 2, 2))
 
 	for x = 1, button_count do
-		RET.buttons[x] = {
-			text = gui.new_text_node(vmath.vector3(1, 1, 1), ""),
-			box = gui.new_box_node(vmath.vector3(1, 1, 1), vmath.vector3(1, 1, 1))
-		}
-		gui.set_pivot(RET.buttons[x].text, button_pivot[x])
-		gui.set_texture(RET.buttons[x].box, hash("selection"))
-		gui.set_slice9(RET.buttons[x].box, vmath.vector4(1, 1, 2, 2))
-		gui.set_pivot(RET.buttons[x].box, button_pivot[x])
-		gui.set_enabled(RET.buttons[x].box, false)
-		gui.set_enabled(RET.buttons[x].text, false)
+		RET.buttons[x] = gui.new_text_node(vmath.vector3(1, 1, 1), "")
+		gui.set_pivot(RET.buttons[x], button_pivot[x])
+		gui.set_font(RET.buttons[x], hash("system_font"))
+		gui.set_enabled(RET.buttons[x], false)
 	end
+
+	RET.label = gui.new_text_node(vmath.vector3(1, 1, 1), "")
+	gui.set_pivot(RET.label, gui.PIVOT_CENTER)
+	gui.set_enabled(RET.label, false)
 end
 
 function RET.show(position, size, target)
@@ -45,28 +49,34 @@ function RET.show(position, size, target)
 	RET.target = target
 end
 
-function RET.show_permanent(position, size, target, buttons)
+function RET.show_permanent(position, size, target, button_data)
 	size = size or vmath.vector3(40, 78, 0)
 	gui.set_position(RET.frame_permanent, position)
 	gui.set_size(RET.frame_permanent, size)
 	gui.set_enabled(RET.frame_permanent, true)
-	for x = 1, #buttons do
-		gui.set_text(RET.buttons[x].text, buttons[x].text)
-		gui.set_enabled(RET.buttons[x].text, true)
-		gui.set_enabled(RET.buttons[x].box, true)
-		gui.set_size(RET.buttons[x].box, gui.get_size(RET.buttons[x].text))
-		gui.set_position(RET.buttons[x].text, gui.get_position(RET.frame_permanent) + button_offset[x])
-		gui.set_position(RET.buttons[x].box, gui.get_position(RET.frame_permanent) + button_offset[x])
+	for x = 1, #button_data do
+		gui.set_text(RET.buttons[x], button_data[x].text)
+		local matrix = gui.get_text_metrics_from_node(RET.buttons[x])
+		gui.set_size(RET.buttons[x], vmath.vector3(matrix.width, matrix.height, 1))
+		gui.set_enabled(RET.buttons[x], true)
+		gui.set_position(RET.buttons[x], gui.get_position(RET.frame_permanent) + button_offset[x])
 	end
+	if type(target) == "string" then
+		gui.set_text(RET.label, SHIP[target].name)
+	elseif type(target) == "number" then
+		gui.set_text(RET.label, text.getName(crew[target]))
+	end
+	gui.set_enabled(RET.label, true)
+	gui.set_position(RET.label, gui.get_position(RET.frame_permanent) + label_offset)
 	RET.target_permanent = target
 end
 
 function RET.move_permanent(position)
 	gui.set_position(RET.frame_permanent, position)
 	for x = 1, button_count do
-		gui.set_position(RET.buttons[x].text, gui.get_position(RET.frame_permanent) + button_offset[x])
-		gui.set_position(RET.buttons[x].box, gui.get_position(RET.frame_permanent) + button_offset[x])
+		gui.set_position(RET.buttons[x], gui.get_position(RET.frame_permanent) + button_offset[x])
 	end
+	gui.set_position(RET.label, gui.get_position(RET.frame_permanent) + label_offset)
 end
 
 function RET.hide()
@@ -77,10 +87,16 @@ end
 function RET.hide_permanent()
 	gui.set_enabled(RET.frame_permanent, false)
 	for x = 1, button_count do
-		gui.set_enabled(RET.buttons[x].text, false)
-		gui.set_enabled(RET.buttons[x].box, false)
+		gui.set_enabled(RET.buttons[x], false)
 	end
+	gui.set_enabled(RET.label, false)
 	RET.target_permanent = nil
+end
+
+function RET.hide_buttons()
+	for x = 1, button_count do
+		gui.set_enabled(RET.buttons[x], false)
+	end
 end
 
 return RET

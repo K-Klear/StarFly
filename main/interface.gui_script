@@ -320,11 +320,40 @@ function on_input(self, action_id, action)
 						if not focus[k] then RET.hide(); RET.hide_permanent() end
 					end
 				end
+				for key, val in ipairs(RET.buttons) do
+					if gui.pick_node(val, action.x, action.y) then
+						local label = gui.get_text(val)
+						if label == "TALK" then
+							TALK.openDialog(dialog.speech, crew[RET.target_permanent], TALK.skills(crew[RET.target_permanent]), nil , "OK")
+							speechResult.reply2 = {"close", "action"}
+							RET.hide()
+							RET.hide_permanent()
+							focus = {speech = true}
+						elseif label == "ASSIGN" or label == "MOVE" then
+							RET.hide_buttons()
+							RET.action = label
+						end
+					end
+				end
 				if RET.target then
 					if type(RET.target) == "number" then
-						RET.show_permanent(crew[RET.target].pos, nil, RET.target, {{text = "TALK"}, {text = "ASSIGN"}})
+						RET.show_permanent(crew[RET.target].pos, nil, RET.target, {{text = "TALK"}, {text = "ASSIGN"}, {text = "MOVE"}})
 					else
-						--make this work ASAP
+						if RET.action == "MOVE" then
+							msg.post(crew[RET.target_permanent].go, "move", {target = RET.target})
+							RET.hide_permanent()
+							RET.action = nil
+						elseif RET.action == "ASSIGN" then
+							local position = SHIP[RET.target].job
+							if position then
+								for key, val in ipairs(crew) do
+									if val.role == position then val.role = nil end
+								end
+								crew[RET.target_permanent].role = position
+								msg.post(crew[RET.target_permanent].go, "move", {target = RET.target})
+								updateDialog("crew")
+							end
+						end
 					end
 				else
 					for key, val in pairs(dialog.crew.btn) do
@@ -626,6 +655,8 @@ function on_input(self, action_id, action)
 									updateDialog("recruit")
 									gui.set_enabled(dialog.recruit.frame, true)
 									focus = {recruit = true}
+								elseif v == "action" then
+									focus = {action = true}
 								end
 							end
 							speechResult = {}
@@ -660,6 +691,12 @@ function on_input(self, action_id, action)
 						end
 					end
 				end
+				for key, val in ipairs(RET.buttons) do
+					if gui.is_enabled(val) and gui.pick_node(val, action.x, action.y) then
+						_selector = nil
+						_thing = nil
+					end
+				end
 				if _selector then
 					RET.show(_selector.pos, _selector.size, _thing)
 					TOOL.show(getSelectorText(), cursor_position)
@@ -690,12 +727,12 @@ function on_input(self, action_id, action)
 				end
 			end
 			for key, val in ipairs(RET.buttons) do
-				if gui.is_enabled(val.text) and gui.pick_node(val.text, action.x, action.y) then
-					gui.set_shadow(val.text, CON.COLOR_SELECTION)
-					gui.set_outline(val.text, CON.COLOR_SELECTION)
+				if gui.is_enabled(val) and gui.pick_node(val, action.x, action.y) then
+					gui.set_shadow(val, CON.COLOR_SELECTION)
+					gui.set_outline(val, CON.COLOR_SELECTION)
 				else
-					gui.set_shadow(val.text, vmath.vector4(0, 0, 0, 0))
-					gui.set_outline(val.text, vmath.vector4(0, 0, 0, 0))
+					gui.set_shadow(val, vmath.vector4(0, 0, 0, 0))
+					gui.set_outline(val, vmath.vector4(0, 0, 0, 0))
 				end
 			end
 		end
@@ -704,17 +741,27 @@ end
 
 function on_message(self, message_id, message, sender)
 	if message_id == hash("update_position") then
-		crew[message.crew].pos = message.pos
-		crew[message.crew].pos.x = crew[message.crew].pos.x - 20
-		if cursor_position.x > message.pos.x and cursor_position.x < message.pos.x + 40 and cursor_position.y > message.pos.y and cursor_position.y < message.pos.y + 78 then
-			RET.show(message.pos, vmath.vector3(40, 78, 0), message.crew)
-			TOOL.show(getSelectorText(), cursor_position)
-		elseif RET.target == message.crew then
-			RET.hide()
-			TOOL.hide()
+		local no_button = true
+		for key, val in ipairs(RET.buttons) do
+			if gui.is_enabled(val) and gui.pick_node(val, cursor_position.x, cursor_position.y) then
+				no_button = false
+			end
 		end
-		if RET.target_permanent == message.crew then
-			RET.move_permanent(message.pos)
+		for menu in pairs(focus) do
+			if menu == "action" and no_button then
+				crew[message.crew].pos = message.pos
+				crew[message.crew].pos.x = crew[message.crew].pos.x - 20
+				if cursor_position.x > message.pos.x and cursor_position.x < message.pos.x + 40 and cursor_position.y > message.pos.y and cursor_position.y < message.pos.y + 78 then
+					RET.show(message.pos, vmath.vector3(40, 78, 0), message.crew)
+					TOOL.show(getSelectorText(), cursor_position)
+				elseif RET.target == message.crew then
+					RET.hide()
+					TOOL.hide()
+				end
+				if RET.target_permanent == message.crew then
+					RET.move_permanent(message.pos)
+				end
+			end
 		end
 	end
 end

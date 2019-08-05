@@ -5,19 +5,19 @@ fonts {
 }
 textures {
   name: "faces"
-  texture: "/assets/images/faces.atlas"
+  texture: "/assets/images/atlases/faces.atlas"
 }
 textures {
   name: "dialog"
-  texture: "/assets/images/dialog.atlas"
+  texture: "/assets/images/atlases/dialog.atlas"
 }
 textures {
   name: "selection"
-  texture: "/assets/images/selection.atlas"
+  texture: "/assets/images/atlases/selection.atlas"
 }
 textures {
   name: "selection_permanent"
-  texture: "/assets/images/selection_permanent.atlas"
+  texture: "/assets/images/atlases/selection_permanent.atlas"
 }
 background_color {
   x: 0.0
