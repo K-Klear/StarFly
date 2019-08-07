@@ -12,6 +12,13 @@ function background.show(type)
 		particlefx.play("/background#stars")
 		spawn_meteor()
 		particlefx.play("/background#engine")
+		msg.post("/sky", "disable")
+	elseif type == hash("planet") then
+		timer.cancel(timer_meteor)
+		particlefx.stop("/background#stars")
+		particlefx.stop("/background#engine")
+		sprite.set_constant("/sky#sprite", "tint", vmath.vector4(0.3, 0.5, 1, 1))
+		msg.post("/sky", "enable")
 	end
 end
 

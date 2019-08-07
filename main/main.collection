@@ -1,4 +1,44 @@
 name: "main"
+instances {
+  id: "sky"
+  prototype: "/main/ship/sky.go"
+  position {
+    x: 640.0
+    y: 0.0
+    z: -0.5
+  }
+  rotation {
+    x: 0.0
+    y: 0.0
+    z: 0.0
+    w: 1.0
+  }
+  scale3 {
+    x: 1280.0
+    y: 10.0
+    z: 1.0
+  }
+}
+instances {
+  id: "ground"
+  prototype: "/main/ship/ground.go"
+  position {
+    x: 452.0
+    y: 88.0
+    z: 0.0
+  }
+  rotation {
+    x: 0.0
+    y: 0.0
+    z: 0.0
+    w: 1.0
+  }
+  scale3 {
+    x: 2.0
+    y: 2.0
+    z: 2.0
+  }
+}
 scale_along_z: 0
 embedded_instances {
   id: "main"
@@ -118,13 +158,15 @@ embedded_instances {
 }
 embedded_instances {
   id: "background"
+  children: "ground"
+  children: "sky"
   data: "components {\n"
   "  id: \"stars\"\n"
   "  component: \"/main/ship/stars.particlefx\"\n"
   "  position {\n"
   "    x: 0.0\n"
   "    y: 0.0\n"
-  "    z: 0.0\n"
+  "    z: -1.0\n"
   "  }\n"
   "  rotation {\n"
   "    x: 0.0\n"

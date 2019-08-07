@@ -7,6 +7,12 @@ images {
 images {
   image: "/assets/images/background/exhaust.png"
 }
+images {
+  image: "/assets/images/background/sky.png"
+}
+images {
+  image: "/assets/images/background/ground.png"
+}
 margin: 0
 extrude_borders: 0
 inner_padding: 0

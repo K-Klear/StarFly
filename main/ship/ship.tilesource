@@ -188,37 +188,37 @@ convex_hulls {
 convex_hulls {
   index: 152
   count: 5
-  collision_group: ""
+  collision_group: "ship"
 }
 convex_hulls {
   index: 157
   count: 4
-  collision_group: ""
+  collision_group: "ship"
 }
 convex_hulls {
   index: 161
   count: 5
-  collision_group: ""
+  collision_group: "ship"
 }
 convex_hulls {
   index: 166
   count: 5
-  collision_group: ""
+  collision_group: "ship"
 }
 convex_hulls {
   index: 171
   count: 7
-  collision_group: ""
+  collision_group: "ship"
 }
 convex_hulls {
   index: 178
   count: 4
-  collision_group: ""
+  collision_group: "ship"
 }
 convex_hulls {
   index: 182
   count: 4
-  collision_group: ""
+  collision_group: "ship"
 }
 convex_hulls {
   index: 186
@@ -238,12 +238,12 @@ convex_hulls {
 convex_hulls {
   index: 186
   count: 4
-  collision_group: ""
+  collision_group: "ship"
 }
 convex_hulls {
   index: 190
   count: 4
-  collision_group: ""
+  collision_group: "ship"
 }
 collision_groups: "ship"
 animations {
