@@ -7,11 +7,15 @@ local function spawn_meteor()
 	timer_meteor = timer.delay(math.random(4, 15) / 10, false, spawn_meteor)
 end
 
-function background.show(type)
+function background.show(type, quick)
 	if type == hash("space") then
-		particlefx.play("/background#stars")
-		spawn_meteor()
-		particlefx.play("/background#engine")
+		if quick then
+			particlefx.play("/background#stars")
+			spawn_meteor()
+			particlefx.play("/background#engine")
+		else
+
+		end
 
 		--msg.post("/sky", "disable")
 	elseif type == hash("planet") then
@@ -20,7 +24,7 @@ function background.show(type)
 		particlefx.stop("/background#engine")
 		--sprite.set_constant("/sky#sprite", "tint", vmath.vector4(0.3, 0.5, 1, 1))
 		msg.post("/sky", "enable")
-		msg.post("/sky", "launch")
+		msg.post("/background", "launch")
 	end
 end
 
