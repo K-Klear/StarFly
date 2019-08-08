@@ -1,0 +1,17 @@
+local function fly()
+	--go.animate("/sky", "position.x", go.PLAYBACK_ONCE_FORWARD, 21280, go.EASING_INCUBIC, 5, 0.5)
+end
+
+local function turn()
+	go.animate("/sky", "euler.z", go.PLAYBACK_ONCE_FORWARD, 90, go.EASING_INOUTCUBIC, 3, 0, fly)
+	--go.animate("/sky", "position", go.PLAYBACK_ONCE_FORWARD, vmath.vector3(2080, 480, -0.5), go.EASING_INOUTCUBIC, 3)
+	go.animate("/sky", "position", go.PLAYBACK_ONCE_FORWARD, vmath.vector3(21280, 480, -0.5), go.EASING_INOUTCUBIC, 5)
+end
+
+
+function on_message(self, message_id, message, sender)
+	if message_id == hash("launch") then
+		go.animate("/sky", "position.y", go.PLAYBACK_ONCE_FORWARD, -900, go.EASING_INOUTCUBIC, 4, 0, turn)
+		go.animate("/ground", "position.y", go.PLAYBACK_ONCE_FORWARD, -900, go.EASING_INOUTCUBIC, 4)
+	end
+end
