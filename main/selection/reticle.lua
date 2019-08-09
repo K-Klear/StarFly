@@ -91,6 +91,7 @@ function RET.hide_permanent()
 	end
 	gui.set_enabled(RET.label, false)
 	RET.target_permanent = nil
+	RET.action = nil
 end
 
 function RET.hide_buttons()

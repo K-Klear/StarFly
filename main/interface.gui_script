@@ -15,10 +15,11 @@ local SHIP = require("main.ship.ship_layout")
 local TOOL = require("main.selection.tooltips")
 local RET = require("main.selection.reticle")
 
-local focus = {action = true}
+local focus = {action = true, reticle = true, tooltip = true}
 
 local planet = FPlanet.generatePlanet("Frontier", true)
 local mission = {}
+local phase = hash("planet")
 
 crew = {}
 crew[0] = {skills = {medic = 0, mech = 0, gunner = 0, comms = 0, pilot = 0, fight = 0}}
@@ -53,8 +54,7 @@ local function getSelectorText(target)
 	end
 end
 
-
-local function updateDialog(dialogID)
+local function updateDialog(dialogID, location)
 	if dialogID == "buy" then
 		gui.set_text(dialog.buy.lbl.fuelAmount, fuelBought)
 		gui.set_text(dialog.buy.lbl.rationsAmount, rationsBought)
@@ -112,7 +112,7 @@ local function updateDialog(dialogID)
 		gui.set_text(dialog.info.lbl.rations, "RATIONS: "..cargo.rations)
 		gui.set_text(dialog.info.lbl.money, "CREDITS: "..cargo.money)
 		gui.set_text(dialog.info.lbl.region, planet.region)
-		gui.set_text(dialog.info.lbl.settlement, planet.settlement)
+		gui.set_text(dialog.info.lbl.settlement, location or planet.settlement)
 		gui.set_text(dialog.info.lbl.government, planet.government)
 	elseif dialogID == "crew" then
 		if selection then gui.set_color(dialog.crew.btn[selection], CON.COLOR_DEFAULT) end
@@ -251,7 +251,6 @@ local function show_UI(type)
 		gui.set_enabled(dialog.action.frame, true)
 		gui.set_enabled(dialog.crew.frame, true)
 		gui.set_enabled(dialog.info.frame, true)
-		focus = {action = true}
 	elseif type == hash("space") then
 		gui.set_enabled(dialog.crew.frame, true)
 		gui.set_enabled(dialog.info.frame, true)
@@ -264,7 +263,8 @@ local function travel(target, mission)
 	planet = FPlanet.generatePlanet(target)
 	msg.post("/background", "space")
 	hide_UI()
-	updateDialog("info")
+	updateDialog("info", "-")
+	phase = hash("travel")
 end
 
 local function checkMission(target)
@@ -278,9 +278,7 @@ local function checkMission(target)
 end
 
 
-
 function init(self)
-
 	msg.post(".", "acquire_input_focus")
 	
 	dialog.travel = DH.newDialog("travel")
@@ -293,6 +291,7 @@ function init(self)
 	dialog.work = DH.newDialog("work")
 	dialog.missions = DH.newDialog("work")
 	dialog.speech = DH.newDialog("speech")
+	dialog.event = DH.newDialog("event")
 	gui.set_text(dialog.missions.lbl.none, "There are no ongoing jobs.")
 	gui.set_text(dialog.missions.lbl.title, "CHOOSE A MISSION")
 	
@@ -313,439 +312,460 @@ end
 
 function on_input(self, action_id, action)
 	if action_id == hash("click") and action.pressed then
-		for k in pairs(focus) do
-			if k == "action" then
-				for key, val in pairs(dialog.action.btn) do
-					if gui.pick_node(val, action.x, action.y) then
-						updateDialog("crew")
-						selection = nil
-						if key == "buy" then
-							fuelBought = CON.MAXFUEL - cargo.fuel
-							rationsBought = CON.MAXRATIONS - cargo.rations
-							gui.set_text(dialog.buy.lbl.fuelPrice, "@ "..planet.price.fuel.." cr/unit.")
-							gui.set_text(dialog.buy.lbl.rationsPrice, "@ "..planet.price.rations.." cr/unit.")
-							gui.set_enabled(dialog.buy.frame, true)
-							focus = {buy = true}
-							updateDialog("buy")
-						elseif key == "recruit" then
-							gui.set_enabled(dialog.recruit.frame, true)
-							focus = {recruit = true}
-							updateDialog("recruit")
-						elseif key == "travel" then
-							gui.set_enabled(dialog.travel.frame, true)
-							focus = {travel = true}
-							updateDialog("travel")
-						elseif key == "work" then
-							gui.set_enabled(dialog.work.frame, true)
-							focus = {work = true}
-							updateDialog("work")
-						end
-						if not focus[k] then RET.hide(); RET.hide_permanent() end
+		if focus.action then
+			for key, val in pairs(dialog.action.btn) do
+				if gui.pick_node(val, action.x, action.y) then
+					updateDialog("crew")
+					selection = nil
+					if key == "buy" then
+						fuelBought = CON.MAXFUEL - cargo.fuel
+						rationsBought = CON.MAXRATIONS - cargo.rations
+						gui.set_text(dialog.buy.lbl.fuelPrice, "@ "..planet.price.fuel.." cr/unit.")
+						gui.set_text(dialog.buy.lbl.rationsPrice, "@ "..planet.price.rations.." cr/unit.")
+						gui.set_enabled(dialog.buy.frame, true)
+						focus = {buy = true}
+						updateDialog("buy")
+					elseif key == "recruit" then
+						gui.set_enabled(dialog.recruit.frame, true)
+						focus = {recruit = true}
+						updateDialog("recruit")
+					elseif key == "travel" then
+						gui.set_enabled(dialog.travel.frame, true)
+						focus = {travel = true}
+						updateDialog("travel")
+					elseif key == "work" then
+						gui.set_enabled(dialog.work.frame, true)
+						focus = {work = true}
+						updateDialog("work")
 					end
 				end
-				for key, val in ipairs(RET.buttons) do
-					if gui.pick_node(val, action.x, action.y) then
-						local label = gui.get_text(val)
-						if label == "TALK" then
-							TALK.openDialog(dialog.speech, crew[RET.target_permanent], TALK.skills(crew[RET.target_permanent]), nil , "OK")
-							speechResult.reply2 = {"close", "action"}
-							RET.hide()
-							RET.hide_permanent()
-							focus = {speech = true}
-						elseif label == "ASSIGN" or label == "MOVE" then
-							RET.hide_buttons()
-							RET.action = label
-						end
+			end
+			for key, val in ipairs(RET.buttons) do
+				if gui.pick_node(val, action.x, action.y) then
+					local label = gui.get_text(val)
+					if label == "TALK" then
+						TALK.openDialog(dialog.speech, crew[RET.target_permanent], TALK.skills(crew[RET.target_permanent]), nil , "OK")
+						speechResult.reply2 = {"close", "action"}
+						RET.hide()
+						RET.hide_permanent()
+						focus = {speech = true}
+					elseif label == "ASSIGN" or label == "MOVE" then
+						RET.hide_buttons()
+						RET.action = label
 					end
 				end
-				if RET.target then
-					if type(RET.target) == "number" then
-						RET.show_permanent(crew[RET.target].pos, nil, RET.target, {{text = "TALK"}, {text = "ASSIGN"}, {text = "MOVE"}})
-					else
-						if RET.action == "MOVE" then
-							msg.post(crew[RET.target_permanent].go, "move", {target = RET.target})
-							RET.hide_permanent()
-							RET.action = nil
-						elseif RET.action == "ASSIGN" then
-							local position = SHIP[RET.target].job
-							if position then
-								for key, val in ipairs(crew) do
-									if val.role == position then val.role = nil end
-								end
-								crew[RET.target_permanent].role = position
-								msg.post(crew[RET.target_permanent].go, "move", {target = RET.target})
-								updateDialog("crew")
-							end
-						end
-					end
+			end
+			if RET.target then
+				if type(RET.target) == "number" then
+					RET.show_permanent(crew[RET.target].pos, nil, RET.target, {{text = "TALK"}, {text = "ASSIGN"}, {text = "MOVE"}})
 				else
-					for key, val in pairs(dialog.crew.btn) do
-						if gui.pick_node(val, action.x, action.y) and gui.is_enabled(val) then
-							for x = 1, 9 do
-								if key == "crew"..x then
-									if selection then gui.set_color(dialog.crew.btn[selection], CON.COLOR_DEFAULT) end
-									selection = "crew"..x
-									gui.set_color(val, CON.COLOR_SELECTION)
-								end
+					if RET.action == "MOVE" then
+						msg.post(crew[RET.target_permanent].go, "move", {target = RET.target})
+						RET.hide_permanent()
+					elseif RET.action == "ASSIGN" then
+						local position = SHIP[RET.target].job
+						if position then
+							for key, val in ipairs(crew) do
+								if val.role == position then val.role = nil end
 							end
-							if key == "pilot" or key == "mech" or key == "comms" or key == "medic" or key == "gunner" then
+							crew[RET.target_permanent].role = position
+							msg.post(crew[RET.target_permanent].go, "move", {target = RET.target})
+							updateDialog("crew")
+						end
+					end
+				end
+			else
+				for key, val in pairs(dialog.crew.btn) do
+					if gui.pick_node(val, action.x, action.y) and gui.is_enabled(val) then
+						for x = 1, 9 do
+							if key == "crew"..x then
 								if selection then gui.set_color(dialog.crew.btn[selection], CON.COLOR_DEFAULT) end
-								selection = key
+								selection = "crew"..x
 								gui.set_color(val, CON.COLOR_SELECTION)
 							end
-							if selection then
-								if key == "pilotR" then
-									if dialog.crew.selection.pilot then crew[dialog.crew.selection.pilot].role = nil end
-									crew[dialog.crew.selection[selection]].role = "pilot"
-									msg.post(crew[dialog.crew.selection[selection]].go, "move", {target = "COCKPIT"})
-									updateDialog("crew")
-								elseif key == "commsR" then
-									if dialog.crew.selection.comms then crew[dialog.crew.selection.comms].role = nil end
-									crew[dialog.crew.selection[selection]].role = "comms"
-									msg.post(crew[dialog.crew.selection[selection]].go, "move", {target = "COMMS"})
-									updateDialog("crew")
-								elseif key == "mechR" then
-									if dialog.crew.selection.mech then crew[dialog.crew.selection.mech].role = nil end
-									crew[dialog.crew.selection[selection]].role = "mech"
-									msg.post(crew[dialog.crew.selection[selection]].go, "move", {target = "ENGINE2"})
-									updateDialog("crew")
-								elseif key == "medicR" then
-									if dialog.crew.selection.medic then crew[dialog.crew.selection.medic].role = nil end
-									crew[dialog.crew.selection[selection]].role = "medic"
-									msg.post(crew[dialog.crew.selection[selection]].go, "move", {target = "BUNK4"})
-									updateDialog("crew")
-								elseif key == "gunnerR" then
-									if dialog.crew.selection.gunner then crew[dialog.crew.selection.gunner].role = nil end
-									crew[dialog.crew.selection[selection]].role = "gunner"
-									msg.post(crew[dialog.crew.selection[selection]].go, "move", {target = "GUN"})
-									updateDialog("crew")
-								end
-							end
 						end
-					end
-				end
-			elseif k == "buy" then
-				for key, val in pairs(dialog.buy.btn) do
-					if gui.pick_node(val, action.x, action.y) then
-						if key == "cancel" then
-							gui.set_enabled(dialog.buy.frame, false)
-							focus = {action = true}
-						elseif key == "fuelPlus" then
-							if fuelBought + cargo.fuel < CON.MAXFUEL then
-								fuelBought = fuelBought + 1
-								updateDialog("buy")
-							end
-						elseif key == "fuelMinus" then
-							if fuelBought > 0 then
-								fuelBought = fuelBought - 1
-								updateDialog("buy")
-							end
-						elseif key == "rationsPlus" then
-							if rationsBought + cargo.rations < CON.MAXRATIONS then
-								rationsBought = rationsBought + 1
-								updateDialog("buy")
-							end
-						elseif key == "rationsMinus" then
-							if rationsBought > 0 then
-								rationsBought = rationsBought - 1
-								updateDialog("buy")
-							end
-						elseif key == "confirm" then
-							if totalPrice <= cargo.money then
-								cargo.money = cargo.money - totalPrice
-								cargo.fuel = cargo.fuel + fuelBought
-								cargo.rations = cargo.rations + rationsBought
-								updateDialog("info")
-								gui.set_enabled(dialog.buy.frame, false)
-								focus = {action = true}
-							end
+						if key == "pilot" or key == "mech" or key == "comms" or key == "medic" or key == "gunner" then
+							if selection then gui.set_color(dialog.crew.btn[selection], CON.COLOR_DEFAULT) end
+							selection = key
+							gui.set_color(val, CON.COLOR_SELECTION)
 						end
-					end
-				end
-			elseif k == "recruit" then
-				for key, val in pairs(dialog.recruit.btn) do
-					if gui.pick_node(val, action.x, action.y) then
-						if key == "cancel" then
-							if selection then gui.set_color(dialog.recruit.btn["recruit"..selection], CON.COLOR_DEFAULT) end
-							selection = nil
-							gui.set_enabled(dialog.recruit.frame, false)
-							focus = {action = true}
-						elseif key == "confirm" and selection then
-							if selection then gui.set_color(dialog.recruit.btn["recruit"..selection], CON.COLOR_DEFAULT) end
-							if #crew >= CON.MAXCREW then
-								selection = nil
-								gui.set_enabled(dialog.recruit.frame, false)
-								gui.set_text(dialog.warning.lbl.text, "You can't have more than "..CON.MAXCREW.." crew!")
-								gui.set_enabled(dialog.warning.frame, true)
-								focus = {warning = true}
-							else
-								table.insert(crew, planet.recruits[selection])
-								crew[#crew].go = factory.create("/ship#spawn_crew", vmath.vector3(math.random(140, 240), 64, 0.1), nil, {crew = #crew, level = 2})
-								table.remove(planet.recruits, selection)
-								selection = nil
-								updateDialog("recruit")
+						if selection then
+							if key == "pilotR" then
+								if dialog.crew.selection.pilot then crew[dialog.crew.selection.pilot].role = nil end
+								crew[dialog.crew.selection[selection]].role = "pilot"
+								msg.post(crew[dialog.crew.selection[selection]].go, "move", {target = "COCKPIT"})
+								updateDialog("crew")
+							elseif key == "commsR" then
+								if dialog.crew.selection.comms then crew[dialog.crew.selection.comms].role = nil end
+								crew[dialog.crew.selection[selection]].role = "comms"
+								msg.post(crew[dialog.crew.selection[selection]].go, "move", {target = "COMMS"})
+								updateDialog("crew")
+							elseif key == "mechR" then
+								if dialog.crew.selection.mech then crew[dialog.crew.selection.mech].role = nil end
+								crew[dialog.crew.selection[selection]].role = "mech"
+								msg.post(crew[dialog.crew.selection[selection]].go, "move", {target = "ENGINE2"})
+								updateDialog("crew")
+							elseif key == "medicR" then
+								if dialog.crew.selection.medic then crew[dialog.crew.selection.medic].role = nil end
+								crew[dialog.crew.selection[selection]].role = "medic"
+								msg.post(crew[dialog.crew.selection[selection]].go, "move", {target = "BUNK4"})
+								updateDialog("crew")
+							elseif key == "gunnerR" then
+								if dialog.crew.selection.gunner then crew[dialog.crew.selection.gunner].role = nil end
+								crew[dialog.crew.selection[selection]].role = "gunner"
+								msg.post(crew[dialog.crew.selection[selection]].go, "move", {target = "GUN"})
 								updateDialog("crew")
 							end
+						end
+					end
+				end
+			end
+		end
+		if focus.buy then
+			for key, val in pairs(dialog.buy.btn) do
+				if gui.pick_node(val, action.x, action.y) then
+					if key == "cancel" then
+						gui.set_enabled(dialog.buy.frame, false)
+						focus = {action = true, reticle = true, tooltip = true}
+					elseif key == "fuelPlus" then
+						if fuelBought + cargo.fuel < CON.MAXFUEL then
+							fuelBought = fuelBought + 1
+							updateDialog("buy")
+						end
+					elseif key == "fuelMinus" then
+						if fuelBought > 0 then
+							fuelBought = fuelBought - 1
+							updateDialog("buy")
+						end
+					elseif key == "rationsPlus" then
+						if rationsBought + cargo.rations < CON.MAXRATIONS then
+							rationsBought = rationsBought + 1
+							updateDialog("buy")
+						end
+					elseif key == "rationsMinus" then
+						if rationsBought > 0 then
+							rationsBought = rationsBought - 1
+							updateDialog("buy")
+						end
+					elseif key == "confirm" then
+						if totalPrice <= cargo.money then
+							cargo.money = cargo.money - totalPrice
+							cargo.fuel = cargo.fuel + fuelBought
+							cargo.rations = cargo.rations + rationsBought
+							updateDialog("info")
+							gui.set_enabled(dialog.buy.frame, false)
+							focus = {action = true, reticle = true, tooltip = true}
+						end
+					end
+				end
+			end
+		end
+		if focus.recruit then
+			for key, val in pairs(dialog.recruit.btn) do
+				if gui.pick_node(val, action.x, action.y) then
+					if key == "cancel" then
+						if selection then gui.set_color(dialog.recruit.btn["recruit"..selection], CON.COLOR_DEFAULT) end
+						selection = nil
+						gui.set_enabled(dialog.recruit.frame, false)
+						focus = {action = true, reticle = true, tooltip = true}
+					elseif key == "confirm" and selection then
+						if selection then gui.set_color(dialog.recruit.btn["recruit"..selection], CON.COLOR_DEFAULT) end
+						if #crew >= CON.MAXCREW then
+							selection = nil
+							gui.set_enabled(dialog.recruit.frame, false)
+							gui.set_text(dialog.warning.lbl.text, "You can't have more than "..CON.MAXCREW.." crew!")
+							gui.set_enabled(dialog.warning.frame, true)
+							focus = {warning = true}
 						else
-							for x = 1, 5 do
-								if key == "recruit"..x and gui.is_enabled(val) then
-									if selection then gui.set_color(dialog.recruit.btn["recruit"..selection], CON.COLOR_DEFAULT) end
-									selection = x
-									gui.set_color(val, CON.COLOR_SELECTION)
-									gui.set_color(dialog.recruit.btn.confirm, CON.COLOR_ENABLED)
-								elseif key == "skills"..x and gui.is_enabled(val) then
-									gui.set_enabled(dialog.recruit.frame, false)
-									TALK.openDialog(dialog.speech, planet.recruits[x], TALK.skills(planet.recruits[x]), nil , "OK")
-									speechResult.reply2 = {"close", "recruit"}
-									focus = {speech = true}
-								elseif key == "about"..x and gui.is_enabled(val) then
-									gui.set_enabled(dialog.recruit.frame, false)
-									TALK.openDialog(dialog.speech, planet.recruits[x], TALK.intro(planet.recruits[x]), nil , "OK")
-									speechResult.reply2 = {"close", "recruit"}
-									focus = {speech = true}
-								end
+							table.insert(crew, planet.recruits[selection])
+							crew[#crew].go = factory.create("/ship#spawn_crew", vmath.vector3(math.random(140, 240), 64, 0.1), nil, {crew = #crew, level = 2})
+							table.remove(planet.recruits, selection)
+							selection = nil
+							updateDialog("recruit")
+							updateDialog("crew")
+						end
+					else
+						for x = 1, 5 do
+							if key == "recruit"..x and gui.is_enabled(val) then
+								if selection then gui.set_color(dialog.recruit.btn["recruit"..selection], CON.COLOR_DEFAULT) end
+								selection = x
+								gui.set_color(val, CON.COLOR_SELECTION)
+								gui.set_color(dialog.recruit.btn.confirm, CON.COLOR_ENABLED)
+							elseif key == "skills"..x and gui.is_enabled(val) then
+								gui.set_enabled(dialog.recruit.frame, false)
+								TALK.openDialog(dialog.speech, planet.recruits[x], TALK.skills(planet.recruits[x]), nil , "OK")
+								speechResult.reply2 = {"close", "recruit"}
+								focus = {speech = true}
+							elseif key == "about"..x and gui.is_enabled(val) then
+								gui.set_enabled(dialog.recruit.frame, false)
+								TALK.openDialog(dialog.speech, planet.recruits[x], TALK.intro(planet.recruits[x]), nil , "OK")
+								speechResult.reply2 = {"close", "recruit"}
+								focus = {speech = true}
 							end
 						end
 					end
 				end
-			elseif k == "travel" then
-				for key, val in pairs(dialog.travel.btn) do
-					if gui.pick_node(val, action.x, action.y) then
-						if key == "confirm" and selection then
-							gui.set_enabled(dialog.travel.frame, false)
-							if cargo.fuel < 1 then
-								gui.set_text(dialog.warning.lbl.text, "You don't have enough fuel!")
-								gui.set_enabled(dialog.warning.frame, true)
-								focus = {warning = true}
-							elseif cargo.rations < #crew then
-								gui.set_text(dialog.warning.lbl.text, "You don't have enough rations!")
-								gui.set_enabled(dialog.warning.frame, true)
-								focus = {warning = true}
-							elseif FCrew.getRole("pilot") == 0 then
-								gui.set_text(dialog.warning.lbl.text, "You must assign a pilot!")
-								gui.set_enabled(dialog.warning.frame, true)
-								focus = {warning = true}
-							else
-								local chosenTarget
-								if selection == dialog.travel.btn.exploreCore then
-									travel("Core")
-									focus = {action = true}
-								elseif selection == dialog.travel.btn.exploreFrontier then
-									travel("Frontier")
-									focus = {action = true}
-								elseif selection == dialog.travel.btn.exploreRim then
-									travel("Rim")
-									focus = {action = true}
-								elseif selection == dialog.travel.btn.missionCore then
-									chosenTarget = "Core"
-								elseif selection == dialog.travel.btn.missionFrontier then
-									chosenTarget = "Frontier"
-								elseif selection == dialog.travel.btn.missionRim then
-									chosenTarget = "Rim"
-								end
-								if chosenTarget then
-									currentMission = checkMission(chosenTarget)
-									if #currentMission == 1 then
-										travel(chosenTarget)
-										gui.set_text(dialog.warning.lbl.text, "Job completed. You earned "..mission[currentMission[1]].wage)
-										gui.set_enabled(dialog.warning.frame, true)
-										focus = {warning = true}
-										cargo.money = cargo.money + mission[currentMission[1]].wage
-										updateDialog("info")
-										table.remove(mission, currentMission[1])
-									else
-										updateDialog("missions")
-										selection = nil
-										gui.set_enabled(dialog.missions.frame, true)
-										focus = {missions = true}
-									end
+			end
+		end
+		if focus.travel then
+			for key, val in pairs(dialog.travel.btn) do
+				if gui.pick_node(val, action.x, action.y) then
+					if key == "confirm" and selection then
+						gui.set_enabled(dialog.travel.frame, false)
+						if cargo.fuel < 1 then
+							gui.set_text(dialog.warning.lbl.text, "You don't have enough fuel!")
+							gui.set_enabled(dialog.warning.frame, true)
+							focus = {warning = true}
+						elseif cargo.rations < #crew then
+							gui.set_text(dialog.warning.lbl.text, "You don't have enough rations!")
+							gui.set_enabled(dialog.warning.frame, true)
+							focus = {warning = true}
+						elseif FCrew.getRole("pilot") == 0 then
+							gui.set_text(dialog.warning.lbl.text, "You must assign a pilot!")
+							gui.set_enabled(dialog.warning.frame, true)
+							focus = {warning = true}
+						else
+							local chosenTarget
+							if selection == dialog.travel.btn.exploreCore then
+								travel("Core")
+							elseif selection == dialog.travel.btn.exploreFrontier then
+								travel("Frontier")
+							elseif selection == dialog.travel.btn.exploreRim then
+								travel("Rim")
+							elseif selection == dialog.travel.btn.missionCore then
+								chosenTarget = "Core"
+							elseif selection == dialog.travel.btn.missionFrontier then
+								chosenTarget = "Frontier"
+							elseif selection == dialog.travel.btn.missionRim then
+								chosenTarget = "Rim"
+							end
+							if chosenTarget then
+								currentMission = checkMission(chosenTarget)
+								if #currentMission == 1 then
+									travel(chosenTarget)
+									gui.set_text(dialog.warning.lbl.text, "Job completed. You earned "..mission[currentMission[1]].wage)
+									gui.set_enabled(dialog.warning.frame, true)
+									focus = {warning = true}
+									cargo.money = cargo.money + mission[currentMission[1]].wage
+									table.remove(mission, currentMission[1])
+								else
+									updateDialog("missions")
+									selection = nil
+									gui.set_enabled(dialog.missions.frame, true)
+									focus = {missions = true}
 								end
 							end
-							selection = nil
-						elseif key == "cancel" then
-							selection = nil
-							gui.set_enabled(dialog.travel.frame, false)
-							focus = {action = true}
-						elseif key == "exploreCore" or key == "exploreFrontier" or key == "exploreRim" then
-							selection = val
-							updateDialog("travel")
-						elseif (key == "missionCore" or key == "missionFrontier" or key == "missionRim") and gui.get_color(val) == CON.COLOR_DEFAULT then
-							selection = val
-							updateDialog("travel")
 						end
+						selection = nil
+					elseif key == "cancel" then
+						selection = nil
+						gui.set_enabled(dialog.travel.frame, false)
+						focus = {action = true, reticle = true, tooltip = true}
+					elseif key == "exploreCore" or key == "exploreFrontier" or key == "exploreRim" then
+						selection = val
+						updateDialog("travel")
+					elseif (key == "missionCore" or key == "missionFrontier" or key == "missionRim") and gui.get_color(val) == CON.COLOR_DEFAULT then
+						selection = val
+						updateDialog("travel")
 					end
 				end
-			elseif k == "work" then
-				for key, val in pairs(dialog.work.btn) do
-					if type(val) == "userdata" and gui.pick_node(val, action.x, action.y) then
-						if key == "cancel" then
-							if selection then
-								gui.set_color(dialog.work.btn[selection].type, CON.COLOR_DEFAULT)
-								gui.set_color(dialog.work.btn[selection].target, CON.COLOR_DEFAULT)
-								gui.set_color(dialog.work.btn[selection].wage, CON.COLOR_DEFAULT)
-							end
+			end
+		end
+		if focus.work then
+			for key, val in pairs(dialog.work.btn) do
+				if type(val) == "userdata" and gui.pick_node(val, action.x, action.y) then
+					if key == "cancel" then
+						if selection then
+							gui.set_color(dialog.work.btn[selection].type, CON.COLOR_DEFAULT)
+							gui.set_color(dialog.work.btn[selection].target, CON.COLOR_DEFAULT)
+							gui.set_color(dialog.work.btn[selection].wage, CON.COLOR_DEFAULT)
+						end
+						selection = nil
+						gui.set_enabled(dialog.work.frame, false)
+						focus = {action = true, reticle = true, tooltip = true}
+					elseif key == "confirm" and selection then
+						if #mission > 4 then
+							gui.set_color(dialog.work.btn[selection].type, CON.COLOR_DEFAULT)
+							gui.set_color(dialog.work.btn[selection].target, CON.COLOR_DEFAULT)
+							gui.set_color(dialog.work.btn[selection].wage, CON.COLOR_DEFAULT)
 							selection = nil
 							gui.set_enabled(dialog.work.frame, false)
-							focus = {action = true}
-						elseif key == "confirm" and selection then
-							if #mission > 4 then
-								gui.set_color(dialog.work.btn[selection].type, CON.COLOR_DEFAULT)
-								gui.set_color(dialog.work.btn[selection].target, CON.COLOR_DEFAULT)
-								gui.set_color(dialog.work.btn[selection].wage, CON.COLOR_DEFAULT)
-								selection = nil
-								gui.set_enabled(dialog.work.frame, false)
-								gui.set_text(dialog.warning.lbl.text, "You have too many missions already!")
-								gui.set_enabled(dialog.warning.frame, true)
-								focus = {warning = true}
-							else
-								table.insert(mission, planet.missions[selection])
-								table.remove(planet.missions, selection)
-								gui.set_color(dialog.work.btn[selection].type, CON.COLOR_DEFAULT)
-								gui.set_color(dialog.work.btn[selection].target, CON.COLOR_DEFAULT)
-								gui.set_color(dialog.work.btn[selection].wage, CON.COLOR_DEFAULT)
-								selection = nil
-								gui.set_enabled(dialog.work.frame, false)
-								focus = {action = true}
-							end
-						end
-					elseif type(val) == "table" then
-						if (gui.pick_node(val.type, action.x, action.y) or gui.pick_node(val.target, action.x, action.y) or gui.pick_node(val.wage, action.x, action.y)) and gui.is_enabled(val.type) then
-							if selection then
-								gui.set_color(dialog.work.btn[selection].type, CON.COLOR_DEFAULT)
-								gui.set_color(dialog.work.btn[selection].target, CON.COLOR_DEFAULT)
-								gui.set_color(dialog.work.btn[selection].wage, CON.COLOR_DEFAULT)
-							end
-							selection = key
-							gui.set_color(val.type, CON.COLOR_SELECTION)
-							gui.set_color(val.target, CON.COLOR_SELECTION)
-							gui.set_color(val.wage, CON.COLOR_SELECTION)
-							gui.set_color(dialog.work.btn.confirm, CON.COLOR_ENABLED)
+							gui.set_text(dialog.warning.lbl.text, "You have too many missions already!")
+							gui.set_enabled(dialog.warning.frame, true)
+							focus = {warning = true}
+						else
+							table.insert(mission, planet.missions[selection])
+							table.remove(planet.missions, selection)
+							gui.set_color(dialog.work.btn[selection].type, CON.COLOR_DEFAULT)
+							gui.set_color(dialog.work.btn[selection].target, CON.COLOR_DEFAULT)
+							gui.set_color(dialog.work.btn[selection].wage, CON.COLOR_DEFAULT)
+							selection = nil
+							gui.set_enabled(dialog.work.frame, false)
+							focus = {action = true, reticle = true, tooltip = true}
 						end
 					end
+				elseif type(val) == "table" then
+					if (gui.pick_node(val.type, action.x, action.y) or gui.pick_node(val.target, action.x, action.y) or gui.pick_node(val.wage, action.x, action.y)) and gui.is_enabled(val.type) then
+						if selection then
+							gui.set_color(dialog.work.btn[selection].type, CON.COLOR_DEFAULT)
+							gui.set_color(dialog.work.btn[selection].target, CON.COLOR_DEFAULT)
+							gui.set_color(dialog.work.btn[selection].wage, CON.COLOR_DEFAULT)
+						end
+						selection = key
+						gui.set_color(val.type, CON.COLOR_SELECTION)
+						gui.set_color(val.target, CON.COLOR_SELECTION)
+						gui.set_color(val.wage, CON.COLOR_SELECTION)
+						gui.set_color(dialog.work.btn.confirm, CON.COLOR_ENABLED)
+					end
 				end
-			elseif k == "missions" then
-				for key, val in pairs(dialog.missions.btn) do
-					if type(val) == "userdata" and gui.pick_node(val, action.x, action.y) then
-						if key == "cancel" then
-							if selection then
-								gui.set_color(dialog.missions.btn[selection].type, CON.COLOR_DEFAULT)
-								gui.set_color(dialog.missions.btn[selection].target, CON.COLOR_DEFAULT)
-								gui.set_color(dialog.missions.btn[selection].wage, CON.COLOR_DEFAULT)
-							end
-							selection = nil
-							updateDialog("travel")
-							gui.set_enabled(dialog.missions.frame, false)
-							gui.set_enabled(dialog.travel.frame, true)
-							focus = {travel = true}
-						elseif key == "confirm" and selection then
-							currentMission = {currentMission[selection]}
+			end
+		end
+		if focus.missions then
+			for key, val in pairs(dialog.missions.btn) do
+				if type(val) == "userdata" and gui.pick_node(val, action.x, action.y) then
+					if key == "cancel" then
+						if selection then
 							gui.set_color(dialog.missions.btn[selection].type, CON.COLOR_DEFAULT)
 							gui.set_color(dialog.missions.btn[selection].target, CON.COLOR_DEFAULT)
 							gui.set_color(dialog.missions.btn[selection].wage, CON.COLOR_DEFAULT)
-							selection = nil
-							gui.set_enabled(dialog.missions.frame, false)
-							travel(mission[currentMission[1]].target)
-							gui.set_text(dialog.warning.lbl.text, "Job completed. You earned "..mission[currentMission[1]].wage)
-							gui.set_enabled(dialog.warning.frame, true)
-							focus = {warning = true}
-							cargo.money = cargo.money + mission[currentMission[1]].wage
-							updateDialog("info")
-							table.remove(mission, currentMission[1])
 						end
-					elseif type(val) == "table" then
-						if (gui.pick_node(val.type, action.x, action.y) or gui.pick_node(val.target, action.x, action.y) or gui.pick_node(val.wage, action.x, action.y)) and gui.is_enabled(val.type) then
-							if selection then
-								gui.set_color(dialog.missions.btn[selection].type, CON.COLOR_DEFAULT)
-								gui.set_color(dialog.missions.btn[selection].target, CON.COLOR_DEFAULT)
-								gui.set_color(dialog.missions.btn[selection].wage, CON.COLOR_DEFAULT)
-							end
-							selection = key
-							gui.set_color(val.type, CON.COLOR_SELECTION)
-							gui.set_color(val.target, CON.COLOR_SELECTION)
-							gui.set_color(val.wage, CON.COLOR_SELECTION)
-							gui.set_color(dialog.missions.btn.confirm, CON.COLOR_ENABLED)
+						selection = nil
+						updateDialog("travel")
+						gui.set_enabled(dialog.missions.frame, false)
+						gui.set_enabled(dialog.travel.frame, true)
+						focus = {travel = true}
+					elseif key == "confirm" and selection then
+						currentMission = {currentMission[selection]}
+						gui.set_color(dialog.missions.btn[selection].type, CON.COLOR_DEFAULT)
+						gui.set_color(dialog.missions.btn[selection].target, CON.COLOR_DEFAULT)
+						gui.set_color(dialog.missions.btn[selection].wage, CON.COLOR_DEFAULT)
+						selection = nil
+						gui.set_enabled(dialog.missions.frame, false)
+						travel(mission[currentMission[1]].target)
+						gui.set_text(dialog.warning.lbl.text, "Job completed. You earned "..mission[currentMission[1]].wage)
+						gui.set_enabled(dialog.warning.frame, true)
+						focus = {warning = true}
+						cargo.money = cargo.money + mission[currentMission[1]].wage
+						updateDialog("info")
+						table.remove(mission, currentMission[1])
+					end
+				elseif type(val) == "table" then
+					if (gui.pick_node(val.type, action.x, action.y) or gui.pick_node(val.target, action.x, action.y) or gui.pick_node(val.wage, action.x, action.y)) and gui.is_enabled(val.type) then
+						if selection then
+							gui.set_color(dialog.missions.btn[selection].type, CON.COLOR_DEFAULT)
+							gui.set_color(dialog.missions.btn[selection].target, CON.COLOR_DEFAULT)
+							gui.set_color(dialog.missions.btn[selection].wage, CON.COLOR_DEFAULT)
 						end
+						selection = key
+						gui.set_color(val.type, CON.COLOR_SELECTION)
+						gui.set_color(val.target, CON.COLOR_SELECTION)
+						gui.set_color(val.wage, CON.COLOR_SELECTION)
+						gui.set_color(dialog.missions.btn.confirm, CON.COLOR_ENABLED)
 					end
 				end
-			elseif k == "speech" then
-				for key, val in pairs(dialog.speech.btn) do
-					if gui.pick_node(val, action.x, action.y) then
-						if speechResult[key] then
-							for k, v in ipairs(speechResult[key]) do
-								if v == "close" then
-									gui.set_enabled(dialog.speech.frame, false)
-								elseif v == "recruit" then
-									updateDialog("recruit")
-									gui.set_enabled(dialog.recruit.frame, true)
-									focus = {recruit = true}
-								elseif v == "action" then
-									focus = {action = true}
-								end
-							end
-							speechResult = {}
-						end
-					end
-				end
-			elseif k == "warning" then
-				gui.set_enabled(dialog.warning.frame, false)
-				focus = {action = true}
 			end
 		end
-	elseif action_id == hash("enter") and action.pressed then
-		
-	else
-		for menu in pairs(focus) do
-			if menu == "action" then
-				cursor_position.x = action.x; cursor_position.y = action.y
-				local _selector
-				for key, val in pairs(SHIP) do
-					if val.pos then
-						if action.x > val.pos.x and action.x < val.pos.x + val.size.x and action.y > val.pos.y and action.y < val.pos.y + val.size.y then
-							_selector = val
-							_thing = key
+		if focus.speech then
+			for key, val in pairs(dialog.speech.btn) do
+				if gui.pick_node(val, action.x, action.y) then
+					if speechResult[key] then
+						for k, v in ipairs(speechResult[key]) do
+							if v == "close" then
+								gui.set_enabled(dialog.speech.frame, false)
+							elseif v == "recruit" then
+								updateDialog("recruit")
+								gui.set_enabled(dialog.recruit.frame, true)
+								focus = {recruit = true}
+							elseif v == "action" then
+								focus = {action = true, reticle = true, tooltip = true}
+							end
 						end
+						speechResult = {}
 					end
-				end
-				for key, val in pairs(crew) do
-					if val.pos then
-						if action.x > val.pos.x and action.x < val.pos.x + 40 and action.y > val.pos.y and action.y < val.pos.y + 78 then
-							_selector = val
-							_thing = key
-						end
-					end
-				end
-				for key, val in ipairs(RET.buttons) do
-					if gui.is_enabled(val) and gui.pick_node(val, action.x, action.y) then
-						_selector = nil
-						_thing = nil
-					end
-				end
-				if _selector then
-					RET.show(_selector.pos, _selector.size, _thing)
-					TOOL.show(getSelectorText(), cursor_position)
-				else
-					RET.hide()
-					TOOL.hide()
 				end
 			end
-			for key, val in pairs(dialog[menu].btn) do
-				if type(val) == "table" then
-					for k_, v_ in pairs(val) do
-						if gui.pick_node(v_, action.x, action.y) then
-							gui.set_shadow(v_, CON.COLOR_SELECTION)
-							gui.set_outline(v_, CON.COLOR_SELECTION)
-						else
-							gui.set_shadow(v_, vmath.vector4(0, 0, 0, 0))
-							gui.set_outline(v_, vmath.vector4(0, 0, 0, 0))
-						end
+		end
+		if focus.warning then
+			for key, val in pairs(dialog.warning.btn) do
+				if gui.pick_node(val, action.x, action.y) then
+					gui.set_enabled(dialog.warning.frame, false)
+					focus = {action = true, reticle = true, tooltip = true}
+				end
+			end
+		end
+		if focus.event then
+			for key, val in pairs(dialog.event.btn) do
+				if gui.pick_node(val, action.x, action.y) then
+					gui.set_enabled(dialog.event.frame, false)
+					focus = {action = true, reticle = true, tooltip = true}
+				end
+			end
+		end
+			
+		if not focus.reticle then
+			RET.hide()
+			RET.hide_permanent()
+		end
+		if not focus.tooltip then
+			TOOL.hide()
+		end
+	elseif action_id == hash("enter") and action.pressed then
+
+	else
+		if focus.tooltip or focus.reticle then
+			cursor_position.x = action.x; cursor_position.y = action.y
+			local _selector
+			for key, val in pairs(SHIP) do
+				if val.pos then
+					if action.x > val.pos.x and action.x < val.pos.x + val.size.x and action.y > val.pos.y and action.y < val.pos.y + val.size.y then
+						_selector = val
+						_thing = key
 					end
-				else
-					if gui.pick_node(val, action.x, action.y) then
-						gui.set_shadow(val, CON.COLOR_SELECTION)
-						gui.set_outline(val, CON.COLOR_SELECTION)
+				end
+			end
+			for key, val in pairs(crew) do
+				if val.pos then
+					if action.x > val.pos.x and action.x < val.pos.x + 40 and action.y > val.pos.y and action.y < val.pos.y + 78 then
+						_selector = val
+						_thing = key
+					end
+				end
+			end
+			for key, val in ipairs(RET.buttons) do
+				if gui.is_enabled(val) and gui.pick_node(val, action.x, action.y) then
+					_selector = nil
+					_thing = nil
+				end
+			end
+			if _selector then
+				if focus.reticle then RET.show(_selector.pos, _selector.size, _thing) end
+				if focus.tooltip then TOOL.show(getSelectorText(), cursor_position) end
+			else
+				RET.hide()
+				TOOL.hide()
+			end
+		end
+		for menu in pairs(focus) do
+			if dialog[menu] then
+				for key, val in pairs(dialog[menu].btn) do
+					if type(val) == "table" then
+						for k_, v_ in pairs(val) do
+							if gui.pick_node(v_, action.x, action.y) then
+								gui.set_shadow(v_, CON.COLOR_SELECTION)
+								gui.set_outline(v_, CON.COLOR_SELECTION)
+							else
+								gui.set_shadow(v_, vmath.vector4(0, 0, 0, 0))
+								gui.set_outline(v_, vmath.vector4(0, 0, 0, 0))
+							end
+						end
 					else
-						gui.set_shadow(val, vmath.vector4(0, 0, 0, 0))
-						gui.set_outline(val, vmath.vector4(0, 0, 0, 0))
+						if gui.pick_node(val, action.x, action.y) then
+							gui.set_shadow(val, CON.COLOR_SELECTION)
+							gui.set_outline(val, CON.COLOR_SELECTION)
+						else
+							gui.set_shadow(val, vmath.vector4(0, 0, 0, 0))
+							gui.set_outline(val, vmath.vector4(0, 0, 0, 0))
+						end
 					end
 				end
 			end
@@ -770,23 +790,52 @@ function on_message(self, message_id, message, sender)
 				no_button = false
 			end
 		end
-		for menu in pairs(focus) do
-			if menu == "action" and no_button then
-				crew[message.crew].pos = message.pos
-				crew[message.crew].pos.x = crew[message.crew].pos.x - 20
-				if cursor_position.x > message.pos.x and cursor_position.x < message.pos.x + 40 and cursor_position.y > message.pos.y and cursor_position.y < message.pos.y + 78 then
-					RET.show(message.pos, vmath.vector3(40, 78, 0), message.crew)
-					TOOL.show(getSelectorText(), cursor_position)
-				elseif RET.target == message.crew then
-					RET.hide()
-					TOOL.hide()
-				end
-				if RET.target_permanent == message.crew then
-					RET.move_permanent(message.pos)
-				end
+		if focus.action and no_button then
+			crew[message.crew].pos = message.pos
+			crew[message.crew].pos.x = crew[message.crew].pos.x - 20
+			if cursor_position.x > message.pos.x and cursor_position.x < message.pos.x + 40 and cursor_position.y > message.pos.y and cursor_position.y < message.pos.y + 78 then
+				RET.show(message.pos, vmath.vector3(40, 78, 0), message.crew)
+				TOOL.show(getSelectorText(), cursor_position)
+			elseif RET.target == message.crew then
+				RET.hide()
+				TOOL.hide()
+			end
+			if RET.target_permanent == message.crew then
+				RET.move_permanent(message.pos)
 			end
 		end
 	elseif message_id == hash("transition_done") then
-		show_UI(message.location)
+		if phase == hash("travel") then
+			gui.set_enabled(dialog.event.frame, true)
+			for key, val in pairs(dialog.event.btn) do gui.set_enabled(val, false) end
+			EVENTS.event = EVENTS.getEvent()
+			EVENTS.stage = 1
+			local finished = false
+			repeat
+				if EVENTS.list[EVENTS.event][EVENTS.stage].stage_type == "choice" then
+					for num, table in ipairs(EVENTS.list[EVENTS.event][EVENTS.stage].values.choices) do
+						gui.set_text(dialog.event.btn["option"..num], table.text)
+						gui.set_enabled(dialog.event.btn["option"..num], true)
+					end
+					gui.set_text(dialog.event.lbl.title, EVENTS.list[EVENTS.event][EVENTS.stage].values.title)
+					gui.set_text(dialog.event.lbl.description, EVENTS.list[EVENTS.event][EVENTS.stage].values.description)
+					finished = true
+				elseif EVENTS.list[EVENTS.event][EVENTS.stage].stage_type == "dice" then
+					if DICE.skillCheck(EVENTS.list[EVENTS.event][EVENTS.stage].dice_type, EVENTS.list[EVENTS.event][EVENTS.stage].dice_difficulty) then
+						EVENTS.stage = EVENTS.list[EVENTS.event][EVENTS.stage].success
+					else
+						EVENTS.stage = EVENTS.list[EVENTS.event][EVENTS.stage].failure
+					end
+				elseif EVENTS.list[EVENTS.event][EVENTS.stage].stage_type == "end" then
+					gui.set_text(dialog.event.btn.option1, "OK")
+					gui.set_enabled(dialog.event.btn.option1, true)
+					gui.set_text(dialog.event.lbl.title, EVENTS.list[EVENTS.event][EVENTS.stage].values.title)
+					gui.set_text(dialog.event.lbl.description, EVENTS.list[EVENTS.event][EVENTS.stage].values.description)
+					finished = true
+				end
+			until finished
+			focus = {event = true}
+		end
+		--show_UI(message.location)
 	end
 end

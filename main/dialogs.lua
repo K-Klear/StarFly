@@ -10,7 +10,8 @@ local size = {
 	warning = {x = 280, y = 88},
 	crew = {x = 192, y = 328},
 	work = {x = 300, y = 188},
-	speech = {x = 384, y = 318}
+	speech = {x = 384, y = 318},
+	event = {x = 384, y = 318},
 }
 
 local pos = {
@@ -23,6 +24,7 @@ local pos = {
 	crew = {x = 6, y = 890},
 	work = {x = 640, y = 460},
 	speech = {x = 640, y = 480},
+	event = {x = 640, y = 480},
 }
 
 local pivot = {
@@ -185,7 +187,6 @@ function M.newDialog(kind, show)
 			name = gui.new_text_node(vmath.vector3(0, 132, 0), "Name of talker says:"),
 			text = gui.new_text_node(vmath.vector3(0, 0, 0), "Blah blah blah blah. Blah blah blah blah. Blah blah blah blah. Blah blah blah blah.")
 		}
-		for x = 1, 23 do gui.set_text(dialog.lbl.text, gui.get_text(dialog.lbl.text).."BLAH BLAH BLAGH!") end
 		gui.set_size(dialog.lbl.text, vmath.vector3(300, 100, 0))
 		gui.set_line_break(dialog.lbl.text, true)
 		
@@ -195,6 +196,19 @@ function M.newDialog(kind, show)
 			reply3 = gui.new_text_node(vmath.vector3(80, -126, 0), "Whatever.")
 		}
 		dialog.ico = {}
+	elseif kind == "event" then
+		dialog.lbl = {
+			title = gui.new_text_node(vmath.vector3(0, 132, 0), "HOLY SHIT! THE SHIP IS ON FIRE!"),
+			description = gui.new_text_node(vmath.vector3(0, 0, 0), "So some asshole decided to have a smoke. When the smoke alarm started blaring, he panicked and ran into a closed door. That pissed him off so he set a fire in revenge.")
+		}
+		for x = 1, 6 do gui.set_text(dialog.lbl.description, gui.get_text(dialog.lbl.description).."BLAH BLAH BLAGH!") end
+		gui.set_size(dialog.lbl.description, vmath.vector3(340, 100, 0))
+		gui.set_line_break(dialog.lbl.description, true)
+		dialog.btn = {
+			option1 = gui.new_text_node(vmath.vector3(-80, -126, 0), "EXTINGUISH IT"),
+			option2 = gui.new_text_node(vmath.vector3(0, -126, 0), "NO WATER"),
+			option3 = gui.new_text_node(vmath.vector3(80, -126, 0), "LET IT BURN")
+		}
 	end
 
 	for key, val in pairs(dialog.lbl) do
