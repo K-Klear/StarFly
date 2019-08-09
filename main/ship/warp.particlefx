@@ -4,8 +4,8 @@ emitters {
   duration: 1.0
   space: EMISSION_SPACE_WORLD
   position {
-    x: -30.0
-    y: -4.0
+    x: -41.0
+    y: 437.0
     z: 0.0
   }
   rotation {
@@ -15,19 +15,19 @@ emitters {
     w: 0.70710677
   }
   tile_source: "/main/ship/background.atlas"
-  animation: "exhaust"
+  animation: "warp_line"
   material: "/assets/particlefx.material"
   blend_mode: BLEND_MODE_ADD
-  particle_orientation: PARTICLE_ORIENTATION_MOVEMENT_DIRECTION
+  particle_orientation: PARTICLE_ORIENTATION_INITIAL_DIRECTION
   inherit_velocity: 0.0
-  max_particle_count: 256
-  type: EMITTER_TYPE_2DCONE
+  max_particle_count: 512
+  type: EMITTER_TYPE_BOX
   start_delay: 0.0
   properties {
     key: EMITTER_KEY_SPAWN_RATE
     points {
       x: 0.0
-      y: 256.0
+      y: 500.0
       t_x: 1.0
       t_y: 0.0
     }
@@ -37,7 +37,7 @@ emitters {
     key: EMITTER_KEY_SIZE_X
     points {
       x: 0.0
-      y: 25.0
+      y: 900.0
       t_x: 1.0
       t_y: 0.0
     }
@@ -47,7 +47,7 @@ emitters {
     key: EMITTER_KEY_SIZE_Y
     points {
       x: 0.0
-      y: 128.0
+      y: 10.0
       t_x: 1.0
       t_y: 0.0
     }
@@ -67,7 +67,7 @@ emitters {
     key: EMITTER_KEY_PARTICLE_LIFE_TIME
     points {
       x: 0.0
-      y: 0.9
+      y: 0.5
       t_x: 1.0
       t_y: 0.0
     }
@@ -77,57 +77,57 @@ emitters {
     key: EMITTER_KEY_PARTICLE_SPEED
     points {
       x: 0.0
-      y: 200.0
+      y: 3500.0
       t_x: 1.0
       t_y: 0.0
     }
-    spread: 0.0
+    spread: 500.0
   }
   properties {
     key: EMITTER_KEY_PARTICLE_SIZE
     points {
       x: 0.0
-      y: 64.0
+      y: 55.0
       t_x: 1.0
       t_y: 0.0
     }
-    spread: 10.0
+    spread: 50.0
   }
   properties {
     key: EMITTER_KEY_PARTICLE_RED
     points {
       x: 0.0
-      y: 0.2
+      y: 0.6
       t_x: 1.0
       t_y: 0.0
     }
-    spread: 0.0
+    spread: 0.4
   }
   properties {
     key: EMITTER_KEY_PARTICLE_GREEN
     points {
       x: 0.0
-      y: 1.0
+      y: 0.9
       t_x: 1.0
       t_y: 0.0
     }
-    spread: 0.0
+    spread: 0.4
   }
   properties {
     key: EMITTER_KEY_PARTICLE_BLUE
     points {
       x: 0.0
-      y: 0.8
+      y: 0.9
       t_x: 1.0
       t_y: 0.0
     }
-    spread: 0.0
+    spread: 0.1
   }
   properties {
     key: EMITTER_KEY_PARTICLE_ALPHA
     points {
       x: 0.0
-      y: 0.5
+      y: 1.0
       t_x: 1.0
       t_y: 0.0
     }
@@ -147,21 +147,21 @@ emitters {
     key: EMITTER_KEY_PARTICLE_STRETCH_FACTOR_X
     points {
       x: 0.0
-      y: 0.0
+      y: 1.0
       t_x: 1.0
       t_y: 0.0
     }
-    spread: 0.1
+    spread: 1.0
   }
   properties {
     key: EMITTER_KEY_PARTICLE_STRETCH_FACTOR_Y
     points {
       x: 0.0
-      y: 0.0
+      y: 10.0
       t_x: 1.0
       t_y: 0.0
     }
-    spread: 0.5
+    spread: 0.0
   }
   properties {
     key: EMITTER_KEY_PARTICLE_ANGULAR_VELOCITY
@@ -178,14 +178,8 @@ emitters {
     points {
       x: 0.0
       y: 1.0
-      t_x: 0.99760073
-      t_y: -0.06923028
-    }
-    points {
-      x: 1.0
-      y: 2.0185869
-      t_x: 0.9234629
-      t_y: 0.38368762
+      t_x: 1.0
+      t_y: 0.0
     }
   }
   particle_properties {
@@ -201,27 +195,15 @@ emitters {
     key: PARTICLE_KEY_GREEN
     points {
       x: 0.0
-      y: 1.0164288
+      y: 1.0
       t_x: 1.0
       t_y: 0.0
-    }
-    points {
-      x: 1.0
-      y: 0.45784894
-      t_x: 0.87045246
-      t_y: -0.49225253
     }
   }
   particle_properties {
     key: PARTICLE_KEY_BLUE
     points {
       x: 0.0
-      y: 0.5071354
-      t_x: 0.44475308
-      t_y: 0.89565325
-    }
-    points {
-      x: 1.0
       y: 1.0
       t_x: 1.0
       t_y: 0.0
@@ -231,15 +213,9 @@ emitters {
     key: PARTICLE_KEY_ALPHA
     points {
       x: 0.0
-      y: 0.9764649
-      t_x: 0.21463998
-      t_y: -0.9766932
-    }
-    points {
-      x: 1.0
-      y: -0.0050896364
-      t_x: 0.54686975
-      t_y: -0.8372177
+      y: 1.0
+      t_x: 1.0
+      t_y: 0.0
     }
   }
   particle_properties {
@@ -255,15 +231,9 @@ emitters {
     key: PARTICLE_KEY_STRETCH_FACTOR_X
     points {
       x: 0.0
-      y: -0.0821441
-      t_x: 0.7542084
-      t_y: 0.6566351
-    }
-    points {
-      x: 1.0
-      y: 1.0843021
-      t_x: 0.9756675
-      t_y: 0.21925549
+      y: 0.0
+      t_x: 1.0
+      t_y: 0.0
     }
   }
   particle_properties {

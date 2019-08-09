@@ -13,6 +13,9 @@ images {
 images {
   image: "/assets/images/background/ground.png"
 }
+images {
+  image: "/assets/images/background/warp_line.png"
+}
 margin: 0
 extrude_borders: 0
 inner_padding: 0

@@ -11,7 +11,6 @@ local FACE = require("main.face")
 local UPG = require("main.upgrades")
 local DICE = require("main.dice")
 local TALK = require("main.talk")
-local BACKGROUND = require("main.ship.background")
 local SHIP = require("main.ship.ship_layout")
 local TOOL = require("main.selection.tooltips")
 local RET = require("main.selection.reticle")
@@ -240,10 +239,31 @@ local function updateDialog(dialogID)
 	end
 end
 
+local function hide_UI()
+	gui.set_enabled(dialog.action.frame, false)
+	gui.set_enabled(dialog.crew.frame, false)
+	gui.set_enabled(dialog.info.frame, false)
+	focus = {}
+end
+
+local function show_UI(type)
+	if type == hash("planet") then
+		gui.set_enabled(dialog.action.frame, true)
+		gui.set_enabled(dialog.crew.frame, true)
+		gui.set_enabled(dialog.info.frame, true)
+		focus = {action = true}
+	elseif type == hash("space") then
+		gui.set_enabled(dialog.crew.frame, true)
+		gui.set_enabled(dialog.info.frame, true)
+	end
+end
+
 local function travel(target, mission)
 	cargo.fuel = cargo.fuel - 1
 	cargo.rations = cargo.rations - #crew
 	planet = FPlanet.generatePlanet(target)
+	msg.post("/background", "space")
+	hide_UI()
 	updateDialog("info")
 end
 
@@ -256,6 +276,8 @@ local function checkMission(target)
 	end
 	return missionList
 end
+
+
 
 function init(self)
 
@@ -285,8 +307,9 @@ function init(self)
 
 	TOOL.setup()
 	RET.setup()
-	BACKGROUND.show(hash("space"))
+	msg.post("/background", "planet_fast")
 end
+
 
 function on_input(self, action_id, action)
 	if action_id == hash("click") and action.pressed then
@@ -669,13 +692,7 @@ function on_input(self, action_id, action)
 			end
 		end
 	elseif action_id == hash("enter") and action.pressed then
-		if sky then
-			BACKGROUND.show(hash("space"))
-			sky = false
-		else
-			BACKGROUND.show(hash("planet"))
-			sky = true
-		end
+		
 	else
 		for menu in pairs(focus) do
 			if menu == "action" then
@@ -769,5 +786,7 @@ function on_message(self, message_id, message, sender)
 				end
 			end
 		end
+	elseif message_id == hash("transition_done") then
+		show_UI(message.location)
 	end
 end
