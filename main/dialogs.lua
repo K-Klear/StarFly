@@ -6,6 +6,8 @@ local size = {
 	recruit = {x = 400, y = 200},
 	buy = {x = 400, y = 200},
 	action = {x = 640, y = 64},
+	action_travel = {x = 640, y = 64},
+	action_orbit = {x = 640, y = 64},
 	info = {x = 256, y = 96},
 	warning = {x = 280, y = 88},
 	crew = {x = 192, y = 328},
@@ -19,6 +21,8 @@ local pos = {
 	recruit = {x = 640, y = 460},
 	buy = {x = 640, y = 460},
 	action = {x = 640, y = 50},
+	action_travel = {x = 640, y = 50},
+	action_orbit = {x = 640, y = 50},
 	info = {x = 1280, y = 890},
 	warning = {x = 640, y = 460},
 	crew = {x = 6, y = 890},
@@ -134,9 +138,20 @@ function M.newDialog(kind, show)
 			work = gui.new_text_node(vmath.vector3(10, 6, 0), "JOBS"),
 			travel = gui.new_text_node(vmath.vector3(80, 6, 0), "TRAVEL")
 		}
+	elseif kind == "action_travel" then
+		gui.set_scale(dialog.frame, vmath.vector3(1, 1, 1))
+		dialog.btn = {
+			destination = gui.new_text_node(vmath.vector3(-80, 6, 0), "CHANGE DESTINATION"),
+			proceed = gui.new_text_node(vmath.vector3(80, 6, 0), "PROCEED")
+		}
+	elseif kind == "action_orbit" then
+		gui.set_scale(dialog.frame, vmath.vector3(1, 1, 1))
+		dialog.btn = {
+			destination = gui.new_text_node(vmath.vector3(-80, 6, 0), "CHANGE DESTINATION"),
+			land = gui.new_text_node(vmath.vector3(80, 6, 0), "LAND")
+		}
 	elseif kind == "info" then
 		gui.set_scale(dialog.frame, vmath.vector3(1, 1, 1))
-
 		dialog.lbl = {
 			fuel = gui.new_text_node(vmath.vector3(-32, -20, 0), "FUEL: XX"),
 			rations = gui.new_text_node(vmath.vector3(-32, -40, 0), "RATIONS: XX"),

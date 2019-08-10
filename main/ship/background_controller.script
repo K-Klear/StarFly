@@ -9,7 +9,7 @@ local function spawn_meteor()
 end
 
 local function transition_done()
-	msg.post("/main#interface", "transition_done", {location = location})
+	msg.post("/main#interface", "transition_done")
 end
 
 local function turn()
@@ -29,7 +29,15 @@ local function get_sky_colour()
 end
 
 function on_message(self, message_id, message, sender)
-	if message_id == hash("space_fast") then
+	if message_id == hash("setup") then
+		sprite.set_constant("/sky#sprite", "tint", get_sky_colour())
+		--go.set_position(vmath.vector3(640, 0, -0.5), "/sky")
+		--go.set_rotation(vmath.quat(0, 0, 0, 1), "/sky")
+		--msg.post("/sky", "enable")
+		--msg.post("/ground", "enable")
+		--go.set_position(vmath.vector3(640, 88, 0), "/ground")
+		location = hash("planet")
+	elseif message_id == hash("space_fast") then
 		msg.post("/sky", "disable")
 		msg.post("/ground", "disable")
 		particlefx.play("#stars")
@@ -47,6 +55,7 @@ function on_message(self, message_id, message, sender)
 		particlefx.stop("#engine")
 		if timer_meteor then timer.cancel(timer_meteor) end
 		location = hash("planet")
+		timer.delay(0.1, false, function() transition_done() end)
 	elseif message_id == hash("space") then
 		if location == hash("planet") then
 			location = hash("space")
@@ -58,6 +67,19 @@ function on_message(self, message_id, message, sender)
 		if location == hash("space") then
 			msg.post(".", "planet_fast")
 		end
+	elseif message_id == hash("land") then
+		sprite.set_constant("/sky#sprite", "tint", get_sky_colour())
+		go.set_position(vmath.vector3(640, -21280, -0.5), "/sky")
+		go.set_rotation(vmath.quat(0, 0, 0, 1), "/sky")
+		msg.post("/sky", "enable")
+		msg.post("/ground", "enable")
+		go.set_position(vmath.vector3(640, -900, 0), "/ground")
+		go.animate("/sky", "position.y", go.PLAYBACK_ONCE_FORWARD, 0, go.EASING_OUTCUBIC, 4)
+		go.animate("/ground", "position.y", go.PLAYBACK_ONCE_FORWARD, 88, go.EASING_OUTCUBIC, 4)
+		if timer_meteor then timer.cancel(timer_meteor) end
+		location = hash("planet")
+		timer.delay(1, false, function() particlefx.stop("#stars") end)
+		timer.delay(4, false, function() transition_done(); particlefx.stop("#engine") end)
 	elseif message_id == hash("warp") then
 		if location == hash("space") then
 			particlefx.play("#warp")

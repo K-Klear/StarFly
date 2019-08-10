@@ -241,6 +241,8 @@ end
 
 local function hide_UI()
 	gui.set_enabled(dialog.action.frame, false)
+	gui.set_enabled(dialog.action_travel.frame, false)
+	gui.set_enabled(dialog.action_orbit.frame, false)
 	gui.set_enabled(dialog.crew.frame, false)
 	gui.set_enabled(dialog.info.frame, false)
 	focus = {}
@@ -251,9 +253,17 @@ local function show_UI(type)
 		gui.set_enabled(dialog.action.frame, true)
 		gui.set_enabled(dialog.crew.frame, true)
 		gui.set_enabled(dialog.info.frame, true)
-	elseif type == hash("space") then
+		focus = {action = true, reticle = true, tooltip = true}
+	elseif type == hash("travel") then
 		gui.set_enabled(dialog.crew.frame, true)
 		gui.set_enabled(dialog.info.frame, true)
+		gui.set_enabled(dialog.action_travel.frame, true)
+		focus = {action_travel = true, reticle = true, tooltip = true}
+	elseif type == hash("orbit") then
+		gui.set_enabled(dialog.crew.frame, true)
+		gui.set_enabled(dialog.info.frame, true)
+		gui.set_enabled(dialog.action_orbit.frame, true)
+		focus = {action_orbit = true, reticle = true, tooltip = true}
 	end
 end
 
@@ -265,6 +275,19 @@ local function travel(target, mission)
 	hide_UI()
 	updateDialog("info", "-")
 	phase = hash("travel")
+end
+
+local function travel_orbit()
+	msg.post("/background", "warp")
+	hide_UI()
+	updateDialog("info")
+	phase = hash("orbit")
+end
+
+local function land()
+	msg.post("/background", "land")
+	hide_UI()
+	phase = hash("planet")
 end
 
 local function checkMission(target)
@@ -292,12 +315,15 @@ function init(self)
 	dialog.missions = DH.newDialog("work")
 	dialog.speech = DH.newDialog("speech")
 	dialog.event = DH.newDialog("event")
+	dialog.action_travel = DH.newDialog("action_travel")
+	dialog.action_orbit = DH.newDialog("action_orbit")
+	
 	gui.set_text(dialog.missions.lbl.none, "There are no ongoing jobs.")
 	gui.set_text(dialog.missions.lbl.title, "CHOOSE A MISSION")
 	
 	updateDialog("info")
 
-	for x = 1, 5 do
+	for x = 1, 3 do
 		table.insert(crew, FCrew.generateCrew())
 		text.setNameAvailability(crew[#crew].name.gender, crew[#crew].name.key, true)
 		crew[#crew].go = factory.create("/ship#spawn_crew", vmath.vector3(math.random(140, 240), 64, 0.1), nil, {crew = #crew, level = 2})
@@ -306,7 +332,7 @@ function init(self)
 
 	TOOL.setup()
 	RET.setup()
-	msg.post("/background", "planet_fast")
+	msg.post("/background", "setup")
 end
 
 
@@ -340,6 +366,8 @@ function on_input(self, action_id, action)
 					end
 				end
 			end
+		end
+		if focus.reticle then
 			for key, val in ipairs(RET.buttons) do
 				if gui.pick_node(val, action.x, action.y) then
 					local label = gui.get_text(val)
@@ -539,21 +567,15 @@ function on_input(self, action_id, action)
 							elseif selection == dialog.travel.btn.missionRim then
 								chosenTarget = "Rim"
 							end
-							if chosenTarget then
-								currentMission = checkMission(chosenTarget)
-								if #currentMission == 1 then
-									travel(chosenTarget)
-									gui.set_text(dialog.warning.lbl.text, "Job completed. You earned "..mission[currentMission[1]].wage)
-									gui.set_enabled(dialog.warning.frame, true)
-									focus = {warning = true}
-									cargo.money = cargo.money + mission[currentMission[1]].wage
-									table.remove(mission, currentMission[1])
-								else
-									updateDialog("missions")
-									selection = nil
-									gui.set_enabled(dialog.missions.frame, true)
-									focus = {missions = true}
-								end
+							currentMission = checkMission(chosenTarget)
+							if #currentMission == 1 then
+								currentMission = currentMission[1]
+								travel(chosenTarget)
+							elseif #currentMission > 1 then
+								updateDialog("missions")
+								selection = nil
+								gui.set_enabled(dialog.missions.frame, true)
+								focus = {missions = true}
 							end
 						end
 						selection = nil
@@ -635,19 +657,10 @@ function on_input(self, action_id, action)
 						gui.set_enabled(dialog.travel.frame, true)
 						focus = {travel = true}
 					elseif key == "confirm" and selection then
-						currentMission = {currentMission[selection]}
-						gui.set_color(dialog.missions.btn[selection].type, CON.COLOR_DEFAULT)
-						gui.set_color(dialog.missions.btn[selection].target, CON.COLOR_DEFAULT)
-						gui.set_color(dialog.missions.btn[selection].wage, CON.COLOR_DEFAULT)
+						currentMission = currentMission[selection]
 						selection = nil
 						gui.set_enabled(dialog.missions.frame, false)
-						travel(mission[currentMission[1]].target)
-						gui.set_text(dialog.warning.lbl.text, "Job completed. You earned "..mission[currentMission[1]].wage)
-						gui.set_enabled(dialog.warning.frame, true)
-						focus = {warning = true}
-						cargo.money = cargo.money + mission[currentMission[1]].wage
-						updateDialog("info")
-						table.remove(mission, currentMission[1])
+						travel(mission[currentMission].target)
 					end
 				elseif type(val) == "table" then
 					if (gui.pick_node(val.type, action.x, action.y) or gui.pick_node(val.target, action.x, action.y) or gui.pick_node(val.wage, action.x, action.y)) and gui.is_enabled(val.type) then
@@ -677,7 +690,7 @@ function on_input(self, action_id, action)
 								gui.set_enabled(dialog.recruit.frame, true)
 								focus = {recruit = true}
 							elseif v == "action" then
-								focus = {action = true, reticle = true, tooltip = true}
+								show_UI(phase)
 							end
 						end
 						speechResult = {}
@@ -693,15 +706,48 @@ function on_input(self, action_id, action)
 				end
 			end
 		end
-		if focus.event then
-			for key, val in pairs(dialog.event.btn) do
+		if focus.action_travel then
+			for key, val in pairs(dialog.action_travel.btn) do
 				if gui.pick_node(val, action.x, action.y) then
-					gui.set_enabled(dialog.event.frame, false)
-					focus = {action = true, reticle = true, tooltip = true}
+					if key == "proceed" then
+						travel_orbit()
+					end
 				end
 			end
 		end
-			
+		if focus.action_orbit then
+			for key, val in pairs(dialog.action_orbit.btn) do
+				if gui.pick_node(val, action.x, action.y) then
+					if key == "land" then
+						land()
+					end
+				end
+			end
+		end
+		if focus.event then
+			if EVENTS.event[EVENTS.stage].stage_type == "end" then
+				for key, val in pairs(dialog.event.btn) do
+					if gui.pick_node(val, action.x, action.y) then
+						if EVENTS.event[EVENTS.stage].effect == "recruit_random" and #crew < CON.MAXCREW then
+							table.insert(crew, FCrew.generateCrew())
+							text.setNameAvailability(crew[#crew].name.gender, crew[#crew].name.key, true)
+							crew[#crew].go = factory.create("/ship#spawn_crew", vmath.vector3(math.random(140, 240), 64, 0.1), nil, {crew = #crew, level = 2})
+						end
+						EVENTS.event = nil
+						EVENTS.stage = nil
+						gui.set_enabled(dialog.event.frame, false)
+						show_UI(phase)
+					end
+				end
+			elseif EVENTS.event[EVENTS.stage].stage_type == "choice" then
+				for key, val in pairs(dialog.event.btn) do
+					if gui.pick_node(val, action.x, action.y) then
+						EVENTS.stage = EVENTS.event[EVENTS.stage].choices[tonumber(string.sub(key, -1))].result
+						EVENTS.progress(dialog)
+					end
+				end
+			end
+		end
 		if not focus.reticle then
 			RET.hide()
 			RET.hide_permanent()
@@ -727,6 +773,7 @@ function on_input(self, action_id, action)
 				if val.pos then
 					if action.x > val.pos.x and action.x < val.pos.x + 40 and action.y > val.pos.y and action.y < val.pos.y + 78 then
 						_selector = val
+						_selector.size = vmath.vector3(40, 78, 0)
 						_thing = key
 					end
 				end
@@ -784,15 +831,15 @@ end
 
 function on_message(self, message_id, message, sender)
 	if message_id == hash("update_position") then
+		crew[message.crew].pos = message.pos
+		crew[message.crew].pos.x = crew[message.crew].pos.x - 20
 		local no_button = true
 		for key, val in ipairs(RET.buttons) do
 			if gui.is_enabled(val) and gui.pick_node(val, cursor_position.x, cursor_position.y) then
 				no_button = false
 			end
 		end
-		if focus.action and no_button then
-			crew[message.crew].pos = message.pos
-			crew[message.crew].pos.x = crew[message.crew].pos.x - 20
+		if focus.reticle and no_button then
 			if cursor_position.x > message.pos.x and cursor_position.x < message.pos.x + 40 and cursor_position.y > message.pos.y and cursor_position.y < message.pos.y + 78 then
 				RET.show(message.pos, vmath.vector3(40, 78, 0), message.crew)
 				TOOL.show(getSelectorText(), cursor_position)
@@ -807,35 +854,24 @@ function on_message(self, message_id, message, sender)
 	elseif message_id == hash("transition_done") then
 		if phase == hash("travel") then
 			gui.set_enabled(dialog.event.frame, true)
-			for key, val in pairs(dialog.event.btn) do gui.set_enabled(val, false) end
-			EVENTS.event = EVENTS.getEvent()
+			EVENTS.event = EVENTS.list[EVENTS.getEvent()]
 			EVENTS.stage = 1
-			local finished = false
-			repeat
-				if EVENTS.list[EVENTS.event][EVENTS.stage].stage_type == "choice" then
-					for num, table in ipairs(EVENTS.list[EVENTS.event][EVENTS.stage].values.choices) do
-						gui.set_text(dialog.event.btn["option"..num], table.text)
-						gui.set_enabled(dialog.event.btn["option"..num], true)
-					end
-					gui.set_text(dialog.event.lbl.title, EVENTS.list[EVENTS.event][EVENTS.stage].values.title)
-					gui.set_text(dialog.event.lbl.description, EVENTS.list[EVENTS.event][EVENTS.stage].values.description)
-					finished = true
-				elseif EVENTS.list[EVENTS.event][EVENTS.stage].stage_type == "dice" then
-					if DICE.skillCheck(EVENTS.list[EVENTS.event][EVENTS.stage].dice_type, EVENTS.list[EVENTS.event][EVENTS.stage].dice_difficulty) then
-						EVENTS.stage = EVENTS.list[EVENTS.event][EVENTS.stage].success
-					else
-						EVENTS.stage = EVENTS.list[EVENTS.event][EVENTS.stage].failure
-					end
-				elseif EVENTS.list[EVENTS.event][EVENTS.stage].stage_type == "end" then
-					gui.set_text(dialog.event.btn.option1, "OK")
-					gui.set_enabled(dialog.event.btn.option1, true)
-					gui.set_text(dialog.event.lbl.title, EVENTS.list[EVENTS.event][EVENTS.stage].values.title)
-					gui.set_text(dialog.event.lbl.description, EVENTS.list[EVENTS.event][EVENTS.stage].values.description)
-					finished = true
-				end
-			until finished
+			EVENTS.progress(dialog)
 			focus = {event = true}
+		elseif phase == hash("orbit") then
+			gui.set_enabled(dialog.action_orbit.frame, true)
+			show_UI(phase)
+		elseif phase == hash("planet") then
+			show_UI(phase)
+			if currentMission then
+				gui.set_text(dialog.warning.lbl.text, "Job completed. You earned "..mission[currentMission].wage)
+				gui.set_enabled(dialog.warning.frame, true)
+				focus = {warning = true}
+				cargo.money = cargo.money + mission[currentMission].wage
+				table.remove(mission, currentMission)
+				updateDialog("info")
+				currentMission = nil
+			end
 		end
-		--show_UI(message.location)
 	end
 end
