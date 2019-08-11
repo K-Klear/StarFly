@@ -3,7 +3,7 @@
 Version 0.3:
 
 - Space travel over the three stages (planet/space/orbit) implemented including simple transition animations.
-- Got a working event system with proper branching etc.
+- Got a working event system with proper branching etc. These can be created in Twine and imported as JSON. (Thanks @pawel.jarosz21!)
 - Skillchecks are pretty barebones (and deteministic), but they do for now
 - Missions now get correctly finished on arrival
 - Improved the UI focus system a bit

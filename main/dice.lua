@@ -25,6 +25,9 @@ function M.skillCheck(action, success)
 	elseif action == "detect" then
 		result = UPG.list.comms[UPG.fitted.comms].strength
 		result = result * (crew[FCrew.getRole("comms")].skills.comms * 2)
+	elseif action == "pilot" then
+		result = UPG.list.thrusters[UPG.fitted.thrusters].maneuverability
+		result = result * (crew[FCrew.getRole("pilot")].skills.pilot * 2)
 	elseif action == "luck" then
 		result = math.random()
 	end

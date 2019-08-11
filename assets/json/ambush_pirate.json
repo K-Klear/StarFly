@@ -1,0 +1,166 @@
+{
+  "passages": [
+    {
+      "text": "[[auto->Pirate ambush!]][[auto->Ambushed by pirates!]]",
+      "links": [
+        {
+          "name": "auto",
+          "link": "Pirate ambush!",
+          "pid": "2"
+        },
+        {
+          "name": "auto",
+          "link": "Ambushed by pirates!",
+          "pid": "3"
+        }
+      ],
+      "name": "comm_check",
+      "pid": "1",
+      "position": {
+        "x": "480",
+        "y": "240"
+      },
+      "tags": [
+        "dice",
+        "test:detect",
+        "difficulty:0.8"
+      ]
+    },
+    {
+      "text": "A pirate shit was hoping to ambush you, but your crew detected it in time and gave you some precious time to react.[[Fight]][[Flee]]",
+      "links": [
+        {
+          "name": "Fight",
+          "link": "Fight",
+          "pid": "4"
+        },
+        {
+          "name": "Flee",
+          "link": "Flee",
+          "pid": "5"
+        }
+      ],
+      "name": "Pirate ambush!",
+      "pid": "2",
+      "position": {
+        "x": "333",
+        "y": "506"
+      },
+      "tags": [
+        "choice"
+      ]
+    },
+    {
+      "text": "A pirate ship got the drop on you. You don't have a choice - you have to fight.[[Fight!->Fight]]",
+      "links": [
+        {
+          "name": "Fight!",
+          "link": "Fight",
+          "pid": "4"
+        }
+      ],
+      "name": "Ambushed by pirates!",
+      "pid": "3",
+      "position": {
+        "x": "714",
+        "y": "506"
+      },
+      "tags": [
+        "choice"
+      ]
+    },
+    {
+      "text": "[[Victory]][[The pirates hit you hard]]",
+      "links": [
+        {
+          "name": "Victory",
+          "link": "Victory",
+          "pid": "8"
+        },
+        {
+          "name": "The pirates hit you hard",
+          "link": "The pirates hit you hard",
+          "pid": "7"
+        }
+      ],
+      "name": "Fight",
+      "pid": "4",
+      "position": {
+        "x": "714",
+        "y": "656"
+      },
+      "tags": [
+        "dice",
+        "test:shoot",
+        "difficulty:1"
+      ]
+    },
+    {
+      "text": "[[You've evaded the pirates]][[The pirates hit you hard]]",
+      "links": [
+        {
+          "name": "You've evaded the pirates",
+          "link": "You've evaded the pirates",
+          "pid": "6"
+        },
+        {
+          "name": "The pirates hit you hard",
+          "link": "The pirates hit you hard",
+          "pid": "7"
+        }
+      ],
+      "name": "Flee",
+      "pid": "5",
+      "position": {
+        "x": "408",
+        "y": "656"
+      },
+      "tags": [
+        "dice",
+        "test:flee",
+        "difficulty:11"
+      ]
+    },
+    {
+      "text": "You quickly change the course and flee as fast as you can. The pirates try to pursue, but you soon leave them far behind. You're safe now.",
+      "name": "You've evaded the pirates",
+      "pid": "6",
+      "position": {
+        "x": "333",
+        "y": "806"
+      },
+      "tags": [
+        "end"
+      ]
+    },
+    {
+      "text": "Unable to outrun or outgun the pirates, your ship takes heavy damage. Damage hasn't been implemented yet, though. Lucky bastard.",
+      "name": "The pirates hit you hard",
+      "pid": "7",
+      "position": {
+        "x": "483",
+        "y": "806"
+      },
+      "tags": [
+        "end"
+      ]
+    },
+    {
+      "text": "Your weapons tear into the pirate ship and soon you see it exploding violently. You are victorious.",
+      "name": "Victory",
+      "pid": "8",
+      "position": {
+        "x": "714",
+        "y": "806"
+      },
+      "tags": [
+        "end"
+      ]
+    }
+  ],
+  "name": "ambush_pirate",
+  "startnode": "1",
+  "creator": "Twine",
+  "creator-version": "2.3.3",
+  "ifid": "45BB730A-FCD8-4623-8DCA-AE86EE7E9E73"
+}

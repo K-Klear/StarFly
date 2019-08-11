@@ -1,0 +1,134 @@
+{
+  "passages": [
+    {
+      "text": "[[auto->A distress signal!]][[auto->An uneventful journey]]",
+      "links": [
+        {
+          "name": "auto",
+          "link": "A distress signal!",
+          "pid": "2"
+        },
+        {
+          "name": "auto",
+          "link": "An uneventful journey",
+          "pid": "3"
+        }
+      ],
+      "name": "comm_check",
+      "pid": "1",
+      "position": {
+        "x": "486",
+        "y": "247"
+      },
+      "tags": [
+        "dice",
+        "test:detect",
+        "difficulty:0.4"
+      ]
+    },
+    {
+      "text": "You have detected an emergency signal from a vessel. Someone may be in trouble. Or they are setting an ambush...[[Investigate->Investigate]][[Ignore->Not your problem]]",
+      "links": [
+        {
+          "name": "Investigate",
+          "link": "Investigate",
+          "pid": "4"
+        },
+        {
+          "name": "Ignore",
+          "link": "Not your problem",
+          "pid": "5"
+        }
+      ],
+      "name": "A distress signal!",
+      "pid": "2",
+      "position": {
+        "x": "290",
+        "y": "516"
+      },
+      "tags": [
+        "choice"
+      ]
+    },
+    {
+      "text": "Nothing of importance happened during travel.",
+      "name": "An uneventful journey",
+      "pid": "3",
+      "position": {
+        "x": "721",
+        "y": "510"
+      },
+      "tags": [
+        "end"
+      ]
+    },
+    {
+      "text": "[[->A survivor!]][[->Dead ship]]",
+      "links": [
+        {
+          "name": "",
+          "link": "A survivor!",
+          "pid": "6"
+        },
+        {
+          "name": "",
+          "link": "Dead ship",
+          "pid": "7"
+        }
+      ],
+      "name": "Investigate",
+      "pid": "4",
+      "position": {
+        "x": "215",
+        "y": "666"
+      },
+      "tags": [
+        "dice",
+        "test:luck",
+        "difficulty:0.5"
+      ]
+    },
+    {
+      "text": "Whoever sent the signal will have to fend for himself.",
+      "name": "Not your problem",
+      "pid": "5",
+      "position": {
+        "x": "365",
+        "y": "666"
+      },
+      "tags": [
+        "end"
+      ]
+    },
+    {
+      "text": "You find a damaged vessel and rescue one of its crew. They agree to join you.",
+      "name": "A survivor!",
+      "pid": "6",
+      "position": {
+        "x": "140",
+        "y": "816"
+      },
+      "tags": [
+        "end",
+        "effect:recruit_random"
+      ]
+    },
+    {
+      "text": "There's nothing you can do to help here. There are no survivors and nothing of value.",
+      "name": "Dead ship",
+      "pid": "7",
+      "position": {
+        "x": "290",
+        "y": "815"
+      },
+      "tags": [
+        "end"
+      ]
+    }
+  ],
+  "name": "distress_signal_true",
+  "startnode": "1",
+  "creator": "Twine",
+  "creator-version": "2.3.3",
+  "ifid": "3FA56D53-7677-4F9C-9BF2-B37CF4D1D68A"
+}

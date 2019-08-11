@@ -1,0 +1,78 @@
+{
+  "passages": [
+    {
+      "text": "You are flying right into an asteroid field. Hold on tight, this will be dangerous.[[Fly through->pilot_check]]",
+      "links": [
+        {
+          "name": "Fly through",
+          "link": "pilot_check",
+          "pid": "4"
+        }
+      ],
+      "name": "Asteroid field ahead!",
+      "pid": "1",
+      "position": {
+        "x": "559",
+        "y": "241"
+      },
+      "tags": [
+        "choice"
+      ]
+    },
+    {
+      "text": "You pilot skillfully takes you through the asteroid swarm without scratching the paint. You breathe a sigh of relief as you emerge on the other side.",
+      "name": "You got through",
+      "pid": "2",
+      "position": {
+        "x": "443",
+        "y": "654"
+      },
+      "tags": [
+        "end"
+      ]
+    },
+    {
+      "text": "You nervously listen as the hull is battered by asteroids of all sizes. Just as you think the next hit might be your last, your ship energes on the other side, although heavily damaged. Luckily, damage still haven't been implemented, so everything is fine. You might want to put someone else in the cockpit, though.",
+      "name": "Heavy damage",
+      "pid": "3",
+      "position": {
+        "x": "776",
+        "y": "641"
+      },
+      "tags": [
+        "end"
+      ]
+    },
+    {
+      "text": "[[You got through]][[Heavy damage]]",
+      "links": [
+        {
+          "name": "You got through",
+          "link": "You got through",
+          "pid": "2"
+        },
+        {
+          "name": "Heavy damage",
+          "link": "Heavy damage",
+          "pid": "3"
+        }
+      ],
+      "name": "pilot_check",
+      "pid": "4",
+      "position": {
+        "x": "615",
+        "y": "499"
+      },
+      "tags": [
+        "dice",
+        "test:pilot",
+        "difficulty:4.5"
+      ]
+    }
+  ],
+  "name": "asteroids",
+  "startnode": "1",
+  "creator": "Twine",
+  "creator-version": "2.3.3",
+  "ifid": "DE13FA43-3639-466F-9D42-91EBFFDC9262"
+}

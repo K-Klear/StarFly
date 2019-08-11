@@ -297,7 +297,7 @@ local function checkMission(target)
 			table.insert(missionList, key)
 		end
 	end
-	return missionList
+	if #missionList > 0 then return missionList end
 end
 
 
@@ -567,15 +567,17 @@ function on_input(self, action_id, action)
 							elseif selection == dialog.travel.btn.missionRim then
 								chosenTarget = "Rim"
 							end
-							currentMission = checkMission(chosenTarget)
-							if #currentMission == 1 then
-								currentMission = currentMission[1]
-								travel(chosenTarget)
-							elseif #currentMission > 1 then
-								updateDialog("missions")
-								selection = nil
-								gui.set_enabled(dialog.missions.frame, true)
-								focus = {missions = true}
+							if chosenTarget then
+								currentMission = checkMission(chosenTarget)
+								if #currentMission == 1 then
+									currentMission = currentMission[1]
+									travel(chosenTarget)
+								elseif #currentMission > 1 then
+									updateDialog("missions")
+									selection = nil
+									gui.set_enabled(dialog.missions.frame, true)
+									focus = {missions = true}
+								end
 							end
 						end
 						selection = nil
@@ -725,10 +727,11 @@ function on_input(self, action_id, action)
 			end
 		end
 		if focus.event then
-			if EVENTS.event[EVENTS.stage].stage_type == "end" then
+			local current_stage = EVENTS.event[EVENTS.stage]
+			if current_stage.stage_type == "end" then
 				for key, val in pairs(dialog.event.btn) do
 					if gui.pick_node(val, action.x, action.y) then
-						if EVENTS.event[EVENTS.stage].effect == "recruit_random" and #crew < CON.MAXCREW then
+						if current_stage.effect == "recruit_random" and #crew < CON.MAXCREW then
 							table.insert(crew, FCrew.generateCrew())
 							text.setNameAvailability(crew[#crew].name.gender, crew[#crew].name.key, true)
 							crew[#crew].go = factory.create("/ship#spawn_crew", vmath.vector3(math.random(140, 240), 64, 0.1), nil, {crew = #crew, level = 2})
@@ -739,10 +742,10 @@ function on_input(self, action_id, action)
 						show_UI(phase)
 					end
 				end
-			elseif EVENTS.event[EVENTS.stage].stage_type == "choice" then
+			elseif current_stage.stage_type == "choice" then
 				for key, val in pairs(dialog.event.btn) do
 					if gui.pick_node(val, action.x, action.y) then
-						EVENTS.stage = EVENTS.event[EVENTS.stage].choices[tonumber(string.sub(key, -1))].result
+						EVENTS.stage = current_stage.links[tonumber(string.sub(key, -1))].pid + 0
 						EVENTS.progress(dialog)
 					end
 				end
@@ -756,7 +759,7 @@ function on_input(self, action_id, action)
 			TOOL.hide()
 		end
 	elseif action_id == hash("enter") and action.pressed then
-
+	
 	else
 		if focus.tooltip or focus.reticle then
 			cursor_position.x = action.x; cursor_position.y = action.y
@@ -853,10 +856,7 @@ function on_message(self, message_id, message, sender)
 		end
 	elseif message_id == hash("transition_done") then
 		if phase == hash("travel") then
-			gui.set_enabled(dialog.event.frame, true)
-			EVENTS.event = EVENTS.list[EVENTS.getEvent()]
-			EVENTS.stage = 1
-			EVENTS.progress(dialog)
+			EVENTS.new_event(dialog)
 			focus = {event = true}
 		elseif phase == hash("orbit") then
 			gui.set_enabled(dialog.action_orbit.frame, true)

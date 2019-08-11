@@ -221,8 +221,8 @@ function M.newDialog(kind, show)
 		gui.set_line_break(dialog.lbl.description, true)
 		dialog.btn = {
 			option1 = gui.new_text_node(vmath.vector3(-80, -126, 0), "EXTINGUISH IT"),
-			option2 = gui.new_text_node(vmath.vector3(0, -126, 0), "NO WATER"),
-			option3 = gui.new_text_node(vmath.vector3(80, -126, 0), "LET IT BURN")
+			option2 = gui.new_text_node(vmath.vector3(80, -126, 0), "NO WATER"),
+			option3 = gui.new_text_node(vmath.vector3(0, -126, 0), "LET IT BURN")
 		}
 	end
 
