@@ -10,7 +10,7 @@ local size = {
 	action_orbit = {x = 640, y = 64},
 	info = {x = 256, y = 96},
 	warning = {x = 280, y = 88},
-	crew = {x = 192, y = 328},
+	crew = {x = 474, y = 280},
 	work = {x = 300, y = 188},
 	speech = {x = 384, y = 318},
 	event = {x = 384, y = 318},
@@ -25,15 +25,14 @@ local pos = {
 	action_orbit = {x = 640, y = 50},
 	info = {x = 1280, y = 890},
 	warning = {x = 640, y = 460},
-	crew = {x = 6, y = 890},
+	crew = {x = 640, y = 460},
 	work = {x = 640, y = 460},
 	speech = {x = 640, y = 480},
 	event = {x = 640, y = 480},
 }
 
 local pivot = {
-	info = gui.PIVOT_NE,
-	crew = gui.PIVOT_NW
+	info = gui.PIVOT_NE
 }
 
 function M.newDialog(kind, show)
@@ -135,8 +134,9 @@ function M.newDialog(kind, show)
 			repair = gui.new_text_node(vmath.vector3(-200, 6, 0), "REPAIR"),
 			upgrade = gui.new_text_node(vmath.vector3(-130, 6, 0), "UPGRADE"),
 			recruit = gui.new_text_node(vmath.vector3(-60, 6, 0), "RECRUIT"),
-			work = gui.new_text_node(vmath.vector3(10, 6, 0), "JOBS"),
-			travel = gui.new_text_node(vmath.vector3(80, 6, 0), "TRAVEL")
+			crew = gui.new_text_node(vmath.vector3(10, 6, 0), "CREW"),
+			work = gui.new_text_node(vmath.vector3(80, 6, 0), "JOBS"),
+			travel = gui.new_text_node(vmath.vector3(150, 6, 0), "TRAVEL")
 		}
 	elseif kind == "action_travel" then
 		gui.set_scale(dialog.frame, vmath.vector3(1, 1, 1))
@@ -167,28 +167,32 @@ function M.newDialog(kind, show)
 		gui.set_pivot(dialog.lbl.settlement, gui.PIVOT_W)
 		gui.set_pivot(dialog.lbl.government, gui.PIVOT_W)
 	elseif kind == "crew" then
-		gui.set_scale(dialog.frame, vmath.vector3(1, 1, 1))
+		--gui.set_scale(dialog.frame, vmath.vector3(1, 1, 1))
 		dialog.ico = {}
 		dialog.lbl = {
-			title = gui.new_text_node(vmath.vector3(96, -16, 0), "CREW")
+			title = gui.new_text_node(vmath.vector3(0, 124, 0), "CREW"),
+			name = gui.new_text_node(vmath.vector3(-176, 104, 0), "NAME"),
+			role = gui.new_text_node(vmath.vector3(-90, 104, 0), "ROLE"),
+			wage = gui.new_text_node(vmath.vector3(-30, 104, 0), "WAGE"),
+			ask = gui.new_text_node(vmath.vector3(70, 104, 0), "ASK THEM ABOUT:"),
 		}
 		dialog.btn = {
-			pilotR = gui.new_text_node(vmath.vector3(6, -36, 0), "PILOT"),
-			commsR = gui.new_text_node(vmath.vector3(6, -56, 0), "COMMS"),
-			mechR = gui.new_text_node(vmath.vector3(6, -76, 0), "ENGINEER"),
-			gunnerR = gui.new_text_node(vmath.vector3(6, -96, 0), "GUNNER"),
-			medicR = gui.new_text_node(vmath.vector3(6, -116, 0), "MEDIC"),
 		}
 		for x = 1, 9 do
-			dialog.btn["crew"..x] = gui.new_text_node(vmath.vector3(32, -116 - 20 * x, 0), "Crewman")
+			dialog.lbl[x] = {
+				name = gui.new_text_node(vmath.vector3(-176, 104 - 20 * x, 0), "Crewman"),
+				wage = gui.new_text_node(vmath.vector3(-30, 104 - 20 * x, 0), "10%")
+			}
+			dialog.btn[x] = {
+				role = gui.new_text_node(vmath.vector3(-90, 104 - 20 * x, 0), "Engineer"),
+				background = gui.new_text_node(vmath.vector3(40, 104 - 20 * x, 0), "BACKGROUND"),
+				skills = gui.new_text_node(vmath.vector3(110, 104 - 20 * x, 0), "SKILLS"),
+				dismiss = gui.new_text_node(vmath.vector3(170, 104 - 20 * x, 0), "DISMISS")
+			}
 		end
-		dialog.btn.pilot = gui.new_text_node(vmath.vector3(100, -36, 0), "Name of Pilot")
-		dialog.btn.comms = gui.new_text_node(vmath.vector3(100, -56, 0), "Name of Comms")
-		dialog.btn.mech = gui.new_text_node(vmath.vector3(100, -76, 0), "Name of Mech")
-		dialog.btn.gunner = gui.new_text_node(vmath.vector3(100, -96, 0), "Name of Guner")
-		dialog.btn.medic = gui.new_text_node(vmath.vector3(100, -116, 0), "Name of Medic")
+		
 		for key, val in pairs(dialog.btn) do
-			gui.set_pivot(val, gui.PIVOT_W)
+			--gui.set_pivot(val, gui.PIVOT_W)
 		end
 	elseif kind == "warning" then
 		dialog.lbl = {
@@ -227,12 +231,24 @@ function M.newDialog(kind, show)
 	end
 
 	for key, val in pairs(dialog.lbl) do
-		gui.set_parent(val, dialog.frame)
-		gui.set_layer(val, "dialog")
+		if type(val) == table then
+			for k, v in ipairs(val) do
+				gui.set_parent(v, dialog.frame)
+				gui.set_layer(v, "dialog")
+			end
+		else
+			gui.set_parent(val, dialog.frame)
+			gui.set_layer(val, "dialog")
+		end
 	end
 
 	for key, val in pairs(dialog.btn) do
-		if type(val) == "userdata" then
+		if type(val) == table then
+			for k, v in ipairs(val) do
+				gui.set_parent(v, dialog.frame)
+				gui.set_layer(v, "dialog")
+			end
+		else
 			gui.set_parent(val, dialog.frame)
 			gui.set_layer(val, "dialog")
 		end

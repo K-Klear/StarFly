@@ -36,7 +36,7 @@ local statsOrder = {pilot = 1, mech = 2, comms = 3, gunner = 4, medic = 5, fight
 
 local selection
 local currentMission
-local cursor_position = vmath.vector3(0, 0, 0)
+local cursor_position = vmath.vector3(0, 0, 1)
 
 local speechResult = {
 	reply1 = {},
@@ -48,9 +48,15 @@ local function getSelectorText(target)
 	target = target or RET.target
 	local type = type(target)
 	if type == "string" then
-		return SHIP[target].name
+		return SHIP[target].name, SHIP[target].job
 	elseif type == "number" then
-		return text.getName(crew[target])
+		local icon = crew[target].role
+		if icon == "passenger" then
+			icon = "none"
+		elseif not icon then
+			icon = "empty"
+		end
+		return text.getName(crew[target]), icon
 	end
 end
 
@@ -115,54 +121,7 @@ local function updateDialog(dialogID, location)
 		gui.set_text(dialog.info.lbl.settlement, location or planet.settlement)
 		gui.set_text(dialog.info.lbl.government, planet.government)
 	elseif dialogID == "crew" then
-		if selection then gui.set_color(dialog.crew.btn[selection], CON.COLOR_DEFAULT) end
-		selection = nil
-		dialog.crew.selection = {}		-- used to assign crewembers to different dialogs
-		local iconPos = {
-			pilot = vmath.vector3(86, -36, 0),
-			comms = vmath.vector3(86, -56, 0),
-			mech = vmath.vector3(86, -76, 0),
-			gunner = vmath.vector3(86, -96, 0),
-			medic = vmath.vector3(86, -116, 0)
-		}
-		for key, val in ipairs(dialog.crew.ico) do
-			for k, v in pairs(val) do
-				gui.delete_node(v)
-			end
-		end
-		dialog.crew.ico = {}
-		for key, val in pairs(dialog.crew.btn) do
-			if string.sub(key, 1, 4) == "crew" then
-				gui.set_enabled(val, false)
-			end
-		end
-		gui.set_enabled(dialog.crew.btn.pilot, false)
-		gui.set_enabled(dialog.crew.btn.comms, false)
-		gui.set_enabled(dialog.crew.btn.mech, false)
-		gui.set_enabled(dialog.crew.btn.medic, false)
-		gui.set_enabled(dialog.crew.btn.gunner, false)
-		local y = 1
-		for key, val in ipairs(crew) do
-			if val.role then
-				gui.set_text(dialog.crew.btn[val.role], text.getName(val))
-				gui.set_enabled(dialog.crew.btn[val.role], true)
-				table.insert(dialog.crew.ico, FACE.drawFace(val.face, iconPos[val.role], 1))
-				dialog.crew.selection[val.role] = key
-			else
-				gui.set_text(dialog.crew.btn["crew"..y], text.getName(val))
-				gui.set_enabled(dialog.crew.btn["crew"..y], true)
-				table.insert(dialog.crew.ico, FACE.drawFace(val.face, vmath.vector3(16, -116 - 20 * y, 0), 1))
-				dialog.crew.selection["crew"..y] = key
-				y = y + 1
-			end
-		end
-		for key, val in ipairs(dialog.crew.ico) do
-			for k, v in pairs(val) do
-				gui.set_parent(v, dialog.crew.frame)
-			end
-			gui.move_above(val.hair, val.forehead)
-			gui.move_below(val.body, val.chin)
-		end
+		
 	elseif dialogID == "travel" then
 		gui.set_color(dialog.travel.btn.missionCore, CON.COLOR_DISABLED)
 		gui.set_color(dialog.travel.btn.missionFrontier, CON.COLOR_DISABLED)
@@ -216,7 +175,11 @@ local function updateDialog(dialogID, location)
 			gui.set_color(dialog.work.btn.confirm, CON.COLOR_DISABLED)
 		end
 	elseif dialogID == "missions" then
+		
 		for x = 1, 5 do
+			gui.set_color(dialog.missions.btn[x].type, CON.COLOR_DEFAULT)
+			gui.set_color(dialog.missions.btn[x].target, CON.COLOR_DEFAULT)
+			gui.set_color(dialog.missions.btn[x].wage, CON.COLOR_DEFAULT)
 			if x > #currentMission then
 				gui.set_enabled(dialog.missions.btn[x].type, false)
 				gui.set_enabled(dialog.missions.btn[x].target, false)
@@ -243,7 +206,6 @@ local function hide_UI()
 	gui.set_enabled(dialog.action.frame, false)
 	gui.set_enabled(dialog.action_travel.frame, false)
 	gui.set_enabled(dialog.action_orbit.frame, false)
-	gui.set_enabled(dialog.crew.frame, false)
 	gui.set_enabled(dialog.info.frame, false)
 	focus = {}
 end
@@ -251,16 +213,13 @@ end
 local function show_UI(type)
 	if type == hash("planet") then
 		gui.set_enabled(dialog.action.frame, true)
-		gui.set_enabled(dialog.crew.frame, true)
 		gui.set_enabled(dialog.info.frame, true)
 		focus = {action = true, reticle = true, tooltip = true}
 	elseif type == hash("travel") then
-		gui.set_enabled(dialog.crew.frame, true)
 		gui.set_enabled(dialog.info.frame, true)
 		gui.set_enabled(dialog.action_travel.frame, true)
 		focus = {action_travel = true, reticle = true, tooltip = true}
 	elseif type == hash("orbit") then
-		gui.set_enabled(dialog.crew.frame, true)
 		gui.set_enabled(dialog.info.frame, true)
 		gui.set_enabled(dialog.action_orbit.frame, true)
 		focus = {action_orbit = true, reticle = true, tooltip = true}
@@ -399,51 +358,6 @@ function on_input(self, action_id, action)
 							crew[RET.target_permanent].role = position
 							msg.post(crew[RET.target_permanent].go, "move", {target = RET.target})
 							updateDialog("crew")
-						end
-					end
-				end
-			else
-				for key, val in pairs(dialog.crew.btn) do
-					if gui.pick_node(val, action.x, action.y) and gui.is_enabled(val) then
-						for x = 1, 9 do
-							if key == "crew"..x then
-								if selection then gui.set_color(dialog.crew.btn[selection], CON.COLOR_DEFAULT) end
-								selection = "crew"..x
-								gui.set_color(val, CON.COLOR_SELECTION)
-							end
-						end
-						if key == "pilot" or key == "mech" or key == "comms" or key == "medic" or key == "gunner" then
-							if selection then gui.set_color(dialog.crew.btn[selection], CON.COLOR_DEFAULT) end
-							selection = key
-							gui.set_color(val, CON.COLOR_SELECTION)
-						end
-						if selection then
-							if key == "pilotR" then
-								if dialog.crew.selection.pilot then crew[dialog.crew.selection.pilot].role = nil end
-								crew[dialog.crew.selection[selection]].role = "pilot"
-								msg.post(crew[dialog.crew.selection[selection]].go, "move", {target = "COCKPIT"})
-								updateDialog("crew")
-							elseif key == "commsR" then
-								if dialog.crew.selection.comms then crew[dialog.crew.selection.comms].role = nil end
-								crew[dialog.crew.selection[selection]].role = "comms"
-								msg.post(crew[dialog.crew.selection[selection]].go, "move", {target = "COMMS"})
-								updateDialog("crew")
-							elseif key == "mechR" then
-								if dialog.crew.selection.mech then crew[dialog.crew.selection.mech].role = nil end
-								crew[dialog.crew.selection[selection]].role = "mech"
-								msg.post(crew[dialog.crew.selection[selection]].go, "move", {target = "ENGINE2"})
-								updateDialog("crew")
-							elseif key == "medicR" then
-								if dialog.crew.selection.medic then crew[dialog.crew.selection.medic].role = nil end
-								crew[dialog.crew.selection[selection]].role = "medic"
-								msg.post(crew[dialog.crew.selection[selection]].go, "move", {target = "BUNK4"})
-								updateDialog("crew")
-							elseif key == "gunnerR" then
-								if dialog.crew.selection.gunner then crew[dialog.crew.selection.gunner].role = nil end
-								crew[dialog.crew.selection[selection]].role = "gunner"
-								msg.post(crew[dialog.crew.selection[selection]].go, "move", {target = "GUN"})
-								updateDialog("crew")
-							end
 						end
 					end
 				end
@@ -789,7 +703,10 @@ function on_input(self, action_id, action)
 			end
 			if _selector then
 				if focus.reticle then RET.show(_selector.pos, _selector.size, _thing) end
-				if focus.tooltip then TOOL.show(getSelectorText(), cursor_position) end
+				if focus.tooltip then
+					local text, ico = getSelectorText()
+					TOOL.show(text, cursor_position, ico)
+				end
 			else
 				RET.hide()
 				TOOL.hide()
@@ -845,13 +762,14 @@ function on_message(self, message_id, message, sender)
 		if focus.reticle and no_button then
 			if cursor_position.x > message.pos.x and cursor_position.x < message.pos.x + 40 and cursor_position.y > message.pos.y and cursor_position.y < message.pos.y + 78 then
 				RET.show(message.pos, vmath.vector3(40, 78, 0), message.crew)
-				TOOL.show(getSelectorText(), cursor_position)
+				local text, ico = getSelectorText()
+				TOOL.show(text, cursor_position, ico)
 			elseif RET.target == message.crew then
 				RET.hide()
 				TOOL.hide()
 			end
 			if RET.target_permanent == message.crew then
-				RET.move_permanent(message.pos)
+				RET.move_permanent(message.pos, message.crew)
 			end
 		end
 	elseif message_id == hash("transition_done") then

@@ -2,6 +2,7 @@ local SHIP = require("main.ship.ship_layout")
 local text = require("main.text")
 
 local RET = {buttons = {}}
+local icon
 local button_count = 3
 
 local button_offset = {
@@ -10,7 +11,8 @@ local button_offset = {
 	vmath.vector3(18, 96, 0)
 }
 
-local label_offset = vmath.vector3(18, -16, 0)
+local label_offset = vmath.vector3(12, -16, 0)
+local icon_offset = vmath.vector3(-8, -15, 0)
 
 local button_pivot = {
 	gui.PIVOT_E,
@@ -37,8 +39,10 @@ function RET.setup()
 	end
 
 	RET.label = gui.new_text_node(vmath.vector3(1, 1, 1), "")
-	gui.set_pivot(RET.label, gui.PIVOT_CENTER)
+	gui.set_pivot(RET.label, gui.PIVOT_W)
 	gui.set_enabled(RET.label, false)
+	icon = gui.new_box_node(vmath.vector3(1, 1, 1), vmath.vector3(32, 32, 32))
+	gui.set_texture(icon, hash("icons"))
 end
 
 function RET.show(position, size, target)
@@ -48,6 +52,7 @@ function RET.show(position, size, target)
 	gui.set_enabled(RET.frame, true)
 	RET.target = target
 end
+
 
 function RET.show_permanent(position, size, target, button_data)
 	size = size or vmath.vector3(40, 78, 0)
@@ -65,18 +70,44 @@ function RET.show_permanent(position, size, target, button_data)
 		gui.set_text(RET.label, SHIP[target].name)
 	elseif type(target) == "number" then
 		gui.set_text(RET.label, text.getName(crew[target]))
+		local icon_pic = crew[target].role
+		if icon_pic == "passenger" then
+			icon_pic = "none"
+		elseif not icon_pic then
+			icon_pic = "empty"
+		end
+		if icon_pic then
+			gui.set_enabled(icon, true)
+			gui.set_position(icon, position + icon_offset)
+			gui.play_flipbook(icon, icon_pic)
+		else
+			gui.set_enabled(icon, false)
+		end
 	end
 	gui.set_enabled(RET.label, true)
 	gui.set_position(RET.label, gui.get_position(RET.frame_permanent) + label_offset)
 	RET.target_permanent = target
 end
 
-function RET.move_permanent(position)
+function RET.move_permanent(position, target)
 	gui.set_position(RET.frame_permanent, position)
 	for x = 1, button_count do
 		gui.set_position(RET.buttons[x], gui.get_position(RET.frame_permanent) + button_offset[x])
 	end
 	gui.set_position(RET.label, gui.get_position(RET.frame_permanent) + label_offset)
+	local icon_pic = crew[target].role
+	if icon_pic == "passenger" then
+		icon_pic = "none"
+	elseif not icon_pic then
+		icon_pic = "empty"
+	end
+	if icon_pic then
+		gui.set_enabled(icon, true)
+		gui.set_position(icon, position + icon_offset)
+		gui.play_flipbook(icon, icon_pic)
+	else
+		gui.set_enabled(icon, false)
+	end
 end
 
 function RET.hide()
@@ -92,6 +123,7 @@ function RET.hide_permanent()
 	gui.set_enabled(RET.label, false)
 	RET.target_permanent = nil
 	RET.action = nil
+	gui.set_enabled(icon, false)
 end
 
 function RET.hide_buttons()

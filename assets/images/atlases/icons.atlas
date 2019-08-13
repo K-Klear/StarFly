@@ -1,0 +1,24 @@
+images {
+  image: "/assets/images/Icons/pilot.png"
+}
+images {
+  image: "/assets/images/Icons/medic.png"
+}
+images {
+  image: "/assets/images/Icons/mech.png"
+}
+images {
+  image: "/assets/images/Icons/gunner.png"
+}
+images {
+  image: "/assets/images/Icons/comms.png"
+}
+images {
+  image: "/assets/images/Icons/none.png"
+}
+images {
+  image: "/assets/images/Icons/empty.png"
+}
+margin: 0
+extrude_borders: 0
+inner_padding: 1
