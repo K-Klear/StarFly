@@ -26,6 +26,20 @@ function F.normalDist(factor, zeroMean)
 	return value
 end
 
+function F.recruit(recruit)
+	if not recruit then recruit = F.generateCrew() end
+	table.insert(crew, recruit)
+	text.setNameAvailability(crew[#crew].name.gender, crew[#crew].name.key, true)
+	crew[#crew].go = factory.create("/ship#spawn_crew", vmath.vector3(math.random(140, 240), 64, 0.1), nil, {crew = #crew, level = 2})
+	crew[#crew].wage = 0
+end
+
+function F.dismiss(crewID)
+	earnings = earnings + crew[crewID].wage
+	go.delete(crew[crewID].go)
+	table.remove(crew, crewID)
+end
+
 function F.generateCrew()
 	IDCount = IDCount + 1
 	local gender

@@ -25,6 +25,7 @@ crew = {}
 crew[0] = {skills = {medic = 0, mech = 0, gunner = 0, comms = 0, pilot = 0, fight = 0}}
 
 cargo = {fuel = 5, rations = 20, money = 1000}
+earnings = 100
 
 local dialog = {}
 
@@ -121,7 +122,54 @@ local function updateDialog(dialogID, location)
 		gui.set_text(dialog.info.lbl.settlement, location or planet.settlement)
 		gui.set_text(dialog.info.lbl.government, planet.government)
 	elseif dialogID == "crew" then
-		
+		for key, val in ipairs(dialog.crew.ico) do
+			for k, v in pairs(val) do
+				gui.delete_node(v)
+			end
+		end
+		dialog.crew.ico = {}
+		earnings = 100
+		for crewID, crewData in ipairs(crew) do
+			gui.set_text(dialog.crew.lbl[crewID].name, text.getName(crewData))
+			gui.set_enabled(dialog.crew.lbl[crewID].name, true)
+			gui.set_text(dialog.crew.btn[crewID].role, crewData.role or "none")
+			gui.set_enabled(dialog.crew.btn[crewID].role, true)
+			gui.set_enabled(dialog.crew.btn[crewID].skills, true)
+			gui.set_enabled(dialog.crew.btn[crewID].background, true)
+			if crewData.role == "passenger" then
+				gui.set_enabled(dialog.crew.lbl[crewID].wage, false)
+				gui.set_enabled(dialog.crew.lbl[crewID].wage_up, false)
+				gui.set_enabled(dialog.crew.lbl[crewID].wage_down, false)
+				gui.set_enabled(dialog.crew.btn[crewID].dismiss, false)
+			else
+				local text = crewData.wage or "0"
+				earnings = earnings - (crewData.wage or 0)
+				text = text.."%"
+				gui.set_text(dialog.crew.lbl[crewID].wage, text)
+				gui.set_enabled(dialog.crew.lbl[crewID].wage, true)
+				gui.set_enabled(dialog.crew.btn[crewID].wage_up, true)
+				gui.set_enabled(dialog.crew.btn[crewID].wage_down, true)
+				gui.set_enabled(dialog.crew.btn[crewID].dismiss, true)
+			end
+			table.insert(dialog.crew.ico, FACE.drawFace(crewData.face, vmath.vector3(-216, 104 - 20 * crewID, 1), 1))
+			local face = dialog.crew.ico[crewID]
+			for k, v in pairs(face) do
+				gui.set_parent(v, dialog.crew.frame)
+			end
+			gui.move_above(face.hair, face.forehead)
+			gui.move_below(face.body, face.chin)
+		end
+		gui.set_text(dialog.crew.lbl.remainder, "EARNINGS: "..earnings.."%")
+		for x = #crew + 1, CON.MAXCREW do
+			gui.set_enabled(dialog.crew.lbl[x].name, false)
+			gui.set_enabled(dialog.crew.btn[x].role, false)
+			gui.set_enabled(dialog.crew.lbl[x].wage, false)
+			gui.set_enabled(dialog.crew.btn[x].wage_up, false)
+			gui.set_enabled(dialog.crew.btn[x].wage_down, false)
+			gui.set_enabled(dialog.crew.btn[x].background, false)
+			gui.set_enabled(dialog.crew.btn[x].skills, false)
+			gui.set_enabled(dialog.crew.btn[x].dismiss, false)
+		end
 	elseif dialogID == "travel" then
 		gui.set_color(dialog.travel.btn.missionCore, CON.COLOR_DISABLED)
 		gui.set_color(dialog.travel.btn.missionFrontier, CON.COLOR_DISABLED)
@@ -175,7 +223,6 @@ local function updateDialog(dialogID, location)
 			gui.set_color(dialog.work.btn.confirm, CON.COLOR_DISABLED)
 		end
 	elseif dialogID == "missions" then
-		
 		for x = 1, 5 do
 			gui.set_color(dialog.missions.btn[x].type, CON.COLOR_DEFAULT)
 			gui.set_color(dialog.missions.btn[x].target, CON.COLOR_DEFAULT)
@@ -269,7 +316,7 @@ function init(self)
 	dialog.action = DH.newDialog("action", true)
 	dialog.info = DH.newDialog("info", true)
 	dialog.warning = DH.newDialog("warning")
-	dialog.crew = DH.newDialog("crew", true)
+	dialog.crew = DH.newDialog("crew")
 	dialog.work = DH.newDialog("work")
 	dialog.missions = DH.newDialog("work")
 	dialog.speech = DH.newDialog("speech")
@@ -282,12 +329,9 @@ function init(self)
 	
 	updateDialog("info")
 
-	for x = 1, 3 do
-		table.insert(crew, FCrew.generateCrew())
-		text.setNameAvailability(crew[#crew].name.gender, crew[#crew].name.key, true)
-		crew[#crew].go = factory.create("/ship#spawn_crew", vmath.vector3(math.random(140, 240), 64, 0.1), nil, {crew = #crew, level = 2})
+	for x = 1, 9 do
+		FCrew.recruit()
 	end
-	updateDialog("crew")
 
 	TOOL.setup()
 	RET.setup()
@@ -300,7 +344,6 @@ function on_input(self, action_id, action)
 		if focus.action then
 			for key, val in pairs(dialog.action.btn) do
 				if gui.pick_node(val, action.x, action.y) then
-					updateDialog("crew")
 					selection = nil
 					if key == "buy" then
 						fuelBought = CON.MAXFUEL - cargo.fuel
@@ -322,6 +365,10 @@ function on_input(self, action_id, action)
 						gui.set_enabled(dialog.work.frame, true)
 						focus = {work = true}
 						updateDialog("work")
+					elseif key == "crew" then
+						gui.set_enabled(dialog.crew.frame, true)
+						focus = {crew = true}
+						updateDialog("crew")
 					end
 				end
 			end
@@ -357,7 +404,6 @@ function on_input(self, action_id, action)
 							end
 							crew[RET.target_permanent].role = position
 							msg.post(crew[RET.target_permanent].go, "move", {target = RET.target})
-							updateDialog("crew")
 						end
 					end
 				end
@@ -419,12 +465,10 @@ function on_input(self, action_id, action)
 							gui.set_enabled(dialog.warning.frame, true)
 							focus = {warning = true}
 						else
-							table.insert(crew, planet.recruits[selection])
-							crew[#crew].go = factory.create("/ship#spawn_crew", vmath.vector3(math.random(140, 240), 64, 0.1), nil, {crew = #crew, level = 2})
+							FCrew.recruit(planet.recruits[selection])
 							table.remove(planet.recruits, selection)
 							selection = nil
 							updateDialog("recruit")
-							updateDialog("crew")
 						end
 					else
 						for x = 1, 5 do
@@ -447,6 +491,56 @@ function on_input(self, action_id, action)
 						end
 					end
 				end
+			end
+		end
+		if focus.crew then
+			for crewID, val in pairs(dialog.crew.btn) do
+				if type(val) == "userdata" and gui.pick_node(val, action.x, action.y) then
+					if crewID == "close" then
+						gui.set_enabled(dialog.crew.frame, false)
+						focus = {action = true, reticle = true, tooltip = true}
+					end
+				elseif type(val) == "table" then
+					for button, v in pairs(val) do 
+						if gui.pick_node(v, action.x, action.y) then
+							if button == "wage_up" and crew[crewID].wage < 100 and earnings > 0 then
+								crew[crewID].wage = crew[crewID].wage + 5
+								earnings = earnings - 5
+								gui.set_text(dialog.crew.lbl[crewID].wage, crew[crewID].wage.."%")
+								gui.set_text(dialog.crew.lbl.remainder, "EARNINGS: "..earnings.."%")
+							elseif button == "wage_down" and crew[crewID].wage > 0 then
+								crew[crewID].wage = crew[crewID].wage - 5
+								earnings = earnings + 5
+								gui.set_text(dialog.crew.lbl[crewID].wage, crew[crewID].wage.."%")
+								gui.set_text(dialog.crew.lbl.remainder, "EARNINGS: "..earnings.."%")
+							elseif button == "dismiss" then
+								FCrew.dismiss(crewID)
+								updateDialog("crew")
+							end
+						end
+					end
+				end
+					
+							--[[
+							if key == "skills" and gui.is_enabled(val) then
+								
+							if key == "recruit"..x and gui.is_enabled(val) then
+								if selection then gui.set_color(dialog.recruit.btn["recruit"..selection], CON.COLOR_DEFAULT) end
+								selection = x
+								gui.set_color(val, CON.COLOR_SELECTION)
+								gui.set_color(dialog.recruit.btn.confirm, CON.COLOR_ENABLED)
+							elseif key == "skills"..x and gui.is_enabled(val) then
+								gui.set_enabled(dialog.recruit.frame, false)
+								TALK.openDialog(dialog.speech, planet.recruits[x], TALK.skills(planet.recruits[x]), nil , "OK")
+								speechResult.reply2 = {"close", "recruit"}
+								focus = {speech = true}
+							elseif key == "about"..x and gui.is_enabled(val) then
+								gui.set_enabled(dialog.recruit.frame, false)
+								TALK.openDialog(dialog.speech, planet.recruits[x], TALK.intro(planet.recruits[x]), nil , "OK")
+								speechResult.reply2 = {"close", "recruit"}
+								focus = {speech = true}
+							end
+							--]]
 			end
 		end
 		if focus.travel then
@@ -646,9 +740,7 @@ function on_input(self, action_id, action)
 				for key, val in pairs(dialog.event.btn) do
 					if gui.pick_node(val, action.x, action.y) then
 						if current_stage.effect == "recruit_random" and #crew < CON.MAXCREW then
-							table.insert(crew, FCrew.generateCrew())
-							text.setNameAvailability(crew[#crew].name.gender, crew[#crew].name.key, true)
-							crew[#crew].go = factory.create("/ship#spawn_crew", vmath.vector3(math.random(140, 240), 64, 0.1), nil, {crew = #crew, level = 2})
+							FCrew.recruit()
 						end
 						EVENTS.event = nil
 						EVENTS.stage = nil

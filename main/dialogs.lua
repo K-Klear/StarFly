@@ -167,7 +167,6 @@ function M.newDialog(kind, show)
 		gui.set_pivot(dialog.lbl.settlement, gui.PIVOT_W)
 		gui.set_pivot(dialog.lbl.government, gui.PIVOT_W)
 	elseif kind == "crew" then
-		--gui.set_scale(dialog.frame, vmath.vector3(1, 1, 1))
 		dialog.ico = {}
 		dialog.lbl = {
 			title = gui.new_text_node(vmath.vector3(0, 124, 0), "CREW"),
@@ -175,24 +174,25 @@ function M.newDialog(kind, show)
 			role = gui.new_text_node(vmath.vector3(-90, 104, 0), "ROLE"),
 			wage = gui.new_text_node(vmath.vector3(-30, 104, 0), "WAGE"),
 			ask = gui.new_text_node(vmath.vector3(70, 104, 0), "ASK THEM ABOUT:"),
+			remainder = gui.new_text_node(vmath.vector3(-70, -96, 0), "EARNINGS: 100%"),
 		}
 		dialog.btn = {
+			close = gui.new_text_node(vmath.vector3(170, -96, 0), "CLOSE")
 		}
 		for x = 1, 9 do
 			dialog.lbl[x] = {
-				name = gui.new_text_node(vmath.vector3(-176, 104 - 20 * x, 0), "Crewman"),
+				name = gui.new_text_node(vmath.vector3(-196, 104 - 20 * x, 0), "Crewman"),
 				wage = gui.new_text_node(vmath.vector3(-30, 104 - 20 * x, 0), "10%")
 			}
 			dialog.btn[x] = {
 				role = gui.new_text_node(vmath.vector3(-90, 104 - 20 * x, 0), "Engineer"),
 				background = gui.new_text_node(vmath.vector3(40, 104 - 20 * x, 0), "BACKGROUND"),
 				skills = gui.new_text_node(vmath.vector3(110, 104 - 20 * x, 0), "SKILLS"),
-				dismiss = gui.new_text_node(vmath.vector3(170, 104 - 20 * x, 0), "DISMISS")
+				dismiss = gui.new_text_node(vmath.vector3(170, 104 - 20 * x, 0), "DISMISS"),
+				wage_up = gui.new_text_node(vmath.vector3(-48, 104 - 20 * x, 0), "+"),
+				wage_down = gui.new_text_node(vmath.vector3(-12, 104 - 20 * x, 0), "-")
 			}
-		end
-		
-		for key, val in pairs(dialog.btn) do
-			--gui.set_pivot(val, gui.PIVOT_W)
+			gui.set_pivot(dialog.lbl[x].name, gui.PIVOT_W)
 		end
 	elseif kind == "warning" then
 		dialog.lbl = {
@@ -230,9 +230,10 @@ function M.newDialog(kind, show)
 		}
 	end
 
+	
 	for key, val in pairs(dialog.lbl) do
-		if type(val) == table then
-			for k, v in ipairs(val) do
+		if type(val) == "table" then
+			for k, v in pairs(val) do
 				gui.set_parent(v, dialog.frame)
 				gui.set_layer(v, "dialog")
 			end
@@ -243,8 +244,8 @@ function M.newDialog(kind, show)
 	end
 
 	for key, val in pairs(dialog.btn) do
-		if type(val) == table then
-			for k, v in ipairs(val) do
+		if type(val) == "table" then
+			for k, v in pairs(val) do
 				gui.set_parent(v, dialog.frame)
 				gui.set_layer(v, "dialog")
 			end
