@@ -32,11 +32,12 @@ function F.recruit(recruit)
 	text.setNameAvailability(crew[#crew].name.gender, crew[#crew].name.key, true)
 	crew[#crew].go = factory.create("/ship#spawn_crew", vmath.vector3(math.random(140, 240), 64, 0.1), nil, {crew = #crew, level = 2})
 	crew[#crew].wage = 0
+	crew[#crew].money = 0
 end
 
 function F.dismiss(crewID)
 	earnings = earnings + crew[crewID].wage
-	go.delete(crew[crewID].go)
+	msg.post(crew[crewID].go, hash("die"))
 	table.remove(crew, crewID)
 end
 
@@ -65,6 +66,7 @@ function F.generateCrew()
 
 	local attributes = {
 		confidence = F.normalDist(2),
+		honesty = F.normalDist(2),
 		greed = F.normalDist(2),
 		secretiveness = F.normalDist(2),
 		charisma = F.normalDist(2),
@@ -83,11 +85,27 @@ function F.generateCrew()
 		"work",
 		"home",
 		"running",
-		"spy",
-		"sabotage"
 	}
 
 	local goal = goalList[math.random(1, #goalList)]
+
+	local desperation
+	local _desperation = 0
+	for key, val in pairs(skills) do
+		local eval = val + ((attributes.confidence - 0.5) * 0.4)
+		_desperation = _desperation - eval
+	end
+	_desperation = (_desperation / 6) + 1.5
+
+	if goal == "fun" or goal == "travel" then
+		desperation = F.normalDist(5, true)
+	elseif goal == "work" or goal == "home" then
+		desperation = F.normalDist(2, true)
+	elseif goal == "running" then
+		desperation = 1 - F.normalDist(5, true) 
+	end
+	desperation = desperation * _desperation
+
 	
 	--[[
 	Goals:
@@ -118,7 +136,7 @@ function F.generateCrew()
 
 	return {
 		gender = gender, name = name, skills = skills, stats = stats, attributes = attributes,
-		knowledge = knowledge, face = face, ID = IDCount, goal = goal
+		knowledge = knowledge, face = face, ID = IDCount, goal = goal, desperation = desperation
 	}
 end
 

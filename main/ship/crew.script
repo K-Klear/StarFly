@@ -65,15 +65,25 @@ local function walk(self)
 	end
 end
 
+local function get_crew_ID()
+	for key, val in ipairs(crew) do
+		if val.go == go.get_id() then
+			return key
+		end
+	end
+	return nil
+end
+
 function init(self)
-	self.sprite_parts = {"hand", "head", "legs", "torso", crew[self.crew].face.hair}
+	local crewID = get_crew_ID()
+	self.sprite_parts = {"hand", "head", "legs", "torso", crew[crewID].face.hair}
 	go.set_parent(go.get_id(), "/ship")
-	sprite.set_constant("#hand", "tint", crew[self.crew].face.skinTone)
-	sprite.set_constant("#head", "tint", crew[self.crew].face.skinTone)
-	sprite.set_constant("#hair", "tint", crew[self.crew].face.hairColor)
-	sprite.set_constant("#torso", "tint", crew[self.crew].face.clothesColor)
-	sprite.set_constant("#legs", "tint", crew[self.crew].face.clothesColor - vmath.vector4(0.1, 0.1, 0.1, 0))
-	sprite.play_flipbook("#hair", "idle_"..crew[self.crew].face.hair)
+	sprite.set_constant("#hand", "tint", crew[crewID].face.skinTone)
+	sprite.set_constant("#head", "tint", crew[crewID].face.skinTone)
+	sprite.set_constant("#hair", "tint", crew[crewID].face.hairColor)
+	sprite.set_constant("#torso", "tint", crew[crewID].face.clothesColor)
+	sprite.set_constant("#legs", "tint", crew[crewID].face.clothesColor - vmath.vector4(0.1, 0.1, 0.1, 0))
+	sprite.play_flipbook("#hair", "idle_"..crew[crewID].face.hair)
 end
 
 
@@ -81,9 +91,14 @@ function on_message(self, message_id, message, sender)
 	if message_id == hash("move") then
 		self.destination = message.target
 		walk(self)
+	elseif message_id == hash("die") then
+		self.deleted = true
+		go.delete()
 	end
 end
 
 function update(self, dt)
-	msg.post("/main#interface", "update_position", {pos = go.get_world_position(), crew = self.crew})
+	if not self.deleted then
+		msg.post("/main#interface", "update_position", {pos = go.get_world_position(), crew = get_crew_ID()})
+	end
 end

@@ -1,5 +1,32 @@
-Search for:
+Version 0.4:
+- New crew dialog added. Crewmembers can now be dismissed and their wages set.
+- Finishing a mission divides the spoils between according to the set wages and the rest goes to you.
+- Reworked recruiting. You can either talk to potential crew or ask around for someone to fulfill a particular role.
+	- The recruits may lie about their abilities, depending on their honesty stat, motivation and level of desperation.
+	- They will also ask for a certain share based on their personality.
 
-if chosenTarget then
 
-...and salvage it.
+
+Characters traits currently in use:
+
+confidence
+- affects skill self-assessment
+
+desperation
+- how much they value being hired
+
+
+
+
+
+Job interview:
+
+1) Greetings, I'm ____. [Best qualities].
+
+1a Ask about motivation
+1b Ask about other qualifications
+1c Ask about wage
+
+1a) Explains situation. Wage estimate perhaps.
+1b) Gives other qualifications, points out what they should NOT do. May point out they are a quick learner.
+1c) 

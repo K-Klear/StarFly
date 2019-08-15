@@ -72,15 +72,20 @@ function M.newDialog(kind, show)
 			nobody = gui.new_text_node(vmath.vector3(0, 0, 0), "There are no recruits available.")
 		}
 		dialog.btn = {
-			confirm = gui.new_text_node(vmath.vector3(-50, -70, 0), "HIRE"),
-			cancel = gui.new_text_node(vmath.vector3(50, -70, 0), "CLOSE")
+			cancel = gui.new_text_node(vmath.vector3(0, -70, 0), "CLOSE")
 		}
 		for x = 1, 5 do
-			dialog.btn["recruit"..x] = gui.new_text_node(vmath.vector3(-160, 88 - 20 * x, 0), "Recruit name")
-			gui.set_pivot(dialog.btn["recruit"..x], gui.PIVOT_W)
-			dialog.btn["about"..x] = gui.new_text_node(vmath.vector3(-40, 88 - 20 * x, 0), "ABOUT")
-			dialog.btn["skills"..x] = gui.new_text_node(vmath.vector3(20, 88 - 20 * x, 0), "SKILLS")
+			dialog.btn[x] = {
+				name = gui.new_text_node(vmath.vector3(-160, 88 - 20 * x, 0), "Recruit_"),
+				hire = gui.new_text_node(vmath.vector3(-70, 88 - 20 * x, 0), "HIRE")
+			}
+			gui.set_pivot(dialog.btn[x].name, gui.PIVOT_W)
 		end
+		dialog.btn.pilot = gui.new_text_node(vmath.vector3(-160, -52, 0), "PILOT")
+		dialog.btn.comms = gui.new_text_node(vmath.vector3(-100, -52, 0), "COMMS")
+		dialog.btn.mech = gui.new_text_node(vmath.vector3(-30, -52, 0), "ENGINEER")
+		dialog.btn.gunner = gui.new_text_node(vmath.vector3(40, -52, 0), "GUNNER")
+		dialog.btn.medic = gui.new_text_node(vmath.vector3(100, -52, 0), "MEDIC")
 	elseif kind == "buy" then
 		dialog.lbl = {
 			title = gui.new_text_node(vmath.vector3(0, 86, 0), "RESTOCK"),

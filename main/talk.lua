@@ -21,7 +21,7 @@ local jobs = {
 	fight = {"fighting off boarders", "fighting", "keeping everyone safe"}
 }
 
-local greeting = {"Hello!", "Greetings.", "Nice to meet you.", "Hello there!"}
+local greeting = {"Hello!", "Greetings.", "Nice to meet you.", "Hello there!", "Good day, Captain."}
 local myNameIs = {"I'm", "You can call me", "My name is", "They call me"}
 
 local qualityList = {"top", "great", "good", "average", "poor", "terrible"}
@@ -32,15 +32,13 @@ local goal = {
 	work = {"It's impossible to find a job here. Joining your crew might be my last chance.", "Frankly? I'm after the money. I will get paid, right?", "Honest work for honest pay, that's what I'm looking for."},
 	home = {"I want to find a place where I belong. A place I could call a home."},
 	running = {"Someone is after me. I need to vanish.", "I've crossed someone. I need to get far away from here."},
-	spy = {"I'm going to spy on you and lying isn't yet implemented, so... please hire me anyway?"},
-	sabotage = {"I'm going to sabotage your ship. Lying isn't yet implemented, but then again, neither are sabotages."},
 }
 
 local function pickLine(table)
 	return table[math.random(1, #table)]
 end
 
-function M.skills(crewID)
+function M.skills(crewID, best, worst)
 	levels = {
 		none = {},
 		terrible = {},
