@@ -455,7 +455,12 @@ function on_input(self, action_id, action)
 								table.remove(planet.recruits, key)
 								updateDialog("recruit")
 							elseif button == "name" then
-								pprint(TALK.skills(crew[key]))
+								gui.set_enabled(dialog.recruit.frame, false)
+								TALK.openDialog(dialog.speech, planet.recruits[key], TALK.recruit_intro(planet.recruits[key]), "Background", "Wage", "Hire")
+								speechResult.reply1 = {"close", "recruit"}
+								speechResult.reply2 = {"close", "recruit"}
+								speechResult.reply3 = {"close", "recruit"}
+								focus = {speech = true}
 							end
 						end
 					end

@@ -49,7 +49,7 @@ function F.generatePlanet(region, start)
 			recruits = {},
 			missions = {}
 		}
-		for x = 1, 4 do
+		for x = 1, 5 do
 			table.insert(planet.recruits, FCrew.generateCrew())
 		end
 		for x = 1, 3 do
