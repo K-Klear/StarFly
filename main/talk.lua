@@ -18,7 +18,7 @@ local jobs = {
 	medic = {"keeping people healthy", "being doctor", "healing injuries", "medicine"},
 	gunner = {"shooting stuff out of the sky", "manning the big gun", "exploding enemies"},
 	comms = {"using comm systems", "listening to space"},
-	fight = {"fighting off boarders", "fighting", "keeping everyone safe"}
+	fight = {"fighting off boarders", "fighting", "security"}
 }
 
 local greeting = {"Hello!", "Greetings.", "Nice to meet you.", "Hello there!", "Good day, Captain."}
@@ -28,11 +28,11 @@ local no_skill = {"I'm not really skilled in anything in particular, but I can l
 local qualityList = {"top", "great", "good", "average", "poor", "terrible", "none"}
 
 local goal = {
-	fun = {"This place is boring. I want to have some fun.", "I'm looking for some excitement. You wouldn't believe how boring colony life can be."},
-	travel = {"I want to see all the universe has to offer.", "I just want to see the stars."},
-	work = {"It's impossible to find a job here. Joining your crew might be my last chance.", "Frankly? I'm after the money. I will get paid, right?", "Honest work for honest pay, that's what I'm looking for."},
-	home = {"I want to find a place where I belong. A place I could call a home."},
-	running = {"Someone is after me. I need to vanish.", "I've crossed someone. I need to get far away from here."},
+	fun = {"This place is boring. I want to have some fun. ", "I'm looking for some excitement. You wouldn't believe how boring colony life can be. "},
+	travel = {"I want to see all the universe has to offer. ", "I just want to see the stars. "},
+	work = {"It's impossible to find a job here. Joining your crew might be my last chance. ", "Frankly? I'm after the money. I will get paid, right? ", "Honest work for honest pay, that's what I'm looking for. "},
+	home = {"I want to find a place where I belong. A place I could call a home. "},
+	running = {"Someone is after me. I need to vanish. ", "I've crossed someone. I need to get far away from here. "},
 }
 
 local function pickLine(table)
@@ -167,9 +167,14 @@ end
 
 function M.recruit_intro(peep)
 	local string = pickLine(greeting).." "..pickLine(myNameIs).." "..Ftext.getName(peep)..". "
-	string = string..skills_to_speech(get_skill_level(get_skills(peep), "best"))
 	--string = string..pickLine(goal[peep.goal])
+	string = string..skills_to_speech(get_skill_level(get_skills(peep), "best"))
 	return string
+end
+
+function M.recruit_background(peep)
+	--local string = 
+
 end
 
 function M.openDialog(dialog, talker, text, reply1, reply2, reply3)

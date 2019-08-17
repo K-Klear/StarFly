@@ -12,9 +12,14 @@ Characters traits currently in use:
 confidence
 - affects skill self-assessment
 
-desperation
-- how much they value being hired
+skillfulness
+- how confident they think they can get a job if they try
 
+dishonesty
+- how likely they are to lie
+
+greed
+- how big of a share they want
 
 
 

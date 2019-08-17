@@ -21,8 +21,8 @@ M.nameList.both = {
 	"Taggart", "Madison", "Lazarus", "Chen", "Laredo", "Sarris", "Grayson", "Hunt", "Sarrano", "Novak", "Sato",
 	"Troi", "Adama", "Thrace", "Tichy", "Lawson", "Chakwas", "Moreau", "Taylor", "Goto", "Massani", "Chambers", "Vega", "Cortez",
 	"Traynor"
-	
 }
+
 
 local namesUsed = {male = {}, female = {}, both = {}}
 

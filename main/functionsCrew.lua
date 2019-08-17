@@ -66,7 +66,7 @@ function F.generateCrew()
 
 	local attributes = {
 		confidence = F.normalDist(2),
-		honesty = F.normalDist(2),
+		dishonesty = F.normalDist(2),
 		greed = F.normalDist(2),
 		secretiveness = F.normalDist(2),
 		charisma = F.normalDist(2),
@@ -88,23 +88,6 @@ function F.generateCrew()
 	}
 
 	local goal = goalList[math.random(1, #goalList)]
-
-	local desperation
-	local _desperation = 0
-	for key, val in pairs(skills) do
-		local eval = val + ((attributes.confidence - 0.5) * 0.4)
-		_desperation = _desperation - eval
-	end
-	_desperation = (_desperation / 6) + 1.5
-
-	if goal == "fun" or goal == "travel" then
-		desperation = F.normalDist(5, true)
-	elseif goal == "work" or goal == "home" then
-		desperation = F.normalDist(2, true)
-	elseif goal == "running" then
-		desperation = 1 - F.normalDist(5, true) 
-	end
-	desperation = desperation * _desperation
 
 	
 	--[[
@@ -136,7 +119,7 @@ function F.generateCrew()
 
 	return {
 		gender = gender, name = name, skills = skills, stats = stats, attributes = attributes,
-		knowledge = knowledge, face = face, ID = IDCount, goal = goal, desperation = desperation
+		knowledge = knowledge, face = face, ID = IDCount, goal = goal
 	}
 end
 
