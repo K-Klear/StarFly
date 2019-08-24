@@ -371,7 +371,7 @@ function on_input(self, action_id, action)
 					local label = gui.get_text(val)
 					if label == "TALK" then
 						TALK.openDialog(dialog.speech, crew[RET.target_permanent], TALK.skills(crew[RET.target_permanent]), nil , "OK")
-						speechResult.reply2 = {"close", "action"}
+						speechResult.reply2 = {close = true, focus = "action"}
 						RET.hide()
 						RET.hide_permanent()
 						focus = {speech = true}
@@ -457,9 +457,9 @@ function on_input(self, action_id, action)
 							elseif button == "name" then
 								gui.set_enabled(dialog.recruit.frame, false)
 								TALK.openDialog(dialog.speech, planet.recruits[key], TALK.recruit_intro(planet.recruits[key]), "Background", "Wage", "Hire")
-								speechResult.reply1 = {"close", "recruit"}
-								speechResult.reply2 = {"close", "recruit"}
-								speechResult.reply3 = {"close", "recruit"}
+								speechResult.reply1 = {speech = "recruit_background", recruit = key}
+								speechResult.reply2 = {speech = "recruit_wage", recruit = key}
+								speechResult.reply3 = {close = true, dialog = "recruit", action = "hire", recruit = key}
 								focus = {speech = true}
 							end
 						end
@@ -494,27 +494,6 @@ function on_input(self, action_id, action)
 						end
 					end
 				end
-					
-							--[[
-							if key == "skills" and gui.is_enabled(val) then
-								
-							if key == "recruit"..x and gui.is_enabled(val) then
-								if selection then gui.set_color(dialog.recruit.btn["recruit"..selection], CON.COLOR_DEFAULT) end
-								selection = x
-								gui.set_color(val, CON.COLOR_SELECTION)
-								gui.set_color(dialog.recruit.btn.confirm, CON.COLOR_ENABLED)
-							elseif key == "skills"..x and gui.is_enabled(val) then
-								gui.set_enabled(dialog.recruit.frame, false)
-								TALK.openDialog(dialog.speech, planet.recruits[x], TALK.skills(planet.recruits[x]), nil , "OK")
-								speechResult.reply2 = {"close", "recruit"}
-								focus = {speech = true}
-							elseif key == "about"..x and gui.is_enabled(val) then
-								gui.set_enabled(dialog.recruit.frame, false)
-								TALK.openDialog(dialog.speech, planet.recruits[x], TALK.intro(planet.recruits[x]), nil , "OK")
-								speechResult.reply2 = {"close", "recruit"}
-								focus = {speech = true}
-							end
-							--]]
 			end
 		end
 		if focus.travel then
@@ -666,18 +645,39 @@ function on_input(self, action_id, action)
 			for key, val in pairs(dialog.speech.btn) do
 				if gui.pick_node(val, action.x, action.y) then
 					if speechResult[key] then
-						for k, v in ipairs(speechResult[key]) do
-							if v == "close" then
-								gui.set_enabled(dialog.speech.frame, false)
-							elseif v == "recruit" then
-								updateDialog("recruit")
-								gui.set_enabled(dialog.recruit.frame, true)
-								focus = {recruit = true}
-							elseif v == "action" then
-								show_UI(phase)
-							end
-						end
+						local result = speechResult[key]
 						speechResult = {}
+						if result.close then
+							gui.set_enabled(dialog.speech.frame, false)
+						end
+						if result.focus == "action" then
+							show_UI(phase)
+						elseif result.focus then
+							focus = result.focus
+						end
+						if result.action == "hire" then
+							FCrew.recruit(planet.recruits[result.recruit])
+							table.remove(planet.recruits, result.recruit)
+						end
+						if result.speech == "recruit_background" then
+							TALK.openDialog(dialog.speech, planet.recruits[result.recruit], "Bacground info about me and all that shit.", "OK", nil, "Hire")
+							speechResult.reply1 = {speech = "recruit_intro", recruit = result.recruit}
+							speechResult.reply3 = {close = true, dialog = "recruit", action = "hire", recruit = result.recruit}
+						elseif result.speech == "recruit_wage" then
+							TALK.openDialog(dialog.speech, planet.recruits[result.recruit], "I want some money or maybe not.", nil, "OK")
+							speechResult.reply2 = {speech = "recruit_intro", recruit = result.recruit}
+						elseif result.speech == "recruit_intro" then
+							TALK.openDialog(dialog.speech, planet.recruits[result.recruit], TALK.recruit_intro(planet.recruits[result.recruit]), "Background", "Wage", "Hire")
+							speechResult.reply1 = {speech = "recruit_background", recruit = result.recruit}
+							speechResult.reply2 = {speech = "recruit_wage", recruit = result.recruit}
+							speechResult.reply3 = {close = true, dialog = "recruit", action = "hire", recruit = result.recruit}
+						end
+						if result.dialog then
+							updateDialog(result.dialog)
+							gui.set_enabled(dialog[result.dialog].frame, true)
+							focus = {}
+							focus[result.dialog] = true
+						end
 					end
 				end
 			end
@@ -739,7 +739,7 @@ function on_input(self, action_id, action)
 			TOOL.hide()
 		end
 	elseif action_id == hash("enter") and action.pressed then
-	
+		
 	else
 		if focus.tooltip or focus.reticle then
 			cursor_position.x = action.x; cursor_position.y = action.y

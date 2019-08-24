@@ -196,16 +196,19 @@ function M.openDialog(dialog, talker, text, reply1, reply2, reply3)
 	gui.set_text(dialog.lbl.name, Ftext.getName(talker).." says:")
 	if reply1 then
 		gui.set_text(dialog.btn.reply1, reply1)
+		gui.set_enabled(dialog.btn.reply1, true)
 	else
 		gui.set_enabled(dialog.btn.reply1, false)
 	end
 	if reply2 then
 		gui.set_text(dialog.btn.reply2, reply2)
+		gui.set_enabled(dialog.btn.reply2, true)
 	else
 		gui.set_enabled(dialog.btn.reply2, false)
 	end
 	if reply3 then
 		gui.set_text(dialog.btn.reply3, reply3)
+		gui.set_enabled(dialog.btn.reply3, true)
 	else
 		gui.set_enabled(dialog.btn.reply3, false)
 	end
