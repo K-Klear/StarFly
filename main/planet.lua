@@ -6,12 +6,12 @@ local regionStats = {
 	Core = {
 		government = {"Federation"},
 		recruitMax = 5,
-		settlement = {"Megalopolis"}
+		settlement = {"Megalopolis", "City"}
 	},
 	Frontier = {
 		government = {"Federation", "Rebels", "Independent", "Independent", "Independent"},
 		recruitMax = 3,
-		settlement = {"Outpost"}
+		settlement = {"City", "Outpost"}
 	},
 	Rim = {
 		government = {"Rebels", "Rebels", "Independent", "Independent"},
@@ -25,6 +25,21 @@ local missionStats = {
 	type = {"Delivery", "Smuggling", "Passage", "Assasination", "Espionage"}
 }
 
+local settlementStats = {
+	Megalopolis = {
+		wealth_max = 1,
+		wealth_min = 0.7
+	},
+	City = {
+		wealth_max = 0.8,
+		wealth_min = 0.3
+	},
+	Outpost = {
+		wealth_max = 0.4,
+		wealth_min = 0
+	}
+}
+
 
 local function generateMission()
 	local mission = {
@@ -33,21 +48,6 @@ local function generateMission()
 		wage = math.random(1, 20) * 100,
 	}
 	return mission
-end
-
-local function get_skillfulness(peep)
-	local skillfulness = 0
-	for key, val in pairs(peep.skills) do
-		local eval = val + ((peep.attributes.confidence - 0.5) * 0.4)
-		if eval < 0.2 then
-
-		elseif eval < 0.6 then
-			skillfulness = skillfulness + 1
-		else
-			skillfulness = skillfulness + 3
-		end
-	end
-	return math.min(1, skillfulness / 10)
 end
 
 function F.generatePlanet(region, start)
@@ -66,7 +66,6 @@ function F.generatePlanet(region, start)
 		}
 		for x = 1, 5 do
 			table.insert(planet.recruits, 1, FCrew.generateCrew())
-			planet.recruits[1].skillfulness = get_skillfulness(planet.recruits[1])
 		end
 		for x = 1, 3 do
 			table.insert(planet.missions, generateMission())
@@ -86,12 +85,13 @@ function F.generatePlanet(region, start)
 		local recruitsCount = math.random(0, regionStats[region].recruitMax)
 		for x = 1, recruitsCount do
 			table.insert(planet.recruits, 1, FCrew.generateCrew())
-			planet.recruits[1].skillfulness = get_skillfulness(planet.recruits[1])
 		end
 		for x = 1, math.random(1, 4) do
 			table.insert(planet.missions, generateMission())
 		end
 	end
+	planet.wealth = math.random() * (settlementStats[planet.settlement].wealth_max - settlementStats[planet.settlement].wealth_min) + settlementStats[planet.settlement].wealth_min
+	print(planet.wealth)
 	return planet
 end
 
