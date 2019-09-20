@@ -41,6 +41,27 @@ function F.dismiss(crewID)
 	table.remove(crew, crewID)
 end
 
+function F.getWage(peep)
+	local best = 0
+	local secondary = 0
+	local skillCount = 0
+	for key, val in pairs(peep.skills) do
+		skillCount = skillCount + 1
+		local eval = val + ((peep.attributes.confidence - 0.5) * 0.4)
+		secondary = secondary + eval
+		if eval > best then
+			best = eval
+		end
+		print(key, eval)
+	end
+	secondary = secondary - best
+	best = best / 4 + 0.05
+	secondary = secondary / (10 * skillCount)
+	local wage = best + secondary
+	
+	return wage
+end
+
 function F.generateCrew()
 	IDCount = IDCount + 1
 	local gender
