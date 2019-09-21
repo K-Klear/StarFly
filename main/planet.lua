@@ -27,16 +27,16 @@ local missionStats = {
 
 local settlementStats = {
 	Megalopolis = {
-		wealth_max = 1,
-		wealth_min = 0.7
+		wealth_max = 1.5,
+		wealth_min = 1.2
 	},
 	City = {
-		wealth_max = 0.8,
-		wealth_min = 0.3
+		wealth_max = 1.3,
+		wealth_min = 0.7
 	},
 	Outpost = {
-		wealth_max = 0.4,
-		wealth_min = 0
+		wealth_max = 0.8,
+		wealth_min = 0.5
 	}
 }
 
@@ -91,7 +91,6 @@ function F.generatePlanet(region, start)
 		end
 	end
 	planet.wealth = math.random() * (settlementStats[planet.settlement].wealth_max - settlementStats[planet.settlement].wealth_min) + settlementStats[planet.settlement].wealth_min
-	print(planet.wealth)
 	return planet
 end
 

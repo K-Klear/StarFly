@@ -5,6 +5,37 @@ local F = {}
 
 local IDCount = 0
 
+local goalList = {
+	"fun",
+	"travel",
+	"work",
+	"home",
+	"running",
+}
+
+local goalStats = {
+	fun = {
+		desperation_max = 1.3,
+		desperation_min = 0.7
+	},
+	travel = {
+		desperation_max = 1.3,
+		desperation_min = 0.7
+	},
+	work = {
+		desperation_max = 1.1,
+		desperation_min = 0.2
+	},
+	home = {
+		desperation_max = 1.1,
+		desperation_min = 0.2
+	},
+	running = {
+		desperation_max = 0.8,
+		desperation_min = 0
+	}
+}
+
 function F.getRole(role)
 	for key, val in ipairs(crew) do
 		if val.role == role then
@@ -57,9 +88,12 @@ function F.getWage(peep)
 	secondary = secondary - best
 	best = best / 4 + 0.05
 	secondary = secondary / (10 * skillCount)
-	local wage = best + secondary
-	
-	return wage
+	return best + secondary
+end
+
+function F.getDesperation(peep, wealth)
+	local desperation = math.random() * (goalStats[peep.goal].desperation_max - goalStats[peep.goal].desperation_min) + goalStats[peep.goal].desperation_min
+	return math.min(desperation * wealth, 1)
 end
 
 function F.generateCrew()
@@ -100,16 +134,7 @@ function F.generateCrew()
 		factions = F.normalDist(2, true)
 	}
 
-	local goalList = {
-		"fun",
-		"travel",
-		"work",
-		"home",
-		"running",
-	}
-
 	local goal = goalList[math.random(1, #goalList)]
-
 	
 	--[[
 	Goals:
