@@ -215,10 +215,13 @@ function M.newDialog(kind, show)
 		gui.set_line_break(dialog.lbl.text, true)
 		
 		dialog.btn = {
-			reply1 = gui.new_text_node(vmath.vector3(-80, -126, 0), "Whatever"),
-			reply2 = gui.new_text_node(vmath.vector3(0, -126, 0), "Whatever"),
-			reply3 = gui.new_text_node(vmath.vector3(80, -126, 0), "Whatever")
+			reply1 = gui.new_text_node(vmath.vector3(-120, -116, 0), "Whatever"),
+			reply2 = gui.new_text_node(vmath.vector3(0, -116, 0), "Whatever"),
+			reply3 = gui.new_text_node(vmath.vector3(120, -116, 0), "Whatever")
 		}
+		gui.set_font(dialog.btn.reply1, hash("system_font"))
+		gui.set_font(dialog.btn.reply2, hash("system_font"))
+		gui.set_font(dialog.btn.reply3, hash("system_font"))
 		dialog.ico = {}
 	elseif kind == "event" then
 		dialog.lbl = {

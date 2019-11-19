@@ -5,7 +5,7 @@ local EVENTS = {}
 local list_space = {
 	"distress_signal_true",
 	"ambush_pirate",
-	"asteroids"
+	"asteroids",
 }
 
 local event_list = {}
@@ -49,9 +49,6 @@ end
 for key, val in ipairs(list_space) do
 	load_event(val)
 end
-
---EVENTS.list = list
-
 
 function EVENTS.progress(dialog)
 	for key, val in pairs(dialog.event.btn) do gui.set_enabled(val, false) end

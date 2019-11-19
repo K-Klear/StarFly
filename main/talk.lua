@@ -9,7 +9,7 @@ local qualifier = {
 	average = {"'m competent at", "'m decent enough at"},
 	good = {"'m good at", " won't let you down when"},
 	great = {"'m excellent at", " know a lot about"},
-	top = {"'m the best at", "'m the elite when it comes to", " know everything about", " a master of"}
+	top = {"'m the best at", "'m the elite when it comes to", " know everything about", " 'm a master of"}
 }
 
 local jobs = {
@@ -33,6 +33,14 @@ local goal = {
 	work = {"It's impossible to find a job here. Joining your crew might be my last chance. ", "Frankly? I'm after the money. I will get paid, right? ", "Honest work for honest pay, that's what I'm looking for. "},
 	home = {"I want to find a place where I belong. A place I could call a home. "},
 	running = {"Someone is after me. I need to vanish. ", "I've crossed someone. I need to get far away from here. "},
+}
+
+local wage = {
+	percent = {"% of the take", "%", "% of what we earn"},
+	offer = {"I deserve at least ", "I think a fair wage would be ", "I'm expecting at least ", "I'm easily worth ", "You should pay me "},
+	negotiate = {"I'm willing to compromise.", "I'm open to negotiations."},
+	final = {"That's my final offer", "That's as low as I can go.", "Take it or leave it.", "I can't really accept anything lower than that."},
+	free = {"I'm willing to work just for food.", "You won't even have to pay me."}
 }
 
 local function pickLine(table)
@@ -172,6 +180,24 @@ function M.recruit_intro(peep)
 	return string
 end
 
+
+function M.recruit_wage_initial(peep, maxWage, minWage)
+	local string
+	if maxWage == 0 then
+		string = pickLine(wage.free)
+	elseif maxWage == 5 then
+		string = pickLine(wage.offer)..maxWage..pickLine(wage.percent).."."
+	else
+		string = pickLine(wage.offer)..maxWage..pickLine(wage.percent)
+		if maxWage == minWage then
+			string = string..". "..pickLine(wage.final)
+		else
+			string = string..", but "..pickLine(wage.negotiate)
+		end
+	end
+	return string
+end
+
 function M.recruit_background(peep)
 	--local string = 
 
@@ -196,18 +222,24 @@ function M.openDialog(dialog, talker, text, reply1, reply2, reply3)
 	gui.set_text(dialog.lbl.name, Ftext.getName(talker).." says:")
 	if reply1 then
 		gui.set_text(dialog.btn.reply1, reply1)
+		local matrix = gui.get_text_metrics_from_node(dialog.btn.reply1)
+		gui.set_size(dialog.btn.reply1, vmath.vector3(matrix.width, matrix.height, 1))
 		gui.set_enabled(dialog.btn.reply1, true)
 	else
 		gui.set_enabled(dialog.btn.reply1, false)
 	end
 	if reply2 then
 		gui.set_text(dialog.btn.reply2, reply2)
+		local matrix = gui.get_text_metrics_from_node(dialog.btn.reply2)
+		gui.set_size(dialog.btn.reply2, vmath.vector3(matrix.width, matrix.height, 1))
 		gui.set_enabled(dialog.btn.reply2, true)
 	else
 		gui.set_enabled(dialog.btn.reply2, false)
 	end
 	if reply3 then
 		gui.set_text(dialog.btn.reply3, reply3)
+		local matrix = gui.get_text_metrics_from_node(dialog.btn.reply3)
+		gui.set_size(dialog.btn.reply3, vmath.vector3(matrix.width, matrix.height, 1))
 		gui.set_enabled(dialog.btn.reply3, true)
 	else
 		gui.set_enabled(dialog.btn.reply3, false)

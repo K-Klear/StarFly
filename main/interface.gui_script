@@ -660,18 +660,18 @@ function on_input(self, action_id, action)
 							table.remove(planet.recruits, result.recruit)
 						end
 						if result.speech == "recruit_background" then
-							TALK.openDialog(dialog.speech, planet.recruits[result.recruit], "Bacground info about me and all that shit.", "OK", nil, "Hire")
+							TALK.openDialog(dialog.speech, planet.recruits[result.recruit], "Background info about me and all that shit.", "OK", nil, "Hire")
 							speechResult.reply1 = {speech = "recruit_intro", recruit = result.recruit}
 							speechResult.reply3 = {close = true, dialog = "recruit", action = "hire", recruit = result.recruit}
 						elseif result.speech == "recruit_wage" then
-							TALK.openDialog(dialog.speech, planet.recruits[result.recruit], "I want some money or maybe not.", nil, "OK")
-							local wage = FCrew.getWage(planet.recruits[result.recruit])
-							print("Wage: "..wage, math.floor(wage * 20 + 0.5) / 0.2)
-							print("Greeded: "..planet.recruits[result.recruit].attributes.greed, math.floor(wage * (planet.recruits[result.recruit].attributes.greed + 0.5) * 20 + 0.5) / 0.2)
-							
-							speechResult.reply2 = {speech = "recruit_intro", recruit = result.recruit}
+							local wage = FCrew.getWage(planet.recruits[result.recruit]) * (planet.recruits[result.recruit].attributes.greed + 0.5)
+							local minWage = math.floor(wage * planet.recruits[result.recruit].desperation * 20 + 0.5) / 0.2
+							wage = math.floor(wage * 20 + 0.5) / 0.2
+							TALK.openDialog(dialog.speech, planet.recruits[result.recruit], TALK.recruit_wage_initial(planet.recruits[result.recruit], wage, minWage), "That's\ntoo much.", "Tell me more\nabout yourself.", "Deal.\nYou're hired.")
+							speechResult.reply1 = {speech = "recruit_intro", recruit = result.recruit}
+							speechResult.reply3 = {speech = "recruit_intro", recruit = result.recruit}
 						elseif result.speech == "recruit_intro" then
-							TALK.openDialog(dialog.speech, planet.recruits[result.recruit], TALK.recruit_intro(planet.recruits[result.recruit]), "Background", "Wage", "Hire")
+							TALK.openDialog(dialog.speech, planet.recruits[result.recruit], TALK.recruit_intro(planet.recruits[result.recruit]), "Tell me more\nabout yourself.", "Let's talk\nabout wages", "You're hired.")
 							speechResult.reply1 = {speech = "recruit_background", recruit = result.recruit}
 							speechResult.reply2 = {speech = "recruit_wage", recruit = result.recruit}
 							speechResult.reply3 = {close = true, dialog = "recruit", action = "hire", recruit = result.recruit}
@@ -788,20 +788,16 @@ function on_input(self, action_id, action)
 					if type(val) == "table" then
 						for k_, v_ in pairs(val) do
 							if gui.pick_node(v_, action.x, action.y) then
-								gui.set_shadow(v_, CON.COLOR_SELECTION)
-								gui.set_outline(v_, CON.COLOR_SELECTION)
+								gui.set_color(v_, vmath.vector4(gui.get_color(v_).x, gui.get_color(v_).y, gui.get_color(v_).z, 0.6))
 							else
-								gui.set_shadow(v_, vmath.vector4(0, 0, 0, 0))
-								gui.set_outline(v_, vmath.vector4(0, 0, 0, 0))
+								gui.set_color(v_, vmath.vector4(gui.get_color(v_).x, gui.get_color(v_).y, gui.get_color(v_).z, 1))
 							end
 						end
 					else
 						if gui.pick_node(val, action.x, action.y) then
-							gui.set_shadow(val, CON.COLOR_SELECTION)
-							gui.set_outline(val, CON.COLOR_SELECTION)
+							gui.set_color(val, vmath.vector4(gui.get_color(val).x, gui.get_color(val).y, gui.get_color(val).z, 0.6))
 						else
-							gui.set_shadow(val, vmath.vector4(0, 0, 0, 0))
-							gui.set_outline(val, vmath.vector4(0, 0, 0, 0))
+							gui.set_color(val, vmath.vector4(gui.get_color(val).x, gui.get_color(val).y, gui.get_color(val).z, 1))
 						end
 					end
 				end

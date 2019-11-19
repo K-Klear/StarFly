@@ -6,7 +6,6 @@ Version 0.4:
 	- They will also ask for a certain share based on their personality.
 
 
-
 Characters traits currently in use:
 
 confidence
@@ -22,8 +21,6 @@ greed
 - how big of a share they want
 
 
-
-
 Job interview:
 
 1) Greetings, I'm ____. [Best qualities].
@@ -35,3 +32,37 @@ Job interview:
 1a) Explains situation. Wage estimate perhaps.
 1b) Gives other qualifications, points out what they should NOT do. May point out they are a quick learner.
 1c) 
+
+
+
+
+EVENT JSON formatting:
+
+Room name is displayed at the top
+Text in the body (minus links) is in the body, duh.
+
+Each "room" has one of three tags:
+
+end
+	Automatically offers a single choice (OK) and ends the event
+choice
+	Provide 1-3 choices, event continues according to player choice
+dice
+	Doesn't display to the player but makes a check and proceeds accordingly.
+		difficulty:### sets the number to beat
+		test:XXX sets what is being rolled (luck, flee, detect etc. - needs to be set up in dice.lua)
+	Success goes to the first branch, failure to the second one. To get more branches, make more consecutive dice rooms.
+
+tag effect:XXX (recruit_random for example) has an in game effect set up in event loop in interface script.
+
+DIALOGUE JSON formatting:
+
+Room name is ignored (instead there's "XXX says")
+Text in the body consists of snips aimed at talk.lua
+
+
+
+
+
+
+

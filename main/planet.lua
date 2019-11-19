@@ -27,16 +27,16 @@ local missionStats = {
 
 local settlementStats = {
 	Megalopolis = {
-		wealth_max = 1,
-		wealth_min = 0.7
+		wealth_max = 1.5,
+		wealth_min = 1.2
 	},
 	City = {
-		wealth_max = 0.8,
-		wealth_min = 0.3
+		wealth_max = 1.3,
+		wealth_min = 0.7
 	},
 	Outpost = {
-		wealth_max = 0.4,
-		wealth_min = 0
+		wealth_max = 0.8,
+		wealth_min = 0.5
 	}
 }
 
@@ -90,8 +90,35 @@ function F.generatePlanet(region, start)
 			table.insert(planet.missions, generateMission())
 		end
 	end
+
+	local goalStats = {
+		fun = {
+			desperation_max = 1.3,
+			desperation_min = 0.7
+		},
+		travel = {
+			desperation_max = 1.3,
+			desperation_min = 0.7
+		},
+		work = {
+			desperation_max = 1.1,
+			desperation_min = 0.2
+		},
+		home = {
+			desperation_max = 1.1,
+			desperation_min = 0.2
+		},
+		running = {
+			desperation_max = 0.8,
+			desperation_min = 0
+		}
+	}
+	
 	planet.wealth = math.random() * (settlementStats[planet.settlement].wealth_max - settlementStats[planet.settlement].wealth_min) + settlementStats[planet.settlement].wealth_min
-	print(planet.wealth)
+	for key, peep in ipairs(planet.recruits) do
+		local desperation = math.random() * (goalStats[peep.goal].desperation_max - goalStats[peep.goal].desperation_min) + goalStats[peep.goal].desperation_min
+		peep.desperation = math.min(desperation * planet.wealth, 1)
+	end
 	return planet
 end
 
