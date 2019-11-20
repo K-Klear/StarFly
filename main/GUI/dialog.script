@@ -1,0 +1,37 @@
+go.property("size", vmath.vector3(0, 0, 1))
+
+function init(self)
+	local pos = go.get_position()
+	local frame = factory.create("#frame")
+	sprite.play_flipbook(msg.url(nil, frame, "sprite"), "dialog_bl")
+	frame = factory.create("#frame", pos + vmath.vector3(self.size.x * 0.5 + 16, 0, 0), nil, nil, vmath.vector3((self.size.x / 16) + 1, 1, 1))
+	sprite.play_flipbook(msg.url(nil, frame, "sprite"), "dialog_b")
+	frame = factory.create("#frame", pos + vmath.vector3(self.size.x + 32, 0, 0))
+	sprite.play_flipbook(msg.url(nil, frame, "sprite"), "dialog_br")
+
+	frame = factory.create("#frame", pos + vmath.vector3(0, self.size.y * 0.5 + 16, 0), nil, nil, vmath.vector3(1, (self.size.y / 16) + 1, 1))
+	sprite.play_flipbook(msg.url(nil, frame, "sprite"), "dialog_l")
+	frame = factory.create("#frame", pos + vmath.vector3(self.size.x * 0.5 + 16, self.size.y * 0.5 + 16, 0), nil, nil, vmath.vector3((self.size.x / 16) + 1, (self.size.y / 16) + 1, 1))
+	sprite.play_flipbook(msg.url(nil, frame, "sprite"), "dialog_mid")
+	frame = factory.create("#frame", pos + vmath.vector3(self.size.x + 32, self.size.y * 0.5 + 16, 0), nil, nil, vmath.vector3(1, (self.size.y / 16) + 1, 1))
+	sprite.play_flipbook(msg.url(nil, frame, "sprite"), "dialog_r")
+	
+	frame = factory.create("#frame", pos + vmath.vector3(0, self.size.y + 32, 0))
+	sprite.play_flipbook(msg.url(nil, frame, "sprite"), "dialog_tl")
+	frame = factory.create("#frame", pos + vmath.vector3(self.size.x * 0.5 + 16, self.size.y + 32, 0), nil, nil, vmath.vector3((self.size.x / 16) + 1, 1, 1))
+	sprite.play_flipbook(msg.url(nil, frame, "sprite"), "dialog_t")
+	frame = factory.create("#frame", pos + vmath.vector3(self.size.x + 32, self.size.y + 32, 0))
+	sprite.play_flipbook(msg.url(nil, frame, "sprite"), "dialog_tr")
+	
+	
+	--go.set_position("#background_tr", pos + vmath.vector3(self.size.x, self.size.y, 0))
+	--factory.create("#button")
+end
+
+function final(self)
+	
+end
+
+function on_message(self, message_id, message, sender)
+	
+end

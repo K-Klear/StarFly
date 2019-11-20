@@ -1,6 +1,42 @@
 images {
   image: "/assets/images/dialog.png"
 }
-margin: 0
-extrude_borders: 0
-inner_padding: 0
+images {
+  image: "/assets/images/ui/buttons/button_main.png"
+}
+images {
+  image: "/assets/images/ui/buttons/button_main_disabled.png"
+}
+images {
+  image: "/assets/images/ui/buttons/button_main_pressed.png"
+}
+images {
+  image: "/assets/images/ui/dialog/dialog_b.png"
+}
+images {
+  image: "/assets/images/ui/dialog/dialog_l.png"
+}
+images {
+  image: "/assets/images/ui/dialog/dialog_r.png"
+}
+images {
+  image: "/assets/images/ui/dialog/dialog_t.png"
+}
+images {
+  image: "/assets/images/ui/dialog/dialog_bl.png"
+}
+images {
+  image: "/assets/images/ui/dialog/dialog_br.png"
+}
+images {
+  image: "/assets/images/ui/dialog/dialog_mid.png"
+}
+images {
+  image: "/assets/images/ui/dialog/dialog_tl.png"
+}
+images {
+  image: "/assets/images/ui/dialog/dialog_tr.png"
+}
+margin: 1
+extrude_borders: 1
+inner_padding: 1
