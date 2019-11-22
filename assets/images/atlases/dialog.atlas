@@ -37,6 +37,12 @@ images {
 images {
   image: "/assets/images/ui/dialog/dialog_tr.png"
 }
+images {
+  image: "/assets/images/ui/buttons/button_close.png"
+}
+images {
+  image: "/assets/images/ui/buttons/button_close_pressed.png"
+}
 margin: 1
 extrude_borders: 1
 inner_padding: 1

@@ -56,6 +56,11 @@ instances {
   component_properties {
     id: "button_main"
     properties {
+      id: "callback"
+      value: "buy_pressed"
+      type: PROPERTY_TYPE_HASH
+    }
+    properties {
       id: "enabled"
       value: "true"
       type: PROPERTY_TYPE_BOOLEAN
@@ -84,42 +89,19 @@ instances {
   component_properties {
     id: "button_main"
     properties {
-      id: "id"
-      value: "2.0"
-      type: PROPERTY_TYPE_NUMBER
+      id: "label"
+      value: "repair"
+      type: PROPERTY_TYPE_HASH
+    }
+    properties {
+      id: "callback"
+      value: "repair_pressed"
+      type: PROPERTY_TYPE_HASH
     }
     properties {
       id: "enabled"
       value: "true"
       type: PROPERTY_TYPE_BOOLEAN
-    }
-  }
-  scale3 {
-    x: 1.0
-    y: 1.0
-    z: 1.0
-  }
-}
-instances {
-  id: "dialog"
-  prototype: "/main/GUI/dialog.go"
-  position {
-    x: 153.0
-    y: 298.0
-    z: 1.0
-  }
-  rotation {
-    x: 0.0
-    y: 0.0
-    z: 0.0
-    w: 1.0
-  }
-  component_properties {
-    id: "dialog"
-    properties {
-      id: "size"
-      value: "20.0, 500.0, 1.0"
-      type: PROPERTY_TYPE_VECTOR3
     }
   }
   scale3 {
@@ -145,9 +127,14 @@ instances {
   component_properties {
     id: "button_main"
     properties {
-      id: "id"
-      value: "3.0"
-      type: PROPERTY_TYPE_NUMBER
+      id: "label"
+      value: "upgrade"
+      type: PROPERTY_TYPE_HASH
+    }
+    properties {
+      id: "callback"
+      value: "upgrade_pressed"
+      type: PROPERTY_TYPE_HASH
     }
     properties {
       id: "enabled"
@@ -178,9 +165,14 @@ instances {
   component_properties {
     id: "button_main"
     properties {
-      id: "id"
-      value: "4.0"
-      type: PROPERTY_TYPE_NUMBER
+      id: "label"
+      value: "recruit"
+      type: PROPERTY_TYPE_HASH
+    }
+    properties {
+      id: "callback"
+      value: "recruit_pressed"
+      type: PROPERTY_TYPE_HASH
     }
     properties {
       id: "enabled"
@@ -211,9 +203,14 @@ instances {
   component_properties {
     id: "button_main"
     properties {
-      id: "id"
-      value: "5.0"
-      type: PROPERTY_TYPE_NUMBER
+      id: "label"
+      value: "crew"
+      type: PROPERTY_TYPE_HASH
+    }
+    properties {
+      id: "callback"
+      value: "crew_pressed"
+      type: PROPERTY_TYPE_HASH
     }
     properties {
       id: "enabled"
@@ -244,9 +241,14 @@ instances {
   component_properties {
     id: "button_main"
     properties {
-      id: "id"
-      value: "6.0"
-      type: PROPERTY_TYPE_NUMBER
+      id: "label"
+      value: "jobs"
+      type: PROPERTY_TYPE_HASH
+    }
+    properties {
+      id: "callback"
+      value: "jobs_pressed"
+      type: PROPERTY_TYPE_HASH
     }
     properties {
       id: "enabled"
@@ -277,9 +279,14 @@ instances {
   component_properties {
     id: "button_main"
     properties {
-      id: "id"
-      value: "7.0"
-      type: PROPERTY_TYPE_NUMBER
+      id: "label"
+      value: "travel"
+      type: PROPERTY_TYPE_HASH
+    }
+    properties {
+      id: "callback"
+      value: "travel_pressed"
+      type: PROPERTY_TYPE_HASH
     }
     properties {
       id: "enabled"
@@ -301,6 +308,39 @@ embedded_instances {
   data: "components {\n"
   "  id: \"interface\"\n"
   "  component: \"/main/interface.gui\"\n"
+  "  position {\n"
+  "    x: 0.0\n"
+  "    y: 0.0\n"
+  "    z: 0.0\n"
+  "  }\n"
+  "  rotation {\n"
+  "    x: 0.0\n"
+  "    y: 0.0\n"
+  "    z: 0.0\n"
+  "    w: 1.0\n"
+  "  }\n"
+  "}\n"
+  "components {\n"
+  "  id: \"controller\"\n"
+  "  component: \"/main/controller.script\"\n"
+  "  position {\n"
+  "    x: 0.0\n"
+  "    y: 0.0\n"
+  "    z: 0.0\n"
+  "  }\n"
+  "  rotation {\n"
+  "    x: 0.0\n"
+  "    y: 0.0\n"
+  "    z: 0.0\n"
+  "    w: 1.0\n"
+  "  }\n"
+  "}\n"
+  "embedded_components {\n"
+  "  id: \"dialog\"\n"
+  "  type: \"factory\"\n"
+  "  data: \"prototype: \\\"/main/GUI/dialog.go\\\"\\n"
+  "load_dynamically: false\\n"
+  "\"\n"
   "  position {\n"
   "    x: 0.0\n"
   "    y: 0.0\n"

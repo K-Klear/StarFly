@@ -1,0 +1,71 @@
+go.property("type", hash("main"))
+go.property("label", hash("buy"))
+go.property("callback", hash("buy"))
+go.property("enabled", true)
+
+
+local STR = require("main/strings")
+
+local default_colour = vmath.vector4(1, 1, 1, 1)
+local pressed_colour = vmath.vector4(1, 1, 1, 1)
+local disabled_colour = vmath.vector4(0.5, 0.5, 0.5, 1)
+
+local types = {
+	[hash("main")] = {
+		sprite = "button_main",
+		sprite_pressed = "button_main_pressed",
+		sprite_disabled = "button_main_disabled"
+	},
+	[hash("close")] = {
+		sprite = "button_close",
+		sprite_pressed = "button_close_pressed",
+		sprite_disabled = "button_close_pressed"
+	}
+}
+
+function init(self)
+	label.set_text("#label", STR.en.ui.button[self.label])
+	self.state = hash("up")
+	if self.enabled then
+		go.set("#label", "color", default_colour)
+	else
+		go.set("#label", "color", disabled_colour)
+		msg.post("#co", "disable")
+		sprite.play_flipbook("#sprite", types[self.type].sprite_disabled)
+	end
+end
+
+function on_message(self, message_id, message, sender)
+	if message_id == hash("pressed") then
+		sprite.play_flipbook("#sprite", types[self.type].sprite_pressed)
+		go.set("#label", "color", pressed_colour)
+		sound.play("#pressed")
+		self.state = hash("down")
+	elseif message_id == hash("released") and self.state == hash("down") then
+		sprite.play_flipbook("#sprite", types[self.type].sprite)
+		go.set("#label", "color", default_colour)
+		--sound.play("#released")
+		self.state = hash("up")
+	elseif message_id == hash("activated") then
+		sprite.play_flipbook("#sprite", types[self.type].sprite)
+		go.set("#label", "color", default_colour)
+		--sound.play("#released")
+		self.state = hash("up")
+		msg.post("/main#controller", self.callback)
+	end
+	if message_id == hash("trigger_response") then
+		if message.enter and not self.hover_playing then
+			sound.play("#hover")
+			self.hover_playing = true
+			timer.delay(0.2, false, function() self.hover_playing = nil end)
+		end
+	elseif message_id == hash("turn_off") then
+		go.set("#label", "color", disabled_colour)
+		msg.post("#co", "disable")
+		sprite.play_flipbook("#sprite", types[self.type].sprite_disabled)
+	elseif message_id == hash("turn_on") then
+		go.set("#label", "color", default_colour)
+		msg.post("#co", "enable")
+		sprite.play_flipbook("#sprite", types[self.type].sprite)
+	end
+end

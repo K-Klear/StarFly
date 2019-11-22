@@ -1,31 +1,63 @@
+local STR = require("main/strings")
+local LAY = require("main/GUI/dialog_layouts")
+
 go.property("size", vmath.vector3(0, 0, 1))
+go.property("title", hash(""))
+go.property("layout", hash(""))
+
 
 function init(self)
-	local pos = go.get_position()
-	local frame = factory.create("#frame")
-	sprite.play_flipbook(msg.url(nil, frame, "sprite"), "dialog_bl")
-	frame = factory.create("#frame", pos + vmath.vector3(self.size.x * 0.5 + 16, 0, 0), nil, nil, vmath.vector3((self.size.x / 16) + 1, 1, 1))
-	sprite.play_flipbook(msg.url(nil, frame, "sprite"), "dialog_b")
-	frame = factory.create("#frame", pos + vmath.vector3(self.size.x + 32, 0, 0))
-	sprite.play_flipbook(msg.url(nil, frame, "sprite"), "dialog_br")
+	local half_x, half_y = self.size.x * 0.5 + 16, self.size.y * 0.5 + 16
 
-	frame = factory.create("#frame", pos + vmath.vector3(0, self.size.y * 0.5 + 16, 0), nil, nil, vmath.vector3(1, (self.size.y / 16) + 1, 1))
-	sprite.play_flipbook(msg.url(nil, frame, "sprite"), "dialog_l")
-	frame = factory.create("#frame", pos + vmath.vector3(self.size.x * 0.5 + 16, self.size.y * 0.5 + 16, 0), nil, nil, vmath.vector3((self.size.x / 16) + 1, (self.size.y / 16) + 1, 1))
-	sprite.play_flipbook(msg.url(nil, frame, "sprite"), "dialog_mid")
-	frame = factory.create("#frame", pos + vmath.vector3(self.size.x + 32, self.size.y * 0.5 + 16, 0), nil, nil, vmath.vector3(1, (self.size.y / 16) + 1, 1))
-	sprite.play_flipbook(msg.url(nil, frame, "sprite"), "dialog_r")
+	local object
+
+	object = factory.create("#frame", vmath.vector3(-half_x + 0.5, -half_y + 0.5, 0))
+	go.set_parent(object, "."); sprite.play_flipbook(object, "dialog_bl")
+	object = factory.create("#frame", vmath.vector3(0, -half_y + 0.5, 0), nil, nil, vmath.vector3((self.size.x / 16) + 1, 1, 1))
+	go.set_parent(object, "."); sprite.play_flipbook(object, "dialog_b")
+	object = factory.create("#frame", vmath.vector3(half_x, -half_y + 0.5, 0))
+	go.set_parent(object, "."); sprite.play_flipbook(object, "dialog_br")
 	
-	frame = factory.create("#frame", pos + vmath.vector3(0, self.size.y + 32, 0))
-	sprite.play_flipbook(msg.url(nil, frame, "sprite"), "dialog_tl")
-	frame = factory.create("#frame", pos + vmath.vector3(self.size.x * 0.5 + 16, self.size.y + 32, 0), nil, nil, vmath.vector3((self.size.x / 16) + 1, 1, 1))
-	sprite.play_flipbook(msg.url(nil, frame, "sprite"), "dialog_t")
-	frame = factory.create("#frame", pos + vmath.vector3(self.size.x + 32, self.size.y + 32, 0))
-	sprite.play_flipbook(msg.url(nil, frame, "sprite"), "dialog_tr")
-	
-	
-	--go.set_position("#background_tr", pos + vmath.vector3(self.size.x, self.size.y, 0))
-	--factory.create("#button")
+	object = factory.create("#frame", vmath.vector3(-half_x + 0.5, 0, 0), nil, nil, vmath.vector3(1, (self.size.y / 16) + 1, 1))
+	go.set_parent(object, "."); sprite.play_flipbook(object, "dialog_l")
+	object = factory.create("#frame", vmath.vector3(0, 0, 0), nil, nil, vmath.vector3((self.size.x / 16) + 1, (self.size.y / 16) + 1, 1))
+	go.set_parent(object, "."); sprite.play_flipbook(object, "dialog_mid")
+	object = factory.create("#frame", vmath.vector3(half_x, 0, 0), nil, nil, vmath.vector3(1, (self.size.y / 16) + 1, 1))
+	go.set_parent(object, "."); sprite.play_flipbook(object, "dialog_r")
+
+	object = factory.create("#frame", vmath.vector3(-half_x + 0.5, half_y, 0))
+	go.set_parent(object, "."); sprite.play_flipbook(object, "dialog_tl")
+	object = factory.create("#frame", vmath.vector3(0, half_y, 0), nil, nil, vmath.vector3((self.size.x / 16) + 1, 1, 1))
+	go.set_parent(object, "."); sprite.play_flipbook(object, "dialog_t")
+	object = factory.create("#frame", vmath.vector3(half_x, half_y, 0))
+	go.set_parent(object, "."); sprite.play_flipbook(object, "dialog_tr")
+
+	if self.title ~= hash("") then
+		object = factory.create("#label", vmath.vector3(0, half_y - 16, 0))
+		go.set_parent(object, "."); label.set_text(object, STR.en.ui.dialog_title[self.title])
+	end
+
+	if self.layout ~= hash("") then
+		if LAY[self.layout].elements then
+			local factory_type = {
+				[hash("button_main")] = "#button_main",
+				[hash("label")] = "#label"
+			}
+			
+			for key, val in ipairs(LAY[self.layout].elements) do
+				object = factory.create(factory_type[val.type], vmath.vector3(val.position_x * 116, half_y - (54 * val.position_y) - 8, 0), nil, val.props)
+				go.set_parent(object, ".")
+				if val.type == hash("label") then
+					label.set_text(object, STR.en.ui.label[val.text])
+				end
+			end
+		end
+		if LAY[self.layout].close_button then
+			object = factory.create("#button_close", vmath.vector3(half_x - 8, half_y - 8, 0))
+			go.set_parent(object, ".")
+		end
+	end
+
 end
 
 function final(self)

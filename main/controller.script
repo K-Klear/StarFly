@@ -1,0 +1,18 @@
+local centre = vmath.vector3(1280 / 2, 900 / 2, 1)
+
+function init(self)
+	
+end
+
+function on_message(self, message_id, message, sender)
+	if message_id == hash("buy_pressed") then
+
+
+
+
+	elseif message_id == hash("travel_pressed") then
+		local props = {size = vmath.vector3(350, 163, 0), title = hash("travel"), layout = hash("travel")}
+	
+		factory.create("#dialog", centre, nil, props)
+	end
+end
