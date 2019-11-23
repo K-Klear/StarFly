@@ -1,3 +1,10 @@
+Stuff I can later delete:
+constants.lua
+text.lua (there's still skillText() and getName())
+face.lua
+
+
+
 Version 0.4:
 - New crew dialog added. Crewmembers can now be dismissed and their wages set.
 - Finishing a mission divides the spoils between according to the set wages and the rest goes to you.

@@ -4,7 +4,7 @@ M.nameList = {}
 
 M.nameList.male = {
 	"Mal", "Wash", "Simon", "Jean-Luc", "Wolf", "Wesley", "Crusher", "Chekov", "Geordi", "Scott", "Odo",
-	"Quark", "Garrus", "Korben", "Cornelius", "Ziggy", "Tom", "Reed", "Flash",
+	"Quark", "Garrus", "Korben", "Cornelius", "Ziggy", "Tom", "Reed", "Flash", "Ace",
 	"Gordon", "Memnon", "Cutter", "Mathesar", "Rimmer", "Lister", "Spiff", "Ijon", "Kaidan", "Jacob"
 }
 

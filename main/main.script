@@ -1,0 +1,19 @@
+local STATS = require("main/modules/stats")
+local CREW = require("main/modules/crew")
+
+local function travel(target, mission)
+	STATS.fuel = STATS.fuel - 1
+	STATS.food = STATS.food - 1 -- tie this with crew!
+	--planet = FPlanet.generatePlanet(target)
+	msg.post("/background", "space")
+end
+
+function init(self)
+
+end
+
+function on_message(self, message_id, message, sender)
+	if message_id == hash("travel") then
+		travel(message.target, message.mission)
+	end
+end

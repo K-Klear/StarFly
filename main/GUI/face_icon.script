@@ -1,0 +1,37 @@
+go.property("skin_colour", vmath.vector4(1, 1, 1, 1))
+go.property("eye_colour", vmath.vector4(1, 1, 1, 1))
+go.property("hair_colour", vmath.vector4(1, 1, 1, 1))
+go.property("clothes_colour", vmath.vector4(1, 1, 1, 1))
+go.property("chin", 1)
+go.property("forehead", 1)
+go.property("mouth", 1)
+go.property("eyes", 1)
+go.property("iris", 1)
+go.property("hair", 1)
+go.property("body", 1)
+
+function init(self)
+	sprite.set_constant("#chin", "tint", self.skin_colour)
+	sprite.set_constant("#forehead", "tint", self.skin_colour)
+	sprite.set_constant("#eyes", "tint", self.skin_colour)
+	sprite.set_constant("#hair", "tint", self.hair_colour)
+	sprite.set_constant("#iris", "tint", self.eye_colour)
+	sprite.set_constant("#body", "tint", self.clothes_colour)
+
+	sprite.play_flipbook("#chin", "chin"..self.chin)
+	sprite.play_flipbook("#forehead", "forehead"..self.forehead)
+	sprite.play_flipbook("#mouth", "mouth"..self.mouth)
+	sprite.play_flipbook("#eyes", "eyes"..self.eyes)
+	sprite.play_flipbook("#iris", "iris"..self.iris)
+	sprite.play_flipbook("#hair", "hair"..self.hair)
+	sprite.play_flipbook("#body", "body"..self.body)
+end
+
+function final(self)
+	
+end
+
+
+function on_message(self, message_id, message, sender)
+	
+end

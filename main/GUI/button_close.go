@@ -31,7 +31,7 @@ components {
 embedded_components {
   id: "sprite"
   type: "sprite"
-  data: "tile_set: \"/assets/images/atlases/dialog.atlas\"\n"
+  data: "tile_set: \"/main/GUI/dialog.atlas\"\n"
   "default_animation: \"button_close\"\n"
   "material: \"/builtins/materials/sprite.material\"\n"
   "blend_mode: BLEND_MODE_ALPHA\n"

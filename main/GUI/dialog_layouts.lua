@@ -124,6 +124,7 @@ local LAY = {
 		background = true,
 		elements = {
 			{
+				id = hash("explore_core"),
 				type = hash("button_main"),
 				position_x = 0,
 				position_y = 1,
@@ -134,6 +135,7 @@ local LAY = {
 				},
 			},
 			{
+				id = hash("explore_frontier"),
 				type = hash("button_main"),
 				position_x = 0,
 				position_y = 2,
@@ -144,6 +146,7 @@ local LAY = {
 				},
 			},
 			{
+				id = hash("explore_rim"),
 				type = hash("button_main"),
 				position_x = 0,
 				position_y = 3,
@@ -154,6 +157,7 @@ local LAY = {
 				},
 			},
 			{
+				id = hash("mission_core"),
 				type = hash("button_main"),
 				position_x = 1,
 				position_y = 1,
@@ -164,6 +168,7 @@ local LAY = {
 				},
 			},
 			{
+				id = hash("mission_frontier"),
 				type = hash("button_main"),
 				position_x = 1,
 				position_y = 2,
@@ -174,6 +179,7 @@ local LAY = {
 				},
 			},
 			{
+				id = hash("mission_rim"),
 				type = hash("button_main"),
 				position_x = 1,
 				position_y = 3,

@@ -9,7 +9,7 @@ textures {
 }
 textures {
   name: "dialog"
-  texture: "/assets/images/atlases/dialog.atlas"
+  texture: "/main/GUI/dialog.atlas"
 }
 textures {
   name: "selection"

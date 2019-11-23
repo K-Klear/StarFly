@@ -1,9 +1,18 @@
+local STATS = require("main/modules/stats")
+
 local centre = vmath.vector3(1280 / 2, 900 / 2, 1)
 local stack = {}
 
 function init(self)
 	local props = {size = vmath.vector3(800, 0, 0), layout = hash("main")}
 	stack[1] = factory.create("#dialog", vmath.vector3(centre.x, 100, 1), nil, props)
+end
+
+local function close_all_dialogs(main_on)
+	while #stack > 1 do
+		go.delete(stack[#stack], true); stack[#stack] = nil
+	end
+	if main_on then	msg.post(stack[1], "enable_all") end
 end
 
 function on_message(self, message_id, message, sender)
@@ -14,11 +23,11 @@ function on_message(self, message_id, message, sender)
 		table.insert(stack, factory.create("#dialog", centre, nil, props))
 		msg.post(stack[#stack - 1], "disable_all")
 	elseif message_id == hash("travel_pressed") then
-		local nofuel, nofood, nopilot = true, true, true
-		if nofuel then
+		local nopilot = false
+		if STATS.fuel == 0 then
 			local props = {size = vmath.vector3(350, 52, 0), title = hash("error_no_fuel"), layout = hash("error")}
 			table.insert(stack, factory.create("#dialog", centre, nil, props))
-		elseif nofood then
+		elseif STATS.food == 0 then
 			local props = {size = vmath.vector3(350, 52, 0), title = hash("error_no_food"), layout = hash("error")}
 			table.insert(stack, factory.create("#dialog", centre, nil, props))
 		elseif nopilot then
@@ -29,6 +38,24 @@ function on_message(self, message_id, message, sender)
 			table.insert(stack, factory.create("#dialog", centre, nil, props))
 			msg.post(stack[#stack - 1], "disable_all")
 		end
+	elseif message_id == hash("travel_explore_core") then
+		close_all_dialogs()
+		msg.post("#main", hash("travel"), {target = hash("core"), mission = false})
+	elseif message_id == hash("travel_explore_frontier") then
+		close_all_dialogs()
+		msg.post("#main", hash("travel"), {target = hash("frontier"), mission = false})
+	elseif message_id == hash("travel_explore_rim") then
+		close_all_dialogs()
+		msg.post("#main", hash("travel"), {target = hash("rim"), mission = false})
+	elseif message_id == hash("travel_mission_core") then
+		close_all_dialogs()
+		msg.post("#main", hash("travel"), {target = hash("core"), mission = true})
+	elseif message_id == hash("travel_mission_frontier") then
+		close_all_dialogs()
+		msg.post("#main", hash("travel"), {target = hash("frontier"), mission = true})
+	elseif message_id == hash("travel_mission_rim") then
+		close_all_dialogs()
+		msg.post("#main", hash("travel"), {target = hash("rim"), mission = true})
 	elseif message_id == hash("close") then
 		go.delete(stack[#stack], true); stack[#stack] = nil
 		msg.post(stack[#stack], "enable_all")

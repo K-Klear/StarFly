@@ -1,4 +1,4 @@
-local STR = require("main/strings")
+local STR = require("main/modules/strings")
 local LAY = require("main/GUI/dialog_layouts")
 
 go.property("size", vmath.vector3(0, 0, 1))
@@ -59,6 +59,7 @@ function init(self)
 	if LAY[self.layout].close_button then
 		object = factory.create("#button_close", vmath.vector3(half_x - 8, half_y - 8, 0))
 		go.set_parent(object, ".")
+		self.elements[hash("close")] = object
 	end
 end
 
@@ -69,11 +70,11 @@ end
 function on_message(self, message_id, message, sender)
 	if message_id == hash("disable_all") then
 		for key, val in pairs(self.elements) do
-			msg.post(val, "turn_off")
+			msg.post(val, "deactivate")
 		end
 	elseif message_id == hash("enable_all") then
 		for key, val in pairs(self.elements) do
-			msg.post(val, "turn_on")
+			msg.post(val, "activate")
 		end	
 	end
 end
