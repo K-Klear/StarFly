@@ -69,3 +69,7 @@ function on_message(self, message_id, message, sender)
 		sprite.play_flipbook("#sprite", types[self.type].sprite)
 	end
 end
+
+function final(self)
+	msg.post("/cursor", hash("deleted"), {id = go.get_id()})
+end

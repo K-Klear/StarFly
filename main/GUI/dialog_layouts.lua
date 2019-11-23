@@ -1,12 +1,127 @@
 local LAY = {
+	[hash("main")] = {
+		elements = {
+			{
+				id = hash("buy"),
+				type = hash("button_main"),
+				position_x = -3,
+				position_y = 0,
+				props = {
+					label = hash("buy"),
+					callback = hash("buy_pressed"),
+					enabled = true
+				},
+			},
+			{
+				id = hash("repair"),
+				type = hash("button_main"),
+				position_x = -2,
+				position_y = 0,
+				props = {
+					label = hash("repair"),
+					callback = hash("repair_pressed"),
+					enabled = true
+				},
+			},
+			{
+				id = hash("upgrade"),
+				type = hash("button_main"),
+				position_x = -1,
+				position_y = 0,
+				props = {
+					label = hash("upgrade"),
+					callback = hash("upgrade_pressed"),
+					enabled = true
+				},
+			},
+			{
+				id = hash("recruit"),
+				type = hash("button_main"),
+				position_x = 0,
+				position_y = 0,
+				props = {
+					label = hash("recruit"),
+					callback = hash("recruit_pressed"),
+					enabled = true
+				},
+			},
+			{
+				id = hash("crew"),
+				type = hash("button_main"),
+				position_x = 1,
+				position_y = 0,
+				props = {
+					label = hash("crew"),
+					callback = hash("crew_pressed"),
+					enabled = true
+				},
+			},
+			{
+				id = hash("jobs"),
+				type = hash("button_main"),
+				position_x = 2,
+				position_y = 0,
+				props = {
+					label = hash("jobs"),
+					callback = hash("jobs_pressed"),
+					enabled = true
+				},
+			},
+			{
+				id = hash("travel"),
+				type = hash("button_main"),
+				position_x = 3,
+				position_y = 0,
+				props = {
+					label = hash("travel"),
+					callback = hash("travel_pressed"),
+					enabled = true
+				},
+			},
+		}
+	},
 	[hash("buy")] = {},
 	[hash("repair")] = {},
 	[hash("upgrade")] = {},
 	[hash("recruit")] = {},
 	[hash("crew")] = {},
-	[hash("jobs")] = {},
+	[hash("jobs")] = {
+		close_button = true,
+		background = true,
+		elements = {
+			{
+				type = hash("label"),
+				position_x = -1.5,
+				position_y = 1,
+				text = hash("jobs_type")
+			},
+			{
+				type = hash("label"),
+				position_x = -0.5,
+				position_y = 1,
+				text = hash("jobs_region")
+			},
+			{
+				type = hash("label"),
+				position_x = 0.5,
+				position_y = 1,
+				text = hash("jobs_wage")
+			},
+			{
+				type = hash("button_main"),
+				position_x = 1.5,
+				position_y = 2,
+				props = {
+					label = hash("jobs_accept"),
+					callback = hash("jobs_accept_1"),
+					enabled = true
+				},
+			},
+		}
+	},
 	[hash("travel")] = {
 		close_button = true,
+		background = true,
 		elements = {
 			{
 				type = hash("button_main"),
@@ -88,6 +203,23 @@ local LAY = {
 			},
 		}
 	},
+
+	[hash("error")] = {
+		close_button = true,
+		background = true,
+		elements = {
+			{
+				type = hash("button_main"),
+				position_x = 0,
+				position_y = 1,
+				props = {
+					label = hash("error_ok"),
+					callback = hash("close"),
+					enabled = true
+				},
+			},
+		}
+	}
 }
 
 return LAY

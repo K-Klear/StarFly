@@ -17,6 +17,8 @@ function on_message(self, message_id, message, sender)
 				if active_button == message.other_id then active_button = nil end
 			end
 		end
+	elseif message_id == hash("deleted") then
+		if active_button == message.id then active_button = nil end
 	end
 end
 

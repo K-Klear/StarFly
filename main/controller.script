@@ -1,18 +1,36 @@
 local centre = vmath.vector3(1280 / 2, 900 / 2, 1)
+local stack = {}
 
 function init(self)
-	
+	local props = {size = vmath.vector3(800, 0, 0), layout = hash("main")}
+	stack[1] = factory.create("#dialog", vmath.vector3(centre.x, 100, 1), nil, props)
 end
 
 function on_message(self, message_id, message, sender)
 	if message_id == hash("buy_pressed") then
 
-
-
-
+	elseif message_id == hash("jobs_pressed") then
+		local props = {size = vmath.vector3(450, 163, 0), title = hash("jobs"), layout = hash("jobs")}
+		table.insert(stack, factory.create("#dialog", centre, nil, props))
+		msg.post(stack[#stack - 1], "disable_all")
 	elseif message_id == hash("travel_pressed") then
-		local props = {size = vmath.vector3(350, 163, 0), title = hash("travel"), layout = hash("travel")}
-	
-		factory.create("#dialog", centre, nil, props)
+		local nofuel, nofood, nopilot = true, true, true
+		if nofuel then
+			local props = {size = vmath.vector3(350, 52, 0), title = hash("error_no_fuel"), layout = hash("error")}
+			table.insert(stack, factory.create("#dialog", centre, nil, props))
+		elseif nofood then
+			local props = {size = vmath.vector3(350, 52, 0), title = hash("error_no_food"), layout = hash("error")}
+			table.insert(stack, factory.create("#dialog", centre, nil, props))
+		elseif nopilot then
+			local props = {size = vmath.vector3(350, 52, 0), title = hash("error_no_pilot"), layout = hash("error")}
+			table.insert(stack, factory.create("#dialog", centre, nil, props))
+		else
+			local props = {size = vmath.vector3(350, 163, 0), title = hash("travel"), layout = hash("travel")}
+			table.insert(stack, factory.create("#dialog", centre, nil, props))
+			msg.post(stack[#stack - 1], "disable_all")
+		end
+	elseif message_id == hash("close") then
+		go.delete(stack[#stack], true); stack[#stack] = nil
+		msg.post(stack[#stack], "enable_all")
 	end
 end
