@@ -4,15 +4,6 @@ local CREW = {
 	list = {}
 }
 
-function CREW.getRole(role)				-- WIP
-	for key, val in ipairs(crew) do
-		if val.role == role then
-			return key
-		end
-	end
-	return 0
-end
-
 local function normal_dist(factor, zeroMean)
 	local value = 0
 	for x = 1, factor do
@@ -23,39 +14,6 @@ local function normal_dist(factor, zeroMean)
 		value = math.abs(value - 0.5) * 2
 	end
 	return value
-end
-
-function CREW.recruit(recruit)				-- WIP
-	if not recruit then recruit = CREW.generateCrew() end
-	table.insert(crew, recruit)
-	text.setNameAvailability(crew[#crew].name.gender, crew[#crew].name.key, true)
-	crew[#crew].go = factory.create("/ship#spawn_crew", vmath.vector3(math.random(140, 240), 64, 0.1), nil, {crew = #crew, level = 2})
-	crew[#crew].wage = 0
-	crew[#crew].money = 0
-end
-
-function CREW.dismiss(crewID)				-- WIP
-	earnings = earnings + crew[crewID].wage
-	msg.post(crew[crewID].go, hash("die"))
-	table.remove(crew, crewID)
-end
-
-function CREW.getWage(peep)				-- WIP
-	local best = 0
-	local secondary = 0
-	local skillCount = 0
-	for key, val in pairs(peep.skills) do
-		skillCount = skillCount + 1
-		local eval = val + ((peep.attributes.confidence - 0.5) * 0.4)
-		secondary = secondary + eval
-		if eval > best then
-			best = eval
-		end
-	end
-	secondary = secondary - best
-	best = best / 4 + 0.05
-	secondary = secondary / (10 * skillCount)
-	return best + secondary
 end
 
 local next_id = 0
@@ -224,5 +182,46 @@ function CREW.new()
 		knowledge = knowledge, face = face, id = IDCount, goal = goal
 	}
 end
+
+function CREW.add(recruit)				-- WIP
+	if not recruit then recruit = CREW.new() end
+	table.insert(CREW.list, recruit)
+	used_names[recruit.name.gender][recruit.name.key] = true
+	CREW.list[#crew].go = factory.create("/ship#spawn_crew", vmath.vector3(math.random(140, 240), 64, 0.1), nil, {crew = #crew, level = 2})
+end
+
+function CREW.dismiss(crewID)				-- WIP
+	msg.post(CREW.list[crewID].go, hash("die"))
+	table.remove(CREW.list, crewID)
+end
+
+function CREW.getWage(peep)				-- WIP
+	local best = 0
+	local secondary = 0
+	local skillCount = 0
+	for key, val in pairs(peep.skills) do
+		skillCount = skillCount + 1
+		local eval = val + ((peep.attributes.confidence - 0.5) * 0.4)
+		secondary = secondary + eval
+		if eval > best then
+			best = eval
+		end
+	end
+	secondary = secondary - best
+	best = best / 4 + 0.05
+	secondary = secondary / (10 * skillCount)
+	return best + secondary
+end
+
+
+function CREW.getRole(role)				-- WIP (possibly free to delete?
+	for key, val in ipairs(CREW.list) do
+		if val.role == role then
+			return key
+		end
+	end
+	return 0
+end
+
 
 return CREW

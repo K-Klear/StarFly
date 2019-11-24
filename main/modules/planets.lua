@@ -1,6 +1,6 @@
-local FCrew = require("main.functionsCrew")
+local CREW = require("main.functionsCrew")
 
-local F = {}
+local PLT = {}
 
 local regionStats = {
 	Core = {
