@@ -2,7 +2,7 @@ go.property("type", hash("main"))
 go.property("label", hash("buy"))
 go.property("callback", hash("buy"))
 go.property("enabled", true)
-
+go.property("id", 1)
 
 local STR = require("main/modules/strings")
 
@@ -16,6 +16,12 @@ local types = {
 		sprite_pressed = "button_main_pressed",
 		sprite_disabled = "button_main_disabled",
 		sprite_inactive = "button_main_inactive"
+	},
+	[hash("tiny")] = {
+		sprite = "button_tiny",
+		sprite_pressed = "button_tiny_pressed",
+		sprite_disabled = "button_tiny_disabled",
+		sprite_inactive = "button_tiny_inactive"
 	},
 	[hash("close")] = {
 		sprite = "button_close",
@@ -54,7 +60,7 @@ function on_message(self, message_id, message, sender)
 		go.set("#label", "color", default_colour)
 		--sound.play("#released")
 		self.state = hash("up")
-		msg.post("/main#controller", self.callback)
+		msg.post("/main#controller", self.callback, {id = self.id})
 	end
 	if message_id == hash("trigger_response") then
 		if message.enter and not self.hover_playing then

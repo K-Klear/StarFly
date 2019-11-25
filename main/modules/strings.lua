@@ -12,6 +12,13 @@ local STR = {
 				[hash("jobs")] = "JOBS",
 				[hash("travel")] = "TRAVEL",
 
+				[hash("crew_background")] = "About",
+				[hash("crew_skills")] = "Skills",
+				[hash("crew_dismiss")] = "Dismiss",
+
+				[hash("crew_plus")] = "+",
+				[hash("crew_minus")] = "-",
+				
 				[hash("jobs_accept")] = "ACCEPT",
 
 				[hash("travel_explore")] = "EXPLORE",
@@ -28,14 +35,38 @@ local STR = {
 				[hash("jobs")] = "AVAILABLE JOBS",
 				[hash("travel")] = "TRAVEL",
 
+				[hash("error_no_crew")] = "You have no crew!",
+				
+				[hash("error_no_jobs")] = "There are no jobs available here.",
+
 				[hash("error_no_fuel")] = "You don't have enough fuel!",
 				[hash("error_no_food")] = "You don't have enough rations!",
 				[hash("error_no_pilot")] = "You must assign a pilot!",
 			},
 			label = {
+				[hash("core")] = "Core worlds",
+				[hash("frontier")] = "Frontier",
+				[hash("rim")] = "Outer rim",
+
+				[hash("role_none")] = "None",
+
+				[hash("crew_name")] = "NAME",
+				[hash("crew_role")] = "POST",
+				[hash("crew_wage")] = "WAGE",
+				
 				[hash("jobs_type")] = "TYPE",
 				[hash("jobs_region")] = "REGION",
 				[hash("jobs_wage")] = "WAGE",
+
+				[hash("job_delivery")] = "Delivery",
+				[hash("job_smuggling")] = "Smuggling",
+				[hash("job_passage")] = "Passage",
+				[hash("job_assasination")] = "Assasination",
+				[hash("job_espionage")] = "Espionage",
+
+
+
+				[hash("jobs_accept")] = "Accept",
 				
 				[hash("travel_core")] = "CORE WORLDS",
 				[hash("travel_frontier")] = "FRONTIER",

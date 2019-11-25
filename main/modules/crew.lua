@@ -101,6 +101,7 @@ function CREW.new()
 
 	local _ = math.random(1, #list)
 	local name = {gender = list[_].gender, key = list[_].key}
+	local name_string = STR.en.names[name.gender][name.key]
 	used_names[name.gender][name.key] = false
 	
 	local face = {
@@ -178,8 +179,8 @@ function CREW.new()
 	--]]
 
 	return {
-		gender = gender, name = name, skills = skills, stats = stats, attributes = attributes,
-		knowledge = knowledge, face = face, id = IDCount, goal = goal
+		gender = gender, name = name, name_string = name_string, skills = skills, stats = stats, attributes = attributes,
+		knowledge = knowledge, face = face, id = IDCount, goal = goal, role = hash("role_none"), wage = 0
 	}
 end
 
@@ -187,11 +188,11 @@ function CREW.add(recruit)				-- WIP
 	if not recruit then recruit = CREW.new() end
 	table.insert(CREW.list, recruit)
 	used_names[recruit.name.gender][recruit.name.key] = true
-	CREW.list[#crew].go = factory.create("/ship#spawn_crew", vmath.vector3(math.random(140, 240), 64, 0.1), nil, {crew = #crew, level = 2})
+	--CREW.list[#crew].go = factory.create("/ship#spawn_crew", vmath.vector3(math.random(140, 240), 64, 0.1), nil, {crew = #crew, level = 2})
 end
 
 function CREW.dismiss(crewID)				-- WIP
-	msg.post(CREW.list[crewID].go, hash("die"))
+	--msg.post(CREW.list[crewID].go, hash("die"))
 	table.remove(CREW.list, crewID)
 end
 
@@ -223,5 +224,6 @@ function CREW.getRole(role)				-- WIP (possibly free to delete?
 	return 0
 end
 
+CREW.add(); CREW.add(); CREW.add()
 
 return CREW

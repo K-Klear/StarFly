@@ -80,11 +80,118 @@ local LAY = {
 			},
 		}
 	},
+	
 	[hash("buy")] = {},
 	[hash("repair")] = {},
 	[hash("upgrade")] = {},
 	[hash("recruit")] = {},
-	[hash("crew")] = {},
+	[hash("crew")] = {
+		close_button = true,
+		background = true,
+		elements = {
+			{
+				type = hash("label"),
+				position_x = -2.5,
+				position_y = 1,
+				text = hash("crew_name")
+			},
+			{
+				type = hash("label"),
+				position_x = -1.5,
+				position_y = 1,
+				text = hash("crew_role")
+			},
+			{
+				type = hash("label"),
+				position_x = -0.5,
+				position_y = 1,
+				text = hash("crew_wage")
+			},
+			{
+				repeating = {"CREW", "list"},
+				type = hash("icon_face"),
+				position_x = -3.1,
+				position_y = 2,
+				scale = vmath.vector3(2, 2, 2)
+			},
+			{
+				repeating = {"CREW", "list"},
+				type = hash("label"),
+				position_x = -2.5,
+				position_y = 2,
+				text = ("name_string")
+			},
+			{
+				repeating = {"CREW", "list"},
+				type = hash("label"),
+				position_x = -1.5,
+				position_y = 2,
+				text = ("role")
+			},
+			{
+				repeating = {"CREW", "list"},
+				type = hash("button_tiny"),
+				position_x = -0.8,
+				position_y = 2,
+				props = {
+					label = hash("crew_plus"),
+					callback = hash("crew_wage_plus"),
+					enabled = true
+				},
+			},
+			{
+				repeating = {"CREW", "list"},
+				type = hash("label"),
+				position_x = -0.5,
+				position_y = 2,
+				text = ("wage")
+			},
+			{
+				repeating = {"CREW", "list"},
+				type = hash("button_tiny"),
+				position_x = -0.2,
+				position_y = 2,
+				props = {
+					label = hash("crew_minus"),
+					callback = hash("crew_wage_minus"),
+					enabled = true
+				},
+			},
+			{
+				repeating = {"CREW", "list"},
+				type = hash("button_main"),
+				position_x = 0.5,
+				position_y = 2,
+				props = {
+					label = hash("crew_background"),
+					callback = hash("crew_background"),
+					enabled = true
+				},
+			},
+			{
+				repeating = {"CREW", "list"},
+				type = hash("button_main"),
+				position_x = 1.5,
+				position_y = 2,
+				props = {
+					label = hash("crew_skills"),
+					callback = hash("crew_skills"),
+					enabled = true
+				},
+			},
+			{
+				repeating = {"CREW", "list"},
+				type = hash("button_main"),
+				position_x = 2.5,
+				position_y = 2,
+				props = {
+					label = hash("crew_dismiss"),
+					callback = hash("crew_dismiss"),
+					enabled = true
+				},
+			},
+		}
+	},
 	[hash("jobs")] = {
 		close_button = true,
 		background = true,
@@ -108,12 +215,34 @@ local LAY = {
 				text = hash("jobs_wage")
 			},
 			{
+				repeating = {"PLANET", "current", "jobs"},
+				type = hash("label"),
+				position_x = -1.5,
+				position_y = 2,
+				text = ("type")
+			},
+			{
+				repeating = {"PLANET", "current", "jobs"},
+				type = hash("label"),
+				position_x = -0.5,
+				position_y = 2,
+				text = ("region")
+			},
+			{
+				repeating = {"PLANET", "current", "jobs"},
+				type = hash("label"),
+				position_x = 0.5,
+				position_y = 2,
+				text = ("wage")
+			},
+			{
+				repeating = {"PLANET", "current", "jobs"},
 				type = hash("button_main"),
 				position_x = 1.5,
 				position_y = 2,
 				props = {
 					label = hash("jobs_accept"),
-					callback = hash("jobs_accept_1"),
+					callback = hash("jobs_accept"),
 					enabled = true
 				},
 			},
@@ -157,7 +286,7 @@ local LAY = {
 				},
 			},
 			{
-				id = hash("mission_core"),
+				id = hash("core"),
 				type = hash("button_main"),
 				position_x = 1,
 				position_y = 1,
@@ -168,7 +297,7 @@ local LAY = {
 				},
 			},
 			{
-				id = hash("mission_frontier"),
+				id = hash("frontier"),
 				type = hash("button_main"),
 				position_x = 1,
 				position_y = 2,
@@ -179,7 +308,7 @@ local LAY = {
 				},
 			},
 			{
-				id = hash("mission_rim"),
+				id = hash("rim"),
 				type = hash("button_main"),
 				position_x = 1,
 				position_y = 3,

@@ -1,56 +1,56 @@
-local CREW = require("main.functionsCrew")
+local CREW = require("main/modules/crew")
 
-local PLT = {}
+local PLANET = {current = {}}
 
-local regionStats = {
-	Core = {
-		government = {"Federation"},
-		recruitMax = 5,
-		settlement = {"Megalopolis", "City"}
+local region_stats = {
+	[hash("core")] = {
+		government = {hash("federation")},
+		recruit_max = 5,
+		settlement = {hash("megalopolis"), hash("city")}
 	},
-	Frontier = {
-		government = {"Federation", "Rebels", "Independent", "Independent", "Independent"},
-		recruitMax = 3,
-		settlement = {"City", "Outpost"}
+	[hash("frontier")] = {
+		government = {hash("federation"), hash("rebels"), hash("independent"), hash("independent"), hash("independent")},
+		recruit_max = 3,
+		settlement = {hash("city"), hash("outpost")}
 	},
-	Rim = {
-		government = {"Rebels", "Rebels", "Independent", "Independent"},
-		recruitMax = 1,
-		settlement = {"Outpost"}
+	[hash("rim")] = {
+		government = {hash("rebels"), hash("rebels"), hash("independent"), hash("independent")},
+		recruit_max = 1,
+		settlement = {hash("outpost")}
 	}
 }
 
-local missionStats = {
-	target = {"Core", "Frontier", "Rim"},
-	type = {"Delivery", "Smuggling", "Passage", "Assasination", "Espionage"}
+local mission_stats = {
+	target = {hash("core"), hash("frontier"), hash("rim")},
+	type = {hash("job_delivery"), hash("job_smuggling"), hash("job_passage"), hash("job_assasination"), hash("job_espionage")}
 }
 
-local settlementStats = {
-	Megalopolis = {
+local settlement_stats = {
+	[hash("megalopolis")] = {
 		wealth_max = 1.5,
 		wealth_min = 1.2
 	},
-	City = {
+	[hash("city")] = {
 		wealth_max = 1.3,
 		wealth_min = 0.7
 	},
-	Outpost = {
+	[hash("outpost")] = {
 		wealth_max = 0.8,
 		wealth_min = 0.5
 	}
 }
 
 
-local function generateMission()
+local function new_mission()
 	local mission = {
-		target = missionStats.target[math.random(1, #missionStats.target)],
-		type = missionStats.type[math.random(1, #missionStats.target)],
+		region = mission_stats.target[math.random(1, #mission_stats.target)],
+		type = mission_stats.type[math.random(1, #mission_stats.target)],
 		wage = math.random(1, 20) * 100,
 	}
 	return mission
 end
 
-function F.generatePlanet(region, start)
+function PLANET.new(region, start)
 	local planet
 	if start then
 		planet = {
@@ -59,16 +59,16 @@ function F.generatePlanet(region, start)
 				rations = 20
 			},
 			region = region,
-			settlement = "Outpost",
-			government = "Federation",
+			settlement = hash("outpost"),
+			government = hash("federation"),
 			recruits = {},
-			missions = {}
+			jobs = {}
 		}
 		for x = 1, 5 do
-			table.insert(planet.recruits, 1, FCrew.generateCrew())
+			table.insert(planet.recruits, 1, CREW.new())
 		end
 		for x = 1, 3 do
-			table.insert(planet.missions, generateMission())
+			table.insert(planet.jobs, new_mission())
 		end
 	else
 		planet = {
@@ -78,49 +78,50 @@ function F.generatePlanet(region, start)
 			},
 			region = region,
 			recruits = {},
-			missions = {}
+			jobs = {}
 		}
-		planet.government = regionStats[region].government[math.random(1, #regionStats[region].government)]
-		planet.settlement = regionStats[region].settlement[math.random(1, #regionStats[region].settlement)]
-		local recruitsCount = math.random(0, regionStats[region].recruitMax)
-		for x = 1, recruitsCount do
-			table.insert(planet.recruits, 1, FCrew.generateCrew())
+		planet.government = region_stats[region].government[math.random(1, #region_stats[region].government)]
+		planet.settlement = region_stats[region].settlement[math.random(1, #region_stats[region].settlement)]
+		local recruit_count = math.random(0, region_stats[region].recruit_max)
+		for x = 1, recruit_count do
+			table.insert(planet.recruits, 1, CREW.new())
 		end
 		for x = 1, math.random(1, 4) do
-			table.insert(planet.missions, generateMission())
+			table.insert(planet.jobs, new_mission())
 		end
 	end
 
-	local goalStats = {
-		fun = {
+	local goal_stats = {
+		[hash("fun")] = {
 			desperation_max = 1.3,
 			desperation_min = 0.7
 		},
-		travel = {
+		[hash("travel")] = {
 			desperation_max = 1.3,
 			desperation_min = 0.7
 		},
-		work = {
+		[hash("work")] = {
 			desperation_max = 1.1,
 			desperation_min = 0.2
 		},
-		home = {
+		[hash("home")] = {
 			desperation_max = 1.1,
 			desperation_min = 0.2
 		},
-		running = {
+		[hash("running")] = {
 			desperation_max = 0.8,
 			desperation_min = 0
 		}
 	}
 	
-	planet.wealth = math.random() * (settlementStats[planet.settlement].wealth_max - settlementStats[planet.settlement].wealth_min) + settlementStats[planet.settlement].wealth_min
+	planet.wealth = math.random() * (settlement_stats[planet.settlement].wealth_max - settlement_stats[planet.settlement].wealth_min) + settlement_stats[planet.settlement].wealth_min
 	for key, peep in ipairs(planet.recruits) do
-		local desperation = math.random() * (goalStats[peep.goal].desperation_max - goalStats[peep.goal].desperation_min) + goalStats[peep.goal].desperation_min
+		local desperation = math.random() * (goal_stats[peep.goal].desperation_max - goal_stats[peep.goal].desperation_min) + goal_stats[peep.goal].desperation_min
 		peep.desperation = math.min(desperation * planet.wealth, 1)
 	end
-	return planet
+	PLANET.current = planet
 end
 
+PLANET.new(hash("frontier"), true)
 
-return F
+return PLANET

@@ -1,10 +1,11 @@
 local STATS = require("main/modules/stats")
 local CREW = require("main/modules/crew")
+local PLANET = require("main/modules/planets")
 
 local function travel(target, mission)
 	STATS.fuel = STATS.fuel - 1
 	STATS.food = STATS.food - 1 -- tie this with crew!
-	--planet = FPlanet.generatePlanet(target)
+	PLANET.new = PLANET.new(target)
 	msg.post("/background", "space")
 end
 
