@@ -16,7 +16,9 @@ local function travel(target, mission)
 end
 
 function init(self)
-
+	local props = CREW.list[1].face
+	local test = factory.create("/ship#spawn_crew", vmath.vector3(-144, -32, 0.1), nil, props)
+	--go.animate(test, "position", go.PLAYBACK_LOOP_PINGPONG, vmath.vector3(0, 0, 0.1), go.EASING_LINEAR, 2)
 end
 
 function on_message(self, message_id, message, sender)

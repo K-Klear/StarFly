@@ -2,10 +2,10 @@ emitters {
   id: "emitter"
   mode: PLAY_MODE_LOOP
   duration: 1.0
-  space: EMISSION_SPACE_WORLD
+  space: EMISSION_SPACE_EMITTER
   position {
-    x: -30.0
-    y: -4.0
+    x: -47.0
+    y: -4.5
     z: 0.0
   }
   rotation {
@@ -37,7 +37,7 @@ emitters {
     key: EMITTER_KEY_SIZE_X
     points {
       x: 0.0
-      y: 25.0
+      y: 2.419
       t_x: 1.0
       t_y: 0.0
     }
@@ -47,7 +47,7 @@ emitters {
     key: EMITTER_KEY_SIZE_Y
     points {
       x: 0.0
-      y: 128.0
+      y: 75.4
       t_x: 1.0
       t_y: 0.0
     }
@@ -87,7 +87,7 @@ emitters {
     key: EMITTER_KEY_PARTICLE_SIZE
     points {
       x: 0.0
-      y: 64.0
+      y: 40.0
       t_x: 1.0
       t_y: 0.0
     }
@@ -147,7 +147,7 @@ emitters {
     key: EMITTER_KEY_PARTICLE_STRETCH_FACTOR_X
     points {
       x: 0.0
-      y: 0.0
+      y: -1.0
       t_x: 1.0
       t_y: 0.0
     }
@@ -157,7 +157,7 @@ emitters {
     key: EMITTER_KEY_PARTICLE_STRETCH_FACTOR_Y
     points {
       x: 0.0
-      y: 0.0
+      y: -10.0
       t_x: 1.0
       t_y: 0.0
     }

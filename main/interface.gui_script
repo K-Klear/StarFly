@@ -260,29 +260,6 @@ local function show_UI(type)
 	end
 end
 
-local function travel(target, mission)
-	cargo.fuel = cargo.fuel - 1
-	cargo.rations = cargo.rations - #crew
-	planet = FPlanet.generatePlanet(target)
-	msg.post("/background", "space")
-	hide_UI()
-	updateDialog("info", "-")
-	phase = hash("travel")
-end
-
-local function travel_orbit()
-	msg.post("/background", "warp")
-	hide_UI()
-	updateDialog("info")
-	phase = hash("orbit")
-end
-
-local function land()
-	msg.post("/background", "land")
-	hide_UI()
-	phase = hash("planet")
-end
-
 local function checkMission(target)
 	local missionList = {}
 	for key, val in ipairs(mission) do
@@ -295,8 +272,6 @@ end
 
 
 function init(self)
-	msg.post(".", "acquire_input_focus")
-	
 	dialog.travel = DH.newDialog("travel")
 	dialog.recruit = DH.newDialog("recruit")
 	dialog.buy = DH.newDialog("buy")
@@ -322,7 +297,7 @@ function init(self)
 
 	TOOL.setup()
 	RET.setup()
-	msg.post("/background", "setup")
+	
 end
 
 

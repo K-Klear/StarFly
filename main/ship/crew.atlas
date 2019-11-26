@@ -1,0 +1,51 @@
+images {
+  image: "/assets/images/crew/hair_idle_1.png"
+}
+images {
+  image: "/assets/images/crew/hair_idle_2.png"
+}
+images {
+  image: "/assets/images/crew/hair_idle_3.png"
+}
+images {
+  image: "/assets/images/crew/hair_idle_4.png"
+}
+images {
+  image: "/assets/images/crew/hair_walk_1.png"
+}
+images {
+  image: "/assets/images/crew/hair_walk_2.png"
+}
+images {
+  image: "/assets/images/crew/hair_walk_3.png"
+}
+images {
+  image: "/assets/images/crew/hair_walk_4.png"
+}
+images {
+  image: "/assets/images/crew/hand_idle_1.png"
+}
+images {
+  image: "/assets/images/crew/hand_walk_1.png"
+}
+images {
+  image: "/assets/images/crew/head_idle_1.png"
+}
+images {
+  image: "/assets/images/crew/head_walk_1.png"
+}
+images {
+  image: "/assets/images/crew/legs_idle_1.png"
+}
+images {
+  image: "/assets/images/crew/legs_walk_1.png"
+}
+images {
+  image: "/assets/images/crew/torso_idle_1.png"
+}
+images {
+  image: "/assets/images/crew/torso_walk_1.png"
+}
+margin: 0
+extrude_borders: 0
+inner_padding: 0

@@ -1,9 +1,6 @@
-Stuff I can later delete:
-constants.lua
-text.lua (there's still skillText() and getName())
-face.lua
-
 Bugs:
+- math.randomseed() called in crew.lua for now. Move it into bootstrapper when that's a thing that exists.
+
 
 Version 0.4:
 - New crew dialog added. Crewmembers can now be dismissed and their wages set.
@@ -12,35 +9,19 @@ Version 0.4:
 	- The recruits may lie about their abilities, depending on their honesty stat, motivation and level of desperation.
 	- They will also ask for a certain share based on their personality.
 
+Z levels:
+
+-1....0: ship and space
+0.1...0.5: crew
+0.8...1: dialogs
+
 
 Characters traits currently in use:
 
-confidence
-- affects skill self-assessment
-
-skillfulness
-- how confident they think they can get a job if they try
-
-dishonesty
-- how likely they are to lie
-
-greed
-- how big of a share they want
-
-
-Job interview:
-
-1) Greetings, I'm ____. [Best qualities].
-
-1a Ask about motivation
-1b Ask about other qualifications
-1c Ask about wage
-
-1a) Explains situation. Wage estimate perhaps.
-1b) Gives other qualifications, points out what they should NOT do. May point out they are a quick learner.
-1c) 
-
-
+confidence - affects skill self-assessment
+skillfulness - how confident they think they can get a job if they try
+dishonesty - how likely they are to lie
+greed - how big of a share they want
 
 
 EVENT JSON formatting:
@@ -53,7 +34,7 @@ Each "room" has one of three tags:
 end
 	Automatically offers a single choice (OK) and ends the event
 choice
-	Provide 1-3 choices, event continues according to player choice
+	Provide multiple choices, event continues according to player choice
 dice
 	Doesn't display to the player but makes a check and proceeds accordingly.
 		difficulty:### sets the number to beat
@@ -66,7 +47,6 @@ DIALOGUE JSON formatting:
 
 Room name is ignored (instead there's "XXX says")
 Text in the body consists of snips aimed at talk.lua
-
 
 
 Credits:

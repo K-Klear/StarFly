@@ -1,3 +1,6 @@
+math.randomseed(os.time())
+math.random(); math.random(); math.random();
+
 local STR = require("main/modules/strings")
 local STATS = require("main/modules/stats")
 
