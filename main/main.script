@@ -3,10 +3,16 @@ local CREW = require("main/modules/crew")
 local PLANET = require("main/modules/planets")
 
 local function travel(target, mission)
-	STATS.fuel = STATS.fuel - 1
-	STATS.food = STATS.food - 1 -- tie this with crew!
-	PLANET.new = PLANET.new(target)
-	msg.post("/background", "space")
+	if target == hash("orbit") then
+		msg.post("/background", "orbit")
+	elseif target == hash("planet")	then
+		msg.post("/background", "land")
+	else
+		STATS.fuel = STATS.fuel - 1
+		STATS.food = STATS.food - #CREW.list
+		PLANET.new(target)
+		msg.post("/background", "space")
+	end
 end
 
 function init(self)

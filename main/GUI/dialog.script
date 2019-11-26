@@ -1,39 +1,41 @@
 local STR = require("main/modules/strings")
 local LAY = require("main/GUI/dialog_layouts")
-local modules = {CREW = require("main/modules/crew"), PLANET = require("main/modules/planets")}
+local modules = {CREW = require("main/modules/crew"), PLANET = require("main/modules/planets"), STATS = require("main/modules/stats")}
 
 go.property("size", vmath.vector3(0, 0, 1))
 go.property("title", hash(""))
 go.property("layout", hash(""))
+go.property("id", 0)
 
+local background_sprite = {
+	enabled = {"dialog_bl", "dialog_b", "dialog_br", "dialog_l", "dialog_mid", "dialog_r", "dialog_tl", "dialog_t", "dialog_tr"},
+	disabled = {"dialog_bl_disabled", "dialog_b_disabled", "dialog_br_disabled", "dialog_l_disabled", "dialog_mid_disabled", "dialog_r_disabled", "dialog_tl_disabled", "dialog_t_disabled", "dialog_tr_disabled"}
+}
 
 function init(self)
 	local half_x, half_y = self.size.x * 0.5 + 16, self.size.y * 0.5 + 16
 	local object
 
 	self.elements = {}
+	self.background = {}
 
 	if LAY[self.layout].background then
-		object = factory.create("#frame", vmath.vector3(-half_x + 0.5, -half_y + 0.5, -0.1))
-		go.set_parent(object, "."); sprite.play_flipbook(object, "dialog_bl")
-		object = factory.create("#frame", vmath.vector3(0, -half_y + 0.5, -0.1), nil, nil, vmath.vector3((self.size.x / 16) + 1, 1, 1))
-		go.set_parent(object, "."); sprite.play_flipbook(object, "dialog_b")
-		object = factory.create("#frame", vmath.vector3(half_x, -half_y + 0.5, -0.1))
-		go.set_parent(object, "."); sprite.play_flipbook(object, "dialog_br")
+		table.insert(self.background, factory.create("#frame", vmath.vector3(-half_x + 0.5, -half_y + 0.5, -0.01)))
+		table.insert(self.background, factory.create("#frame", vmath.vector3(0, -half_y + 0.5, -0.01), nil, nil, vmath.vector3((self.size.x / 16) + 1, 1, 1)))
+		table.insert(self.background, factory.create("#frame", vmath.vector3(half_x, -half_y + 0.5, -0.01)))
 		
-		object = factory.create("#frame", vmath.vector3(-half_x + 0.5, 0, -0.1), nil, nil, vmath.vector3(1, (self.size.y / 16) + 1, 1))
-		go.set_parent(object, "."); sprite.play_flipbook(object, "dialog_l")
-		object = factory.create("#frame", vmath.vector3(0, 0, -0.1), nil, nil, vmath.vector3((self.size.x / 16) + 1, (self.size.y / 16) + 1, 1))
-		go.set_parent(object, "."); sprite.play_flipbook(object, "dialog_mid")
-		object = factory.create("#frame", vmath.vector3(half_x, 0, -0.1), nil, nil, vmath.vector3(1, (self.size.y / 16) + 1, 1))
-		go.set_parent(object, "."); sprite.play_flipbook(object, "dialog_r")
+		table.insert(self.background, factory.create("#frame", vmath.vector3(-half_x + 0.5, 0, -0.01), nil, nil, vmath.vector3(1, (self.size.y / 16) + 1, 1)))
+		table.insert(self.background, factory.create("#frame", vmath.vector3(0, 0, -0.01), nil, nil, vmath.vector3((self.size.x / 16) + 1, (self.size.y / 16) + 1, 1)))
+		table.insert(self.background, factory.create("#frame", vmath.vector3(half_x, 0, -0.01), nil, nil, vmath.vector3(1, (self.size.y / 16) + 1, 1)))
 
-		object = factory.create("#frame", vmath.vector3(-half_x + 0.5, half_y, -0.1))
-		go.set_parent(object, "."); sprite.play_flipbook(object, "dialog_tl")
-		object = factory.create("#frame", vmath.vector3(0, half_y, -0.1), nil, nil, vmath.vector3((self.size.x / 16) + 1, 1, 1))
-		go.set_parent(object, "."); sprite.play_flipbook(object, "dialog_t")
-		object = factory.create("#frame", vmath.vector3(half_x, half_y, -0.1))
-		go.set_parent(object, "."); sprite.play_flipbook(object, "dialog_tr")
+		table.insert(self.background, factory.create("#frame", vmath.vector3(-half_x + 0.5, half_y, -0.01)))
+		table.insert(self.background, factory.create("#frame", vmath.vector3(0, half_y, -0.01), nil, nil, vmath.vector3((self.size.x / 16) + 1, 1, 1)))
+		table.insert(self.background, factory.create("#frame", vmath.vector3(half_x, half_y, -0.01)))
+	end
+
+	for key, val in ipairs(self.background) do
+		go.set_parent(val, ".")
+		sprite.play_flipbook(val, background_sprite.enabled[key])
 	end
 
 	if self.title ~= hash("") then
@@ -60,13 +62,20 @@ function init(self)
 						props = tab[_].face
 					elseif val.props then
 						for k, v in pairs(val.props) do
-							props[k] = v
+							if type(v) == "string" then
+								props[k] = tab[_][v]
+							else
+								props[k] = v
+							end
 						end
 						props.id = _
 					end
 					object = factory.create(factory_type[val.type], vmath.vector3(val.position_x * 116, half_y - (54 * (val.position_y + _ - 1)) - 8, 0), nil, props, val.scale)
 					go.set_parent(object, ".")
-					if val.id then self.elements[val.id] = object end
+					if val.id then
+						self.elements[val.id] = self.elements[val.id] or {}
+						table.insert(self.elements[val.id], object)
+					end
 					if val.type == hash("label") then
 						if type(tab[_][val.text]) == "userdata" then
 							label.set_text(object, STR.en.ui.label[tab[_][val.text]])
@@ -76,11 +85,23 @@ function init(self)
 					end
 				end
 			else
+				if self.id > 0 then val.props.id = self.id end
 				object = factory.create(factory_type[val.type], vmath.vector3(val.position_x * 116, half_y - (54 * val.position_y) - 8, 0), nil, val.props, val.scale)
 				go.set_parent(object, ".")
 				if val.id then self.elements[val.id] = object end
 				if val.type == hash("label") then
-					label.set_text(object, STR.en.ui.label[val.text])
+					if type(val.text) == "userdata" then
+						label.set_text(object, STR.en.ui.label[val.text])
+					elseif type(val.text) == "table" then
+						local tab = modules
+						for _ = 1, #val.text do
+							tab = tab[val.text[_]]
+						end
+						if type(tab) == "userdata" then tab = STR.en.ui.label[tab] end
+						label.set_text(object, tab)
+					else
+						label.set_text(object, val.text)
+					end
 				end
 			end
 		end
@@ -100,13 +121,42 @@ end
 function on_message(self, message_id, message, sender)
 	if message_id == hash("disable_all") then
 		for key, val in pairs(self.elements) do
-			msg.post(val, "deactivate")
+			if type(val) == "table" then
+				for k, v in ipairs(val) do
+					msg.post(v, "deactivate")
+				end
+			else
+				msg.post(val, "deactivate")
+			end
+		end
+		for key, val in ipairs(self.background) do
+			sprite.play_flipbook(val, background_sprite.disabled[key])
 		end
 	elseif message_id == hash("enable_all") then
 		for key, val in pairs(self.elements) do
-			msg.post(val, "activate")
+			if type(val) == "table" then
+				for k, v in ipairs(val) do
+					msg.post(v, "activate")
+				end
+			else
+				msg.post(val, "activate")
+			end
+		end
+		for key, val in ipairs(self.background) do
+			sprite.play_flipbook(val, background_sprite.enabled[key])
 		end
 	elseif message_id == hash("turn_button_on") then
-		msg.post(self.elements[message.button], "turn_on")
+		if message.id then
+			msg.post(self.elements[message.button][message.id], "turn_on")
+		else
+			msg.post(self.elements[message.button], "turn_on")
+		end
+	elseif message_id == hash("turn_button_off") then
+		if message.id then
+			msg.post(self.elements[message.button][message.id], "turn_off")
+		else
+			msg.post(self.elements[message.button], "turn_off")
+		end
 	end
+	
 end

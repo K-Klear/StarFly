@@ -1,4 +1,5 @@
 local STR = require("main/modules/strings")
+local STATS = require("main/modules/stats")
 
 local CREW = {
 	list = {}
@@ -60,6 +61,14 @@ local goal_list = {
 	hash("home"),
 	hash("running"),
 }
+
+function CREW.get_role(role)
+	for key, val in ipairs(CREW.list) do
+		if val.role == role then
+			return key
+		end
+	end
+end
 
 function CREW.new()
 	next_id = next_id + 1
@@ -193,6 +202,7 @@ end
 
 function CREW.dismiss(crewID)				-- WIP
 	--msg.post(CREW.list[crewID].go, hash("die"))
+	STATS.wage = STATS.wage + CREW.list[crewID].wage
 	table.remove(CREW.list, crewID)
 end
 

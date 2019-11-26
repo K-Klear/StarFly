@@ -2,36 +2,142 @@ local STATS = require("main/modules/stats")
 local PLANET = require("main/modules/planets")
 local CREW = require("main/modules/crew")
 
-local centre = vmath.vector3(1280 / 2, 900 / 2, 1)
+local centre = vmath.vector3(1280 / 2, 900 / 2, 0.8)
+
+-- note: dialog z-pos goes from 0.8. 11th level dialog will not be visible.
+
 local stack = {}
+local infobox
 
 local button_x, button_y = 116, 54
 
-function init(self)
-	local props = {size = vmath.vector3(800, 0, 0), layout = hash("main")}
-	stack[1] = factory.create("#dialog", vmath.vector3(centre.x, 100, 1), nil, props)
+local function open_main(main)
+	local props = {size = vmath.vector3(800, 0, 0), layout = main}
+	stack[1] = factory.create("#dialog", vmath.vector3(centre.x, 100, centre.z), nil, props)
+	local props = {size = vmath.vector3(button_x * 2.25, button_y * 3, 0), layout = hash("infobox")}
+	infobox = factory.create("#dialog", vmath.vector3(1110, 780, centre.z), nil, props)
 end
 
-local function close_all_dialogs(main_on)
+function init(self)
+	open_main(hash("main"))
+end
+
+local function close_all_dialogs(main_on, main_gone)
 	while #stack > 1 do
 		go.delete(stack[#stack], true); stack[#stack] = nil
 	end
-	if main_on then	msg.post(stack[1], "enable_all") end
+	if main_on then msg.post(stack[1], "enable_all") end
+	if main_gone then
+		go.delete(stack[#stack], true); stack[#stack] = nil
+		go.delete(infobox, true); infobox = nil
+	end
 end
 
 function on_message(self, message_id, message, sender)
-	print(message_id, message.id)
 	if message_id == hash("buy_pressed") then
 
+	elseif message_id == hash("recruit_pressed") then
+		if #PLANET.current.recruits == 0 then
+			local props = {size = vmath.vector3(button_x * 3, button_y, 0), title = hash("error_no_recruits"), layout = hash("error")}
+			table.insert(stack, factory.create("#dialog", vmath.vector3(centre.x, centre.y, 0.8 + #stack * 0.02), nil, props))
+		else
+			local props = {size = vmath.vector3(button_x * 3.6, button_y * #PLANET.current.recruits, 0), title = hash("recruit"), layout = hash("recruit")}
+			table.insert(stack, factory.create("#dialog", vmath.vector3(centre.x, centre.y, 0.8 + #stack * 0.02), nil, props))
+		end
+		msg.post(stack[#stack - 1], "disable_all")
+	elseif message_id == hash("recruit_hire") then
+		if #CREW.list >= STATS.max_crew then
+			local props = {size = vmath.vector3(button_x * 3, button_y, 0), title = hash("error_crew_full"), layout = hash("error")}
+			table.insert(stack, factory.create("#dialog", vmath.vector3(centre.x, centre.y, 0.8 + #stack * 0.02), nil, props))
+			msg.post(stack[#stack - 1], "disable_all")
+		else
+			CREW.add(PLANET.current.recruits[message.id])
+			table.remove(PLANET.current.recruits, message.id)
+			close_all_dialogs()
+			msg.post(".", hash("recruit_pressed"))
+		end
 	elseif message_id == hash("crew_pressed") then
 		if #CREW.list == 0 then
 			local props = {size = vmath.vector3(button_x * 3, button_y, 0), title = hash("error_no_crew"), layout = hash("error")}
-			table.insert(stack, factory.create("#dialog", centre, nil, props))
+			table.insert(stack, factory.create("#dialog", vmath.vector3(centre.x, centre.y, 0.8 + #stack * 0.02), nil, props))
 		else
 			local props = {size = vmath.vector3(button_x * 6.5, button_y * (#CREW.list + 2), 0), title = hash("crew"), layout = hash("crew")}
-			table.insert(stack, factory.create("#dialog", centre, nil, props))
+			table.insert(stack, factory.create("#dialog", vmath.vector3(centre.x, centre.y, 0.8 + #stack * 0.02), nil, props))
+			for key, val in ipairs(CREW.list) do
+				if val.wage == 0 then
+					msg.post(stack[#stack], "turn_button_off", {button = hash("crew_wage_minus"), id = key})
+				end
+				if STATS.wage == 0 then
+					msg.post(stack[#stack], "turn_button_off", {button = hash("crew_wage_plus"), id = key})
+				end
+				if val.role == hash("role_passenger") then
+					msg.post(stack[#stack], "turn_button_off", {button = hash("crew_role"), id = key})
+				end
+			end
 		end
 		msg.post(stack[#stack - 1], "disable_all")
+	elseif message_id == hash("crew_role") then
+		local props = {size = vmath.vector3(button_x * 3, button_y * 2, 0), title = hash("role_selection"), layout = hash("crew_role"), id = message.id}
+		table.insert(stack, factory.create("#dialog", vmath.vector3(centre.x, centre.y, 0.8 + #stack * 0.02), nil, props))
+		msg.post(stack[#stack - 1], "disable_all")
+	elseif message_id == hash("crew_role_pilot") then
+		local current_holder = CREW.get_role(hash("role_pilot"))
+		if current_holder then 
+			CREW.list[current_holder].role = hash("role_none")
+		end
+		CREW.list[message.id].role = hash("role_pilot")
+		close_all_dialogs()
+		msg.post(".", hash("crew_pressed"))
+	elseif message_id == hash("crew_role_engineer") then
+		local current_holder = CREW.get_role(hash("role_engineer"))
+		if current_holder then 
+			CREW.list[current_holder].role = hash("role_none")
+		end
+		CREW.list[message.id].role = hash("role_engineer")
+		close_all_dialogs()
+		msg.post(".", hash("crew_pressed"))
+	elseif message_id == hash("crew_role_comms") then
+		local current_holder = CREW.get_role(hash("role_comms"))
+		if current_holder then 
+			CREW.list[current_holder].role = hash("role_none")
+		end
+		CREW.list[message.id].role = hash("role_comms")
+		close_all_dialogs()
+		msg.post(".", hash("crew_pressed"))
+	elseif message_id == hash("crew_role_medic") then
+		local current_holder = CREW.get_role(hash("role_medic"))
+		if current_holder then 
+			CREW.list[current_holder].role = hash("role_none")
+		end
+		CREW.list[message.id].role = hash("role_medic")
+		close_all_dialogs()
+		msg.post(".", hash("crew_pressed"))
+	elseif message_id == hash("crew_role_gunner") then
+		local current_holder = CREW.get_role(hash("role_gunner"))
+		if current_holder then 
+			CREW.list[current_holder].role = hash("role_none")
+		end
+		CREW.list[message.id].role = hash("role_gunner")
+		close_all_dialogs()
+		msg.post(".", hash("crew_pressed"))
+	elseif message_id == hash("crew_role_none") then
+		CREW.list[message.id].role = hash("role_none")
+		close_all_dialogs()
+		msg.post(".", hash("crew_pressed"))
+	elseif message_id == hash("crew_wage_plus") then
+		if STATS.wage > 0 and CREW.list[message.id].wage < 100 then
+			CREW.list[message.id].wage = CREW.list[message.id].wage + 5
+			STATS.wage = STATS.wage - 5
+		end
+		close_all_dialogs()
+		msg.post(".", hash("crew_pressed"))
+	elseif message_id == hash("crew_wage_minus") then
+		if CREW.list[message.id].wage > 0 then
+			CREW.list[message.id].wage = CREW.list[message.id].wage - 5
+			STATS.wage = STATS.wage + 5
+		end
+		close_all_dialogs()
+		msg.post(".", hash("crew_pressed"))
 	elseif message_id == hash("crew_dismiss") then
 		CREW.dismiss(message.id)
 		close_all_dialogs()
@@ -39,10 +145,10 @@ function on_message(self, message_id, message, sender)
 	elseif message_id == hash("jobs_pressed") then
 		if #PLANET.current.jobs == 0 then
 			local props = {size = vmath.vector3(button_x * 3, button_y, 0), title = hash("error_no_jobs"), layout = hash("error")}
-			table.insert(stack, factory.create("#dialog", centre, nil, props))
+			table.insert(stack, factory.create("#dialog", vmath.vector3(centre.x, centre.y, 0.8 + #stack * 0.02), nil, props))
 		else
 			local props = {size = vmath.vector3(button_x * 4, button_y * (#PLANET.current.jobs + 1), 0), title = hash("jobs"), layout = hash("jobs")}
-			table.insert(stack, factory.create("#dialog", centre, nil, props))
+			table.insert(stack, factory.create("#dialog", vmath.vector3(centre.x, centre.y, 0.8 + #stack * 0.02), nil, props))
 		end
 		msg.post(stack[#stack - 1], "disable_all")
 	elseif message_id == hash("jobs_accept") then
@@ -50,19 +156,18 @@ function on_message(self, message_id, message, sender)
 		table.remove(PLANET.current.jobs, message.id)
 		close_all_dialogs(true)
 	elseif message_id == hash("travel_pressed") then
-		local nopilot = false
 		if STATS.fuel == 0 then
 			local props = {size = vmath.vector3(button_x * 3, button_y, 0), title = hash("error_no_fuel"), layout = hash("error")}
-			table.insert(stack, factory.create("#dialog", centre, nil, props))
+			table.insert(stack, factory.create("#dialog", vmath.vector3(centre.x, centre.y, 0.8 + #stack * 0.02), nil, props))
 		elseif STATS.food == 0 then
 			local props = {size = vmath.vector3(button_x * 3, button_y, 0), title = hash("error_no_food"), layout = hash("error")}
-			table.insert(stack, factory.create("#dialog", centre, nil, props))
-		elseif nopilot then
+			table.insert(stack, factory.create("#dialog", vmath.vector3(centre.x, centre.y, 0.8 + #stack * 0.02), nil, props))
+		elseif not CREW.get_role(hash("role_pilot")) then
 			local props = {size = vmath.vector3(button_x * 3, button_y, 0), title = hash("error_no_pilot"), layout = hash("error")}
-			table.insert(stack, factory.create("#dialog", centre, nil, props))
+			table.insert(stack, factory.create("#dialog", vmath.vector3(centre.x, centre.y, 0.8 + #stack * 0.02), nil, props))
 		else
 			local props = {size = vmath.vector3(button_x * 3, button_y * 3, 0), title = hash("travel"), layout = hash("travel")}
-			table.insert(stack, factory.create("#dialog", centre, nil, props))
+			table.insert(stack, factory.create("#dialog", vmath.vector3(centre.x, centre.y, 0.8 + #stack * 0.02), nil, props))
 			local mission_regions = {}
 			for key, val in ipairs(STATS.jobs) do
 				mission_regions[val.region] = true
@@ -73,24 +178,48 @@ function on_message(self, message_id, message, sender)
 		end
 		msg.post(stack[#stack - 1], "disable_all")
 	elseif message_id == hash("travel_explore_core") then
-		close_all_dialogs()
+		close_all_dialogs(false, true)
 		msg.post("#main", hash("travel"), {target = hash("core"), mission = false})
 	elseif message_id == hash("travel_explore_frontier") then
-		close_all_dialogs()
+		close_all_dialogs(false, true)
 		msg.post("#main", hash("travel"), {target = hash("frontier"), mission = false})
 	elseif message_id == hash("travel_explore_rim") then
-		close_all_dialogs()
+		close_all_dialogs(false, true)
 		msg.post("#main", hash("travel"), {target = hash("rim"), mission = false})
 	elseif message_id == hash("travel_mission_core") then
-		close_all_dialogs()
+		close_all_dialogs(false, true)
 		msg.post("#main", hash("travel"), {target = hash("core"), mission = true})
 	elseif message_id == hash("travel_mission_frontier") then
-		close_all_dialogs()
+		close_all_dialogs(false, true)
 		msg.post("#main", hash("travel"), {target = hash("frontier"), mission = true})
 	elseif message_id == hash("travel_mission_rim") then
-		close_all_dialogs()
+		close_all_dialogs(false, true)
 		msg.post("#main", hash("travel"), {target = hash("rim"), mission = true})
+	elseif message_id == hash("continue_pressed") then
+		if not CREW.get_role(hash("role_pilot")) then
+			local props = {size = vmath.vector3(button_x * 3, button_y, 0), title = hash("error_no_pilot"), layout = hash("error")}
+			table.insert(stack, factory.create("#dialog", vmath.vector3(centre.x, centre.y, 0.8 + #stack * 0.02), nil, props))
+		else
+			close_all_dialogs(false, true)
+			msg.post("#main", hash("travel"), {target = hash("orbit")})
+		end
+	elseif message_id == hash("land_pressed") then
+		if not CREW.get_role(hash("role_pilot")) then
+			local props = {size = vmath.vector3(button_x * 3, button_y, 0), title = hash("error_no_pilot"), layout = hash("error")}
+			table.insert(stack, factory.create("#dialog", vmath.vector3(centre.x, centre.y, 0.8 + #stack * 0.02), nil, props))
+		else
+			close_all_dialogs(false, true)
+			msg.post("#main", hash("travel"), {target = hash("planet")})
+		end
 	elseif message_id == hash("close") then
-		close_all_dialogs(true)
+		go.delete(stack[#stack], true); stack[#stack] = nil
+		msg.post(stack[#stack], "enable_all")
+	elseif message_id == hash("transition_space") then
+		open_main(hash("main_space"))
+		--EVENTS.new_event(dialog)
+	elseif message_id == hash("transition_orbit") then
+		open_main(hash("main_orbit"))
+	elseif message_id == hash("transition_planet") then
+		open_main(hash("main"))
 	end
 end

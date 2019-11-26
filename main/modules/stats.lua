@@ -5,7 +5,8 @@ local STATS = {
 	max_crew = 9,
 	max_food = 20,
 	max_fuel = 5,
-	jobs = {}
+	jobs = {},
+	wage = 100
 }
 
 return STATS

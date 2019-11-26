@@ -1,4 +1,69 @@
 local LAY = {
+	[hash("infobox")] = {
+		background = true,
+		elements = {
+			{
+				id = hash("info_region"),
+				type = hash("label"),
+				position_x = -0.9,
+				position_y = 0.2,
+				text = {"PLANET", "current", "region"}
+			},
+			{
+				id = hash("info_government"),
+				type = hash("label"),
+				position_x = 0,
+				position_y = 0.2,
+				text = {"PLANET", "current", "government"}
+			},
+			{
+				id = hash("info_settlement"),
+				type = hash("label"),
+				position_x = 0.9,
+				position_y = 0.2,
+				text = {"PLANET", "current", "settlement"}
+			},
+			{
+				type = hash("label"),
+				position_x = -0.5,
+				position_y = 1,
+				text = hash("info_fuel")
+			},
+			{
+				type = hash("label"),
+				position_x = -0.5,
+				position_y = 2,
+				text = hash("info_food")
+			},
+			{
+				type = hash("label"),
+				position_x = -0.5,
+				position_y = 3,
+				text = hash("info_money")
+			},
+			{
+				id == hash("info_fuel"),
+				type = hash("label"),
+				position_x = 0.5,
+				position_y = 1,
+				text = {"STATS", "fuel"}
+			},
+			{
+				id = hash("info_food"),
+				type = hash("label"),
+				position_x = 0.5,
+				position_y = 2,
+				text = {"STATS", "food"}
+			},
+			{
+				id = hash("info_money"),
+				type = hash("label"),
+				position_x = 0.5,
+				position_y = 3,
+				text = {"STATS", "money"}
+			},
+		}
+	},
 	[hash("main")] = {
 		elements = {
 			{
@@ -9,7 +74,7 @@ local LAY = {
 				props = {
 					label = hash("buy"),
 					callback = hash("buy_pressed"),
-					enabled = true
+					enabled = false
 				},
 			},
 			{
@@ -20,7 +85,7 @@ local LAY = {
 				props = {
 					label = hash("repair"),
 					callback = hash("repair_pressed"),
-					enabled = true
+					enabled = false
 				},
 			},
 			{
@@ -31,7 +96,7 @@ local LAY = {
 				props = {
 					label = hash("upgrade"),
 					callback = hash("upgrade_pressed"),
-					enabled = true
+					enabled = false
 				},
 			},
 			{
@@ -80,11 +145,105 @@ local LAY = {
 			},
 		}
 	},
-	
+	[hash("main_space")] = {
+		elements = {
+			{
+				id = hash("crew"),
+				type = hash("button_main"),
+				position_x = -1,
+				position_y = 0,
+				props = {
+					label = hash("crew"),
+					callback = hash("crew_pressed"),
+					enabled = true
+				},
+			},
+			{
+				id = hash("continue"),
+				type = hash("button_main"),
+				position_x = 1,
+				position_y = 0,
+				props = {
+					label = hash("continue"),
+					callback = hash("continue_pressed"),
+					enabled = true
+				},
+			},
+		}
+	},
+	[hash("main_orbit")] = {
+		elements = {
+			{
+				id = hash("crew"),
+				type = hash("button_main"),
+				position_x = -1,
+				position_y = 0,
+				props = {
+					label = hash("crew"),
+					callback = hash("crew_pressed"),
+					enabled = true
+				},
+			},
+			{
+				id = hash("continue"),
+				type = hash("button_main"),
+				position_x = 1,
+				position_y = 0,
+				props = {
+					label = hash("land"),
+					callback = hash("land_pressed"),
+					enabled = true
+				},
+			},
+		}
+	},
 	[hash("buy")] = {},
 	[hash("repair")] = {},
 	[hash("upgrade")] = {},
-	[hash("recruit")] = {},
+	[hash("recruit")] = {
+		close_button = true,
+		background = true,
+		elements = {
+			{
+				repeating = {"PLANET", "current", "recruits"},
+				type = hash("icon_face"),
+				position_x = -1.6,
+				position_y = 1,
+				scale = vmath.vector3(2, 2, 2)
+			},
+			{
+				repeating = {"PLANET", "current", "recruits"},
+				type = hash("label"),
+				position_x = -1,
+				position_y = 1,
+				text = "name_string"
+			},
+			{
+				id = hash("recruit_talk"),
+				repeating = {"PLANET", "current", "recruits"},
+				type = hash("button_main"),
+				position_x = 0,
+				position_y = 1,
+				props = {
+					label =  hash("recruit_talk"),
+					callback = hash("recruit_talk"),
+					enabled = true
+				},
+			},
+			{
+				id = hash("recruit_hire"),
+				repeating = {"PLANET", "current", "recruits"},
+				type = hash("button_main"),
+				position_x = 1,
+				position_y = 1,
+				props = {
+					label =  hash("recruit_hire"),
+					callback = hash("recruit_hire"),
+					enabled = true
+				},
+			},
+		}
+	},
 	[hash("crew")] = {
 		close_button = true,
 		background = true,
@@ -108,6 +267,18 @@ local LAY = {
 				text = hash("crew_wage")
 			},
 			{
+				type = hash("label"),
+				position_x = 1.5,
+				position_y = 1,
+				text = hash("crew_earnings")
+			},
+			{
+				type = hash("label"),
+				position_x = 2.5,
+				position_y = 1,
+				text = {"STATS", "wage"}
+			},
+			{
 				repeating = {"CREW", "list"},
 				type = hash("icon_face"),
 				position_x = -3.1,
@@ -119,16 +290,22 @@ local LAY = {
 				type = hash("label"),
 				position_x = -2.5,
 				position_y = 2,
-				text = ("name_string")
+				text = "name_string"
 			},
 			{
+				id = hash("crew_role"),
 				repeating = {"CREW", "list"},
-				type = hash("label"),
+				type = hash("button_main"),
 				position_x = -1.5,
 				position_y = 2,
-				text = ("role")
+				props = {
+					label = "role",
+					callback = hash("crew_role"),
+					enabled = true
+				},
 			},
 			{
+				id = hash("crew_wage_plus"),
 				repeating = {"CREW", "list"},
 				type = hash("button_tiny"),
 				position_x = -0.8,
@@ -147,6 +324,7 @@ local LAY = {
 				text = ("wage")
 			},
 			{
+				id = hash("crew_wage_minus"),
 				repeating = {"CREW", "list"},
 				type = hash("button_tiny"),
 				position_x = -0.2,
@@ -158,6 +336,7 @@ local LAY = {
 				},
 			},
 			{
+				id = hash("crew_background"),
 				repeating = {"CREW", "list"},
 				type = hash("button_main"),
 				position_x = 0.5,
@@ -169,6 +348,7 @@ local LAY = {
 				},
 			},
 			{
+				id = hash("crew_skills"),
 				repeating = {"CREW", "list"},
 				type = hash("button_main"),
 				position_x = 1.5,
@@ -180,6 +360,7 @@ local LAY = {
 				},
 			},
 			{
+				id = hash("crew_dismiss"),
 				repeating = {"CREW", "list"},
 				type = hash("button_main"),
 				position_x = 2.5,
@@ -187,6 +368,79 @@ local LAY = {
 				props = {
 					label = hash("crew_dismiss"),
 					callback = hash("crew_dismiss"),
+					enabled = true
+				},
+			},
+			
+		}
+	},
+	[hash("crew_role")] = {
+		close_button = true,
+		background = true,
+		elements = {
+			{
+				id = hash("crew_role_pilot"),
+				type = hash("button_main"),
+				position_x = -1,
+				position_y = 1,
+				props = {
+					label = hash("role_pilot"),
+					callback = hash("crew_role_pilot"),
+					enabled = true
+				},
+			},
+			{
+				id = hash("crew_role_engineer"),
+				type = hash("button_main"),
+				position_x = 0,
+				position_y = 1,
+				props = {
+					label = hash("role_engineer"),
+					callback = hash("crew_role_engineer"),
+					enabled = true
+				},
+			},
+			{
+				id = hash("crew_role_comms"),
+				type = hash("button_main"),
+				position_x = 1,
+				position_y = 1,
+				props = {
+					label = hash("role_comms"),
+					callback = hash("crew_role_comms"),
+					enabled = true
+				},
+			},
+			{
+				id = hash("crew_role_medic"),
+				type = hash("button_main"),
+				position_x = -1,
+				position_y = 2,
+				props = {
+					label = hash("role_medic"),
+					callback = hash("crew_role_medic"),
+					enabled = true
+				},
+			},
+			{
+				id = hash("crew_role_gunner"),
+				type = hash("button_main"),
+				position_x = 0,
+				position_y = 2,
+				props = {
+					label = hash("role_gunner"),
+					callback = hash("crew_role_gunner"),
+					enabled = true
+				},
+			},
+			{
+				id = hash("crew_role_none"),
+				type = hash("button_main"),
+				position_x = 1,
+				position_y = 2,
+				props = {
+					label = hash("role_none"),
+					callback = hash("crew_role_none"),
 					enabled = true
 				},
 			},

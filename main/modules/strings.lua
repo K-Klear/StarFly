@@ -11,11 +11,24 @@ local STR = {
 				[hash("crew")] = "CREW",
 				[hash("jobs")] = "JOBS",
 				[hash("travel")] = "TRAVEL",
+				[hash("continue")] = "CONTINUE",
+				[hash("land")] = "LAND",
 
+				[hash("recruit_talk")] = "INTERVIEW",
+				[hash("recruit_hire")] = "HIRE",
+				
 				[hash("crew_background")] = "About",
 				[hash("crew_skills")] = "Skills",
 				[hash("crew_dismiss")] = "Dismiss",
 
+				[hash("role_none")] = "None",
+				[hash("role_pilot")] = "Pilot",
+				[hash("role_engineer")] = "Engineer",
+				[hash("role_medic")] = "Medic",
+				[hash("role_comms")] = "Comms",
+				[hash("role_gunner")] = "Gunner",
+				[hash("role_passenger")] = "Passenger",
+				
 				[hash("crew_plus")] = "+",
 				[hash("crew_minus")] = "-",
 				
@@ -35,7 +48,12 @@ local STR = {
 				[hash("jobs")] = "AVAILABLE JOBS",
 				[hash("travel")] = "TRAVEL",
 
+				[hash("error_no_recruits")] = "There is nobody here to recruit.",
+				
+				[hash("role_selection")] = "Assign a new role.",
+
 				[hash("error_no_crew")] = "You have no crew!",
+				[hash("error_crew_full")] = "You don't have room for more crew!",
 				
 				[hash("error_no_jobs")] = "There are no jobs available here.",
 
@@ -44,15 +62,29 @@ local STR = {
 				[hash("error_no_pilot")] = "You must assign a pilot!",
 			},
 			label = {
-				[hash("core")] = "Core worlds",
+				[hash("core")] = "Core",
 				[hash("frontier")] = "Frontier",
 				[hash("rim")] = "Outer rim",
+				
+				[hash("megalopolis")] = "Megalopolis",
+				[hash("city")] = "City",
+				[hash("outpost")] = "Outpost",
+				
+				[hash("federation")] = "Federation",
+				[hash("independent")] = "Independent",
+				[hash("rebels")] = "Rebel",
+				
+				[hash("info_fuel")] = "FUEL:",
+				[hash("info_food")] = "RATIONS:",
+				[hash("info_money")] = "CREDITS:",
 
-				[hash("role_none")] = "None",
+				[hash("recruit_name")] = "NAME",
 
 				[hash("crew_name")] = "NAME",
-				[hash("crew_role")] = "POST",
-				[hash("crew_wage")] = "WAGE",
+				[hash("crew_role")] = "ROLE",
+				[hash("crew_wage")] = "WAGE %",
+
+				[hash("crew_earnings")] = "PERCENT EARNED:",
 				
 				[hash("jobs_type")] = "TYPE",
 				[hash("jobs_region")] = "REGION",
@@ -63,8 +95,6 @@ local STR = {
 				[hash("job_passage")] = "Passage",
 				[hash("job_assasination")] = "Assasination",
 				[hash("job_espionage")] = "Espionage",
-
-
 
 				[hash("jobs_accept")] = "Accept",
 				

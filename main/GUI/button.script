@@ -64,7 +64,7 @@ function on_message(self, message_id, message, sender)
 	end
 	if message_id == hash("trigger_response") then
 		if message.enter and not self.hover_playing then
-			sound.play("#hover")
+			--sound.play("#hover")
 			self.hover_playing = true
 			timer.delay(0.2, false, function() self.hover_playing = nil end)
 		end
@@ -78,7 +78,7 @@ function on_message(self, message_id, message, sender)
 		msg.post("#co", "enable")
 		sprite.play_flipbook("#sprite", types[self.type].sprite)
 		self.state = hash("up")
-	elseif message_id == hash("deactivate") then
+	elseif message_id == hash("deactivate") and not (self.state == hash("disabled")) then
 		go.set("#label", "color", disabled_colour)
 		msg.post("#co", "disable")
 		sprite.play_flipbook("#sprite", types[self.type].sprite_inactive)

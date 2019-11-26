@@ -61,6 +61,33 @@ images {
 images {
   image: "/assets/images/ui/buttons/button_tiny_pressed.png"
 }
+images {
+  image: "/assets/images/ui/dialog/dialog_b_disabled.png"
+}
+images {
+  image: "/assets/images/ui/dialog/dialog_bl_disabled.png"
+}
+images {
+  image: "/assets/images/ui/dialog/dialog_br_disabled.png"
+}
+images {
+  image: "/assets/images/ui/dialog/dialog_l_disabled.png"
+}
+images {
+  image: "/assets/images/ui/dialog/dialog_mid_disabled.png"
+}
+images {
+  image: "/assets/images/ui/dialog/dialog_r_disabled.png"
+}
+images {
+  image: "/assets/images/ui/dialog/dialog_t_disabled.png"
+}
+images {
+  image: "/assets/images/ui/dialog/dialog_tl_disabled.png"
+}
+images {
+  image: "/assets/images/ui/dialog/dialog_tr_disabled.png"
+}
 margin: 1
 extrude_borders: 1
 inner_padding: 1

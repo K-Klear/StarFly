@@ -4,9 +4,6 @@ text.lua (there's still skillText() and getName())
 face.lua
 
 Bugs:
-- id not implemented for repeating dialog elements yet
-- disappearing close button? Might go away after I get rid of gui altogether.
-
 
 Version 0.4:
 - New crew dialog added. Crewmembers can now be dismissed and their wages set.

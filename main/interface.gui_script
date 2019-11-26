@@ -107,12 +107,7 @@ local function updateDialog(dialogID, location)
 			end
 		end
 	elseif dialogID == "info" then
-		gui.set_text(dialog.info.lbl.fuel, "FUEL: "..cargo.fuel)
-		gui.set_text(dialog.info.lbl.rations, "RATIONS: "..cargo.rations)
-		gui.set_text(dialog.info.lbl.money, "CREDITS: "..cargo.money)
-		gui.set_text(dialog.info.lbl.region, planet.region)
-		gui.set_text(dialog.info.lbl.settlement, location or planet.settlement)
-		gui.set_text(dialog.info.lbl.government, planet.government)
+
 	elseif dialogID == "crew" then
 		for key, val in ipairs(dialog.crew.ico) do
 			for k, v in pairs(val) do
@@ -305,8 +300,8 @@ function init(self)
 	dialog.travel = DH.newDialog("travel")
 	dialog.recruit = DH.newDialog("recruit")
 	dialog.buy = DH.newDialog("buy")
-	dialog.action = DH.newDialog("action", true)
-	dialog.info = DH.newDialog("info", true)
+	--dialog.action = DH.newDialog("action", true)
+	--dialog.info = DH.newDialog("info", true)
 	dialog.warning = DH.newDialog("warning")
 	dialog.crew = DH.newDialog("crew")
 	dialog.work = DH.newDialog("work")
@@ -319,7 +314,7 @@ function init(self)
 	gui.set_text(dialog.missions.lbl.none, "There are no ongoing jobs.")
 	gui.set_text(dialog.missions.lbl.title, "CHOOSE A MISSION")
 	
-	updateDialog("info")
+	--updateDialog("info")
 
 	for x = 1, 3 do
 		FCrew.recruit()
@@ -332,7 +327,7 @@ end
 
 
 function on_input(self, action_id, action)
-	if action_id == hash("click") and action.pressed then
+	if action_id == hash("click") and action.pressed and false then
 		if focus.action then
 			for key, val in pairs(dialog.action.btn) do
 				if gui.pick_node(val, action.x, action.y) then
