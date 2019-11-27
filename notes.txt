@@ -12,7 +12,7 @@ Version 0.4:
 Z levels:
 
 -1....0: ship and space
-0.1...0.5: crew
+0.1...0.5: crew (if max_crew ever becomes higher than 9, this may need to be changed)
 0.8...1: dialogs
 
 

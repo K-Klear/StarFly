@@ -2,13 +2,32 @@ go.property("skin_colour", vmath.vector4(1, 1, 1, 1))
 go.property("hair_colour", vmath.vector4(1, 1, 1, 1))
 go.property("clothes_colour", vmath.vector4(1, 1, 1, 1))
 go.property("hair", 1)
+go.property("x", 0)
+go.property("y", 0)
+go.property("z", 0)
 
-local pos = vmath.vector3(-144, -32, 0)
+local pos = vmath.vector3(-176, -128, 0.05)
 
+local function find_ladder(self)
+	if self.y == 3 then
+		return {}
+	elseif self.y == 2 then
 
+	else
+		
+	end
+end
 
-local function walk(self)
+local function walk(x, y, self)
+	
+end
 
+local function get_path(x, y, self)
+	if self.y == y then
+		for step = self.x, math.abs(x - self.x) do
+			table.insert(self.path, value)
+		end
+	end
 end
 
 function init(self)
@@ -19,6 +38,8 @@ function init(self)
 	sprite.set_constant("#torso", "tint", self.clothes_colour)
 	sprite.set_constant("#legs", "tint", self.clothes_colour - vmath.vector4(0.1, 0.1, 0.1, 0))
 	sprite.play_flipbook("#hair", "hair_idle_"..self.hair)
+	go.set_position(pos + vmath.vector3(self.x * 32, self.y * 96, self.z * 0.05))
+	self.path = {}
 end
 
 

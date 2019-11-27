@@ -149,7 +149,7 @@ embedded_instances {
   "  id: \"engine\"\n"
   "  component: \"/main/ship/engine.particlefx\"\n"
   "  position {\n"
-  "    x: 264.5\n"
+  "    x: 242.0\n"
   "    y: 37.5\n"
   "    z: 0.0\n"
   "  }\n"
