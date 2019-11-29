@@ -15,22 +15,10 @@ local function travel(target, mission)
 	end
 end
 
-local function spawn_crew(crewID, x, y, z)
-	local props = {
-		skin_colour = CREW.list[crewID].face.skin_colour,
-		hair_colour = CREW.list[crewID].face.hair_colour,
-		clothes_colour = CREW.list[crewID].face.clothes_colour,
-		hair = CREW.list[crewID].face.hair,
-		x = x, y = y, z = z
-	}
-	CREW.list[crewID].go = factory.create("/ship#spawn_crew", nil, nil, props)
-end
-
 function init(self)
-	spawn_crew(1, 6, 3, 1)
-	spawn_crew(2, 6, 2, 2)
-	spawn_crew(3, 6, 1, 3)
-	--go.animate(test, "position", go.PLAYBACK_LOOP_PINGPONG, vmath.vector3(0, 0, 0.1), go.EASING_LINEAR, 2)
+	for key, val in ipairs(CREW.list) do
+		CREW.spawn(key, 9 + key, 2, key)
+	end
 end
 
 function on_message(self, message_id, message, sender)

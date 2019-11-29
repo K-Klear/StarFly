@@ -1,6 +1,7 @@
 Bugs:
 - math.randomseed() called in crew.lua for now. Move it into bootstrapper when that's a thing that exists.
-
+- pathfinding for crew is a mess. It works, but oh god so ugly. I should go back to that at some point.
+- I might want to hashify all the damn name strings. Gonna be a lot of work, though.
 
 Version 0.4:
 - New crew dialog added. Crewmembers can now be dismissed and their wages set.

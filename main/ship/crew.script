@@ -1,14 +1,19 @@
+local STR = require("main/modules/strings")
+
 go.property("skin_colour", vmath.vector4(1, 1, 1, 1))
 go.property("hair_colour", vmath.vector4(1, 1, 1, 1))
 go.property("clothes_colour", vmath.vector4(1, 1, 1, 1))
 go.property("hair", 1)
+go.property("name_key", 1)
+go.property("name_gender", hash("male"))
+go.property("role", hash("role_none"))
 go.property("x", 0)
 go.property("y", 0)
 go.property("z", 0)
 
 local pos = vmath.vector3(-176, -128, 0.05)
-local speed = 45
-local speed_climb = 35
+local speed = 0.02
+local speed_climb = 0.015
 
 
 local ladders = {
@@ -17,13 +22,21 @@ local ladders = {
 	{down = {3}}
 }
 
+local rooms = {
+	[hash("role_pilot")] = {x = 1, y = 3},
+	[hash("role_medic")] = {x = 4, y = 2},
+	[hash("role_engineer")] = {x = 11, y = 1},
+	[hash("role_comms")] = {x = 6, y = 3},
+	[hash("role_gunner")] = {x = 2, y = 1}
+}
+
 local walk
 local function finish_step(x, y, self)
 	self.x = x; self.y = y
 	walk(self)
 end
 
-local bodyparts = {"torso", "head", "hair", "legs"}
+local bodyparts = {"torso", "head", "hair", "legs", "hand"}
 
 local function walk_anim(self)
 	for key, val in ipairs(bodyparts) do
@@ -38,14 +51,14 @@ local function move_x(target, self)
 		sprite.set_hflip("#"..val, dir == 1)
 	end
 	local new_x = pos.x + (self.x + dir) * 32
-	local duration = math.abs(go.get_position().x - new_x) / speed
+	local duration = math.abs(go.get_position().x - new_x) * speed
 	go.animate(go.get_id(), "position.x", go.PLAYBACK_ONCE_FORWARD, new_x, go.EASING_LINEAR, duration, 0, function() finish_step(self.x + dir, self.y, self) end)
 end
 
 local function move_y(target, self)
 	local dir = (target - self.y) / math.abs(target - self.y)
 	local new_y = pos.y + (self.y + dir) * 96
-	local duration = math.abs(go.get_position().y - new_y) / speed_climb
+	local duration = math.abs(go.get_position().y - new_y) * speed_climb
 	go.animate(go.get_id(), "position.y", go.PLAYBACK_ONCE_FORWARD, new_y, go.EASING_LINEAR, duration, 0, function() finish_step(self.x, self.y + dir, self) end)
 end
 
@@ -94,6 +107,26 @@ local function set_target(x, y, self)
 	if still then walk(self) end
 end
 
+local role_icons = {
+	[hash("role_pilot")] = "pilot",
+	[hash("role_medic")] = "medic",
+	[hash("role_engineer")] = "mech",
+	[hash("role_comms")] = "comms",
+	[hash("role_gunner")] = "gunner",
+	[hash("role_passenger")] = "none",
+}
+
+local function set_role(self)
+	if self.role == hash("role_none") then
+		sprite.set_constant("#role_icon", "tint", vmath.vector4(1, 1, 1, 0))
+		label.set_text("#role_label", "")
+	else
+		sprite.set_constant("#role_icon", "tint", vmath.vector4(1, 1, 1, 1))
+		sprite.play_flipbook("#role_icon", role_icons[self.role])
+		label.set_text("#role_label", STR.en.ui.button[self.role])
+		set_target(rooms[self.role].x, rooms[self.role].y, self)
+	end
+end
 
 function init(self)
 	go.set_parent(go.get_id(), "/ship")
@@ -104,15 +137,47 @@ function init(self)
 	sprite.set_constant("#legs", "tint", self.clothes_colour - vmath.vector4(0.1, 0.1, 0.1, 0))
 	sprite.play_flipbook("#hair", "hair_idle_"..self.hair)
 	go.set_position(pos + vmath.vector3(self.x * 32, self.y * 96, self.z * 0.05))
+	msg.post("#reticle", hash("disable"))
 	self.target = {}
-	set_target(6, 2, self)
+	label.set_text("#name", STR.en.names[self.name_gender][self.name_key])
+	msg.post("#name", hash("disable"))
+	msg.post("#role_icon", hash("disable"))
+	msg.post("#role_label", hash("disable"))
+	go.set("#role_icon", "scale", vmath.vector3(1/2, 1/2, 1/2))
+	set_role(self)
 end
 
-
 function on_message(self, message_id, message, sender)
-	if message_id == hash("move") then
-		--self.destination = message.target
-		--walk(self)
+	if message_id == hash("highlight") then
+		msg.post("#reticle", hash("enable"))
+		msg.post("#name", hash("enable"))
+		msg.post("#role_icon", hash("enable"))
+		msg.post("#role_label", hash("enable"))
+	elseif message_id == hash("remove_highlight") then
+		msg.post("#reticle", hash("disable"))
+		msg.post("#name", hash("disable"))
+		msg.post("#role_icon", hash("disable"))
+		msg.post("#role_label", hash("disable"))
+	elseif message_id == hash("select") then
+		sound.play("#selected")
+		msg.post("#co", hash("disable"))
+		sprite.play_flipbook("#reticle", "crew_reticle_active")
+	elseif message_id == hash("deselect") then
+		msg.post("#co", hash("enable"))
+		sprite.play_flipbook("#reticle", "crew_reticle")
+		msg.post("#reticle", hash("disable"))
+		msg.post("#name", hash("disable"))
+		msg.post("#role_icon", hash("disable"))
+		msg.post("#role_label", hash("disable"))
+	elseif message_id == hash("move") then
+		if message.role then
+			set_target(rooms[message.role].x, rooms[message.role].y, self)
+		else
+			set_target(message.x, message.y, self)
+		end
+	elseif message_id == hash("set_role") then
+		self.role = message.role
+		set_role(self)
 	elseif message_id == hash("die") then
 		go.delete()
 	end

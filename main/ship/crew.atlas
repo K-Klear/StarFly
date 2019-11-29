@@ -22,6 +22,12 @@ images {
 images {
   image: "/assets/images/crew/hair_idle_2.png"
 }
+images {
+  image: "/assets/images/ui/reticles/crew_reticle.png"
+}
+images {
+  image: "/assets/images/ui/reticles/crew_reticle_active.png"
+}
 animations {
   id: "hair_walk_1"
   images {

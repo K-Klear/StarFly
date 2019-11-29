@@ -81,47 +81,27 @@ function on_message(self, message_id, message, sender)
 		table.insert(stack, factory.create("#dialog", vmath.vector3(centre.x, centre.y, 0.8 + #stack * 0.02), nil, props))
 		msg.post(stack[#stack - 1], "disable_all")
 	elseif message_id == hash("crew_role_pilot") then
-		local current_holder = CREW.get_role(hash("role_pilot"))
-		if current_holder then 
-			CREW.list[current_holder].role = hash("role_none")
-		end
-		CREW.list[message.id].role = hash("role_pilot")
+		CREW.set_role(message.id, hash("role_pilot"), true)
 		close_all_dialogs()
 		msg.post(".", hash("crew_pressed"))
 	elseif message_id == hash("crew_role_engineer") then
-		local current_holder = CREW.get_role(hash("role_engineer"))
-		if current_holder then 
-			CREW.list[current_holder].role = hash("role_none")
-		end
-		CREW.list[message.id].role = hash("role_engineer")
+		CREW.set_role(message.id, hash("role_engineer"), true)
 		close_all_dialogs()
 		msg.post(".", hash("crew_pressed"))
 	elseif message_id == hash("crew_role_comms") then
-		local current_holder = CREW.get_role(hash("role_comms"))
-		if current_holder then 
-			CREW.list[current_holder].role = hash("role_none")
-		end
-		CREW.list[message.id].role = hash("role_comms")
+		CREW.set_role(message.id, hash("role_comms"), true)
 		close_all_dialogs()
 		msg.post(".", hash("crew_pressed"))
 	elseif message_id == hash("crew_role_medic") then
-		local current_holder = CREW.get_role(hash("role_medic"))
-		if current_holder then 
-			CREW.list[current_holder].role = hash("role_none")
-		end
-		CREW.list[message.id].role = hash("role_medic")
+		CREW.set_role(message.id, hash("role_medic"), true)
 		close_all_dialogs()
 		msg.post(".", hash("crew_pressed"))
 	elseif message_id == hash("crew_role_gunner") then
-		local current_holder = CREW.get_role(hash("role_gunner"))
-		if current_holder then 
-			CREW.list[current_holder].role = hash("role_none")
-		end
-		CREW.list[message.id].role = hash("role_gunner")
+		CREW.set_role(message.id, hash("role_gunner"), true)
 		close_all_dialogs()
 		msg.post(".", hash("crew_pressed"))
 	elseif message_id == hash("crew_role_none") then
-		CREW.list[message.id].role = hash("role_none")
+		CREW.set_role(message.id, hash("role_none"))
 		close_all_dialogs()
 		msg.post(".", hash("crew_pressed"))
 	elseif message_id == hash("crew_wage_plus") then

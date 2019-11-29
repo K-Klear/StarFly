@@ -73,6 +73,18 @@ function CREW.get_role(role)
 	end
 end
 
+function CREW.set_role(crewID, role, replace)
+	if replace then
+		local current_holder = CREW.get_role(role)
+		if current_holder then 
+			CREW.list[current_holder].role = hash("role_none")
+			msg.post(CREW.list[current_holder].go, hash("set_role"), {role = hash("role_none")})
+		end
+	end
+	CREW.list[crewID].role = role
+	msg.post(CREW.list[crewID].go, hash("set_role"), {role = role})
+end
+
 function CREW.new()
 	next_id = next_id + 1
 	
@@ -196,11 +208,25 @@ function CREW.new()
 	}
 end
 
+function CREW.spawn(crewID, x, y, z)
+	local props = {
+		skin_colour = CREW.list[crewID].face.skin_colour,
+		hair_colour = CREW.list[crewID].face.hair_colour,
+		clothes_colour = CREW.list[crewID].face.clothes_colour,
+		hair = CREW.list[crewID].face.hair,
+		name_key = CREW.list[crewID].name.key,
+		name_gender = CREW.list[crewID].name.gender,
+		role = CREW.list[crewID].role,
+		x = x, y = y, z = z
+	}
+	CREW.list[crewID].go = factory.create("/ship#spawn_crew", nil, nil, props)
+end
+
 function CREW.add(recruit)				-- WIP
 	if not recruit then recruit = CREW.new() end
 	table.insert(CREW.list, recruit)
 	used_names[recruit.name.gender][recruit.name.key] = true
-	--CREW.list[#crew].go = factory.create("/ship#spawn_crew", vmath.vector3(math.random(140, 240), 64, 0.1), nil, {crew = #crew, level = 2})
+	CREW.spawn(#CREW.list, math.random(10, 13), 2, #CREW.list)
 end
 
 function CREW.dismiss(crewID)				-- WIP
