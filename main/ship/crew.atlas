@@ -1,50 +1,130 @@
 images {
-  image: "/assets/images/crew/hair_idle_1.png"
-}
-images {
-  image: "/assets/images/crew/hair_idle_2.png"
-}
-images {
   image: "/assets/images/crew/hair_idle_3.png"
 }
 images {
   image: "/assets/images/crew/hair_idle_4.png"
 }
 images {
-  image: "/assets/images/crew/hair_walk_1.png"
-}
-images {
-  image: "/assets/images/crew/hair_walk_2.png"
-}
-images {
-  image: "/assets/images/crew/hair_walk_3.png"
-}
-images {
-  image: "/assets/images/crew/hair_walk_4.png"
-}
-images {
   image: "/assets/images/crew/hand_idle_1.png"
-}
-images {
-  image: "/assets/images/crew/hand_walk_1.png"
 }
 images {
   image: "/assets/images/crew/head_idle_1.png"
 }
 images {
-  image: "/assets/images/crew/head_walk_1.png"
-}
-images {
   image: "/assets/images/crew/legs_idle_1.png"
-}
-images {
-  image: "/assets/images/crew/legs_walk_1.png"
 }
 images {
   image: "/assets/images/crew/torso_idle_1.png"
 }
 images {
-  image: "/assets/images/crew/torso_walk_1.png"
+  image: "/assets/images/crew/hair_idle_1.png"
+}
+images {
+  image: "/assets/images/crew/hair_idle_2.png"
+}
+animations {
+  id: "hair_walk_1"
+  images {
+    image: "/assets/images/crew/hair_walk_1.png"
+  }
+  images {
+    image: "/assets/images/crew/hair_idle_1.png"
+  }
+  playback: PLAYBACK_LOOP_FORWARD
+  fps: 3
+  flip_horizontal: 0
+  flip_vertical: 0
+}
+animations {
+  id: "hair_walk_2"
+  images {
+    image: "/assets/images/crew/hair_walk_2.png"
+  }
+  images {
+    image: "/assets/images/crew/hair_idle_2.png"
+  }
+  playback: PLAYBACK_LOOP_FORWARD
+  fps: 3
+  flip_horizontal: 0
+  flip_vertical: 0
+}
+animations {
+  id: "hair_walk_3"
+  images {
+    image: "/assets/images/crew/hair_walk_3.png"
+  }
+  images {
+    image: "/assets/images/crew/hair_idle_3.png"
+  }
+  playback: PLAYBACK_LOOP_FORWARD
+  fps: 3
+  flip_horizontal: 0
+  flip_vertical: 0
+}
+animations {
+  id: "hair_walk_4"
+  images {
+    image: "/assets/images/crew/hair_walk_4.png"
+  }
+  images {
+    image: "/assets/images/crew/hair_idle_4.png"
+  }
+  playback: PLAYBACK_LOOP_FORWARD
+  fps: 3
+  flip_horizontal: 0
+  flip_vertical: 0
+}
+animations {
+  id: "hand_walk_1"
+  images {
+    image: "/assets/images/crew/hand_walk_1.png"
+  }
+  images {
+    image: "/assets/images/crew/hand_idle_1.png"
+  }
+  playback: PLAYBACK_LOOP_FORWARD
+  fps: 3
+  flip_horizontal: 0
+  flip_vertical: 0
+}
+animations {
+  id: "head_walk_1"
+  images {
+    image: "/assets/images/crew/head_walk_1.png"
+  }
+  images {
+    image: "/assets/images/crew/head_idle_1.png"
+  }
+  playback: PLAYBACK_LOOP_FORWARD
+  fps: 3
+  flip_horizontal: 0
+  flip_vertical: 0
+}
+animations {
+  id: "legs_walk_1"
+  images {
+    image: "/assets/images/crew/legs_walk_1.png"
+  }
+  images {
+    image: "/assets/images/crew/legs_idle_1.png"
+  }
+  playback: PLAYBACK_LOOP_FORWARD
+  fps: 3
+  flip_horizontal: 0
+  flip_vertical: 0
+}
+animations {
+  id: "torso_walk_1"
+  images {
+    image: "/assets/images/crew/torso_walk_1.png"
+  }
+  images {
+    image: "/assets/images/crew/torso_idle_1.png"
+  }
+  playback: PLAYBACK_LOOP_FORWARD
+  fps: 3
+  flip_horizontal: 0
+  flip_vertical: 0
 }
 margin: 0
 extrude_borders: 0
