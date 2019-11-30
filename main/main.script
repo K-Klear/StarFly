@@ -15,14 +15,30 @@ local function travel(target, mission)
 	end
 end
 
+function spawn_crew(crewID, x, y, z)
+	local props = {
+		skin_colour = CREW.list[crewID].face.skin_colour,
+		hair_colour = CREW.list[crewID].face.hair_colour,
+		clothes_colour = CREW.list[crewID].face.clothes_colour,
+		hair = CREW.list[crewID].face.hair,
+		name_key = CREW.list[crewID].name.key,
+		name_gender = CREW.list[crewID].name.gender,
+		role = CREW.list[crewID].role,
+		x = x, y = y, z = z
+	}
+	CREW.list[crewID].go = factory.create("/ship#spawn_crew", nil, nil, props)
+end
+
 function init(self)
 	for key, val in ipairs(CREW.list) do
-		CREW.spawn(key, 9 + key, 2, key)
+		spawn_crew(key, 9 + key, 2, key)
 	end
 end
 
 function on_message(self, message_id, message, sender)
 	if message_id == hash("travel") then
 		travel(message.target, message.mission)
+	elseif message_id == hash("spawn_crew") then
+		spawn_crew(message.crewID, message.x, message.y, message.z)
 	end
 end

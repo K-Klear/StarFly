@@ -1,6 +1,6 @@
-local DICE = require("main.dice")
+local DICE = require("main/modules/dice")
 
-local EVENTS = {}
+local EVENT = {}
 
 local list_space = {
 	"distress_signal_true",
@@ -8,8 +8,7 @@ local list_space = {
 	"asteroids",
 }
 
-local event_list = {}
-
+local event_list = {[hash("space")] = {}, [hash("orbit")] = {}, [hash("landing")] = {}}
 
 local function get_tags(stage)
 	local type, effect, test, diff
@@ -27,7 +26,7 @@ local function get_tags(stage)
 	return type, effect, test, diff
 end
 
-local function load_event(event)
+local function load_event(event, event_type)
 	local data, err = sys.load_resource("/assets/json/"..event..".json")
 	if err then pprint(err) end
 	data = json.decode(data).passages
@@ -43,16 +42,16 @@ local function load_event(event)
 		val.dice_difficulty = diff
 		val.tags = nil
 	end
-	event_list[event] = data
+	event_list[event_type][event] = data
 end
 
 for key, val in ipairs(list_space) do
-	load_event(val)
+	load_event(val, hash("space"))
 end
 
-function EVENTS.progress(dialog)
+function EVENT.progress(dialog)
 	for key, val in pairs(dialog.event.btn) do gui.set_enabled(val, false) end
-	local current_stage = EVENTS.event[EVENTS.stage]
+	local current_stage = EVENT.event[EVENT.stage]
 	if current_stage.stage_type == "choice" then
 		for num, option in ipairs(current_stage.links) do
 			gui.set_text(dialog.event.btn["option"..num], option.name)
@@ -62,11 +61,11 @@ function EVENTS.progress(dialog)
 		gui.set_text(dialog.event.lbl.description, current_stage.text)
 	elseif current_stage.stage_type == "dice" then
 		if DICE.skillCheck(current_stage.dice_type, current_stage.dice_difficulty) then
-			EVENTS.stage = current_stage.links[1].pid + 0
+			EVENT.stage = current_stage.links[1].pid + 0
 		else
-			EVENTS.stage = current_stage.links[2].pid + 0
+			EVENT.stage = current_stage.links[2].pid + 0
 		end
-		EVENTS.progress(dialog); return
+		EVENT.progress(dialog); return
 	elseif current_stage.stage_type == "end" then
 		gui.set_text(dialog.event.btn.option3, "OK")
 		gui.set_enabled(dialog.event.btn.option3, true)
@@ -75,21 +74,18 @@ function EVENTS.progress(dialog)
 	end
 end
 
-function EVENTS.getEvent()		-- I think here I will add factors making various events more or less likely
+function EVENT.getEvent(event_type)		-- I think here I will add factors making various events more or less likely
 	local randomizer = {}
-	for key, val in pairs(event_list) do
+	for key, val in pairs(event_list[event_type]) do
 		table.insert(randomizer, key)
 	end
 	return randomizer[math.random(1, #randomizer)]
 end
 
-function EVENTS.new_event(dialog)
-	EVENTS.event = event_list[EVENTS.getEvent()]
-	EVENTS.stage = 1
-	gui.set_enabled(dialog.event.frame, true)
-	EVENTS.progress(dialog)
+function EVENT.new(event_type)
+	EVENT.current = event_list[event_type][EVENT.getEvent(event_type)]
+	EVENT.stage = 1
 end
 
 
-
-return EVENTS
+return EVENT

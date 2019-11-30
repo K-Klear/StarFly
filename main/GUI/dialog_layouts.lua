@@ -74,7 +74,7 @@ local LAY = {
 				props = {
 					label = hash("buy"),
 					callback = hash("buy_pressed"),
-					enabled = false
+					enabled = true
 				},
 			},
 			{
@@ -592,7 +592,21 @@ local LAY = {
 			},
 		}
 	},
-
+	[hash("event")] = {
+		background = true,
+		elements = {
+			{
+				type = hash("button_main"),
+				position_x = 0,
+				position_y = 1,
+				props = {
+					label = hash("error_ok"),
+					callback = hash("close"),
+					enabled = true
+				},
+			},
+		}
+	},
 	[hash("error")] = {
 		close_button = true,
 		background = true,

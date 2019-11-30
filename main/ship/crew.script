@@ -147,7 +147,7 @@ function init(self)
 	set_role(self)
 end
 
-function on_message(self, message_id, message, sender)
+function on_message(self, message_id, message, senřžpčder)
 	if message_id == hash("highlight") then
 		msg.post("#reticle", hash("enable"))
 		msg.post("#name", hash("enable"))
@@ -178,7 +178,8 @@ function on_message(self, message_id, message, sender)
 	elseif message_id == hash("set_role") then
 		self.role = message.role
 		set_role(self)
-	elseif message_id == hash("die") then
-		go.delete()
+	elseif message_id == hash("dismiss") then
+		msg.post("/cursor", "deleted", {id = go.get_id()})
+		go.delete(true)
 	end
 end

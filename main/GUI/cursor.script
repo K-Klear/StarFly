@@ -6,6 +6,8 @@ local crew_moused = {}
 local crew_highlighted
 local crew_selected
 
+local crew_selection_enabled = true
+
 function init(self)
 	msg.post(".", "acquire_input_focus")
 end
@@ -42,6 +44,14 @@ function on_message(self, message_id, message, sender)
 		end
 	elseif message_id == hash("deleted") then
 		if active_button == message.id then active_button = nil end
+		if crew_selected == message.id then crew_selected = nil end
+		if crew_moused[crew_selected] then crew_moused[crew_selected] = nil end
+		if crew_highlighted == message.id then
+			local new = next(crew_moused)
+			if new then	msg.post(new, "highlight");	crew_highlighted = new end
+		end
+	elseif message_id == hash("crew_selection") then
+		crew_selection_enabled = message.enabled
 	end
 end
 
@@ -58,7 +68,7 @@ function on_input(self, action_id, action)
 		if action.pressed then
 			mouse_pressed = true
 			if active_button then msg.post(active_button, "pressed") end
-			if crew_highlighted then
+			if crew_selection_enabled and crew_highlighted then
 				if crew_selected then msg.post(crew_selected, hash("deselect")) end
 				crew_selected = crew_highlighted
 				msg.post(crew_selected, "select")

@@ -208,25 +208,10 @@ function CREW.new()
 	}
 end
 
-function CREW.spawn(crewID, x, y, z)
-	local props = {
-		skin_colour = CREW.list[crewID].face.skin_colour,
-		hair_colour = CREW.list[crewID].face.hair_colour,
-		clothes_colour = CREW.list[crewID].face.clothes_colour,
-		hair = CREW.list[crewID].face.hair,
-		name_key = CREW.list[crewID].name.key,
-		name_gender = CREW.list[crewID].name.gender,
-		role = CREW.list[crewID].role,
-		x = x, y = y, z = z
-	}
-	CREW.list[crewID].go = factory.create("/ship#spawn_crew", nil, nil, props)
-end
-
-function CREW.add(recruit)				-- WIP
+function CREW.add(recruit)
 	if not recruit then recruit = CREW.new() end
 	table.insert(CREW.list, recruit)
 	used_names[recruit.name.gender][recruit.name.key] = true
-	CREW.spawn(#CREW.list, math.random(10, 13), 2, #CREW.list)
 end
 
 function CREW.dismiss(crewID)				-- WIP

@@ -1,5 +1,5 @@
-local FCrew = require("main.functionsCrew")
-local UPG = require("main.upgrades")
+--local FCrew = require("main.functionsCrew")
+--local UPG = require("main.upgrades")
 
 local M = {}
 
