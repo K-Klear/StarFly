@@ -68,7 +68,7 @@ local goal_list = {
 function CREW.get_role(role)
 	for key, val in ipairs(CREW.list) do
 		if val.role == role then
-			return key
+			return val
 		end
 	end
 end
@@ -77,8 +77,8 @@ function CREW.set_role(crewID, role, replace)
 	if replace then
 		local current_holder = CREW.get_role(role)
 		if current_holder then 
-			CREW.list[current_holder].role = hash("role_none")
-			msg.post(CREW.list[current_holder].go, hash("set_role"), {role = hash("role_none")})
+			current_holder.role = hash("role_none")
+			msg.post(current_holder.go, hash("set_role"), {role = hash("role_none")})
 		end
 	end
 	CREW.list[crewID].role = role
@@ -214,8 +214,7 @@ function CREW.add(recruit)
 	used_names[recruit.name.gender][recruit.name.key] = true
 end
 
-function CREW.dismiss(crewID)				-- WIP
-	--msg.post(CREW.list[crewID].go, hash("die"))
+function CREW.dismiss(crewID)
 	STATS.wage = STATS.wage + CREW.list[crewID].wage
 	table.remove(CREW.list, crewID)
 end

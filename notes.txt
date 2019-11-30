@@ -51,7 +51,8 @@ Text in the body consists of snips aimed at talk.lua
 
 
 Credits:
-https://www.dafont.com/the-wastes-of-space.font?text=Starfly+123%21
+https://www.dafont.com/the-wastes-of-space.font
+https://www.dafont.com/time-and-space.font
 https://freesound.org/people/unfa/sounds/244266/
 
 

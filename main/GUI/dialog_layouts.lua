@@ -1,3 +1,5 @@
+local EVENT = require("main/modules/events")
+
 local LAY = {
 	[hash("infobox")] = {
 		background = true,
@@ -27,19 +29,19 @@ local LAY = {
 				type = hash("label"),
 				position_x = -0.5,
 				position_y = 1,
-				text = hash("info_fuel")
+				text = hash("lbl_info_fuel")
 			},
 			{
 				type = hash("label"),
 				position_x = -0.5,
 				position_y = 2,
-				text = hash("info_food")
+				text = hash("lbl_info_food")
 			},
 			{
 				type = hash("label"),
 				position_x = -0.5,
 				position_y = 3,
-				text = hash("info_money")
+				text = hash("lbl_info_money")
 			},
 			{
 				id == hash("info_fuel"),
@@ -72,7 +74,7 @@ local LAY = {
 				position_x = -3,
 				position_y = 0,
 				props = {
-					label = hash("buy"),
+					label = hash("btn_buy"),
 					callback = hash("buy_pressed"),
 					enabled = true
 				},
@@ -83,7 +85,7 @@ local LAY = {
 				position_x = -2,
 				position_y = 0,
 				props = {
-					label = hash("repair"),
+					label = hash("btn_repair"),
 					callback = hash("repair_pressed"),
 					enabled = false
 				},
@@ -94,7 +96,7 @@ local LAY = {
 				position_x = -1,
 				position_y = 0,
 				props = {
-					label = hash("upgrade"),
+					label = hash("btn_upgrade"),
 					callback = hash("upgrade_pressed"),
 					enabled = false
 				},
@@ -105,7 +107,7 @@ local LAY = {
 				position_x = 0,
 				position_y = 0,
 				props = {
-					label = hash("recruit"),
+					label = hash("btn_recruit"),
 					callback = hash("recruit_pressed"),
 					enabled = true
 				},
@@ -116,7 +118,7 @@ local LAY = {
 				position_x = 1,
 				position_y = 0,
 				props = {
-					label = hash("crew"),
+					label = hash("btn_crew"),
 					callback = hash("crew_pressed"),
 					enabled = true
 				},
@@ -127,7 +129,7 @@ local LAY = {
 				position_x = 2,
 				position_y = 0,
 				props = {
-					label = hash("jobs"),
+					label = hash("btn_jobs"),
 					callback = hash("jobs_pressed"),
 					enabled = true
 				},
@@ -138,7 +140,7 @@ local LAY = {
 				position_x = 3,
 				position_y = 0,
 				props = {
-					label = hash("travel"),
+					label = hash("btn_travel"),
 					callback = hash("travel_pressed"),
 					enabled = true
 				},
@@ -153,7 +155,7 @@ local LAY = {
 				position_x = -1,
 				position_y = 0,
 				props = {
-					label = hash("crew"),
+					label = hash("btn_crew"),
 					callback = hash("crew_pressed"),
 					enabled = true
 				},
@@ -164,7 +166,7 @@ local LAY = {
 				position_x = 1,
 				position_y = 0,
 				props = {
-					label = hash("continue"),
+					label = hash("btn_continue"),
 					callback = hash("continue_pressed"),
 					enabled = true
 				},
@@ -179,7 +181,7 @@ local LAY = {
 				position_x = -1,
 				position_y = 0,
 				props = {
-					label = hash("crew"),
+					label = hash("btn_crew"),
 					callback = hash("crew_pressed"),
 					enabled = true
 				},
@@ -190,7 +192,7 @@ local LAY = {
 				position_x = 1,
 				position_y = 0,
 				props = {
-					label = hash("land"),
+					label = hash("btn_land"),
 					callback = hash("land_pressed"),
 					enabled = true
 				},
@@ -225,7 +227,7 @@ local LAY = {
 				position_x = 0,
 				position_y = 1,
 				props = {
-					label =  hash("recruit_talk"),
+					label =  hash("btn_recruit_talk"),
 					callback = hash("recruit_talk"),
 					enabled = true
 				},
@@ -237,7 +239,7 @@ local LAY = {
 				position_x = 1,
 				position_y = 1,
 				props = {
-					label =  hash("recruit_hire"),
+					label =  hash("btn_recruit_hire"),
 					callback = hash("recruit_hire"),
 					enabled = true
 				},
@@ -252,25 +254,25 @@ local LAY = {
 				type = hash("label"),
 				position_x = -2.5,
 				position_y = 1,
-				text = hash("crew_name")
+				text = hash("lbl_crew_name")
 			},
 			{
 				type = hash("label"),
 				position_x = -1.5,
 				position_y = 1,
-				text = hash("crew_role")
+				text = hash("lbl_crew_role")
 			},
 			{
 				type = hash("label"),
 				position_x = -0.5,
 				position_y = 1,
-				text = hash("crew_wage")
+				text = hash("lbl_crew_wage")
 			},
 			{
 				type = hash("label"),
 				position_x = 1.5,
 				position_y = 1,
-				text = hash("crew_earnings")
+				text = hash("lbl_crew_earnings")
 			},
 			{
 				type = hash("label"),
@@ -311,7 +313,7 @@ local LAY = {
 				position_x = -0.8,
 				position_y = 2,
 				props = {
-					label = hash("crew_plus"),
+					label = hash("btn_crew_plus"),
 					callback = hash("crew_wage_plus"),
 					enabled = true
 				},
@@ -321,7 +323,7 @@ local LAY = {
 				type = hash("label"),
 				position_x = -0.5,
 				position_y = 2,
-				text = ("wage")
+				text = "wage"
 			},
 			{
 				id = hash("crew_wage_minus"),
@@ -330,7 +332,7 @@ local LAY = {
 				position_x = -0.2,
 				position_y = 2,
 				props = {
-					label = hash("crew_minus"),
+					label = hash("btn_crew_minus"),
 					callback = hash("crew_wage_minus"),
 					enabled = true
 				},
@@ -342,7 +344,7 @@ local LAY = {
 				position_x = 0.5,
 				position_y = 2,
 				props = {
-					label = hash("crew_background"),
+					label = hash("btn_crew_background"),
 					callback = hash("crew_background"),
 					enabled = true
 				},
@@ -354,7 +356,7 @@ local LAY = {
 				position_x = 1.5,
 				position_y = 2,
 				props = {
-					label = hash("crew_skills"),
+					label = hash("btn_crew_skills"),
 					callback = hash("crew_skills"),
 					enabled = true
 				},
@@ -366,7 +368,7 @@ local LAY = {
 				position_x = 2.5,
 				position_y = 2,
 				props = {
-					label = hash("crew_dismiss"),
+					label = hash("btn_crew_dismiss"),
 					callback = hash("crew_dismiss"),
 					enabled = true
 				},
@@ -454,40 +456,40 @@ local LAY = {
 				type = hash("label"),
 				position_x = -1.5,
 				position_y = 1,
-				text = hash("jobs_type")
+				text = hash("lbl_jobs_type")
 			},
 			{
 				type = hash("label"),
 				position_x = -0.5,
 				position_y = 1,
-				text = hash("jobs_region")
+				text = hash("lbl_jobs_region")
 			},
 			{
 				type = hash("label"),
 				position_x = 0.5,
 				position_y = 1,
-				text = hash("jobs_wage")
+				text = hash("lbl_jobs_wage")
 			},
 			{
 				repeating = {"PLANET", "current", "jobs"},
 				type = hash("label"),
 				position_x = -1.5,
 				position_y = 2,
-				text = ("type")
+				text = "type"
 			},
 			{
 				repeating = {"PLANET", "current", "jobs"},
 				type = hash("label"),
 				position_x = -0.5,
 				position_y = 2,
-				text = ("region")
+				text = "region"
 			},
 			{
 				repeating = {"PLANET", "current", "jobs"},
 				type = hash("label"),
 				position_x = 0.5,
 				position_y = 2,
-				text = ("wage")
+				text = "wage"
 			},
 			{
 				repeating = {"PLANET", "current", "jobs"},
@@ -495,7 +497,7 @@ local LAY = {
 				position_x = 1.5,
 				position_y = 2,
 				props = {
-					label = hash("jobs_accept"),
+					label = hash("btn_jobs_accept"),
 					callback = hash("jobs_accept"),
 					enabled = true
 				},
@@ -512,7 +514,7 @@ local LAY = {
 				position_x = 0,
 				position_y = 1,
 				props = {
-					label = hash("travel_explore"),
+					label = hash("btn_travel_explore"),
 					callback = hash("travel_explore_core"),
 					enabled = true
 				},
@@ -523,7 +525,7 @@ local LAY = {
 				position_x = 0,
 				position_y = 2,
 				props = {
-					label = hash("travel_explore"),
+					label = hash("btn_travel_explore"),
 					callback = hash("travel_explore_frontier"),
 					enabled = true
 				},
@@ -534,7 +536,7 @@ local LAY = {
 				position_x = 0,
 				position_y = 3,
 				props = {
-					label = hash("travel_explore"),
+					label = hash("btn_travel_explore"),
 					callback = hash("travel_explore_rim"),
 					enabled = true
 				},
@@ -545,7 +547,7 @@ local LAY = {
 				position_x = 1,
 				position_y = 1,
 				props = {
-					label = hash("travel_mission"),
+					label = hash("btn_travel_mission"),
 					callback = hash("travel_mission_core"),
 					enabled = false
 				},
@@ -556,7 +558,7 @@ local LAY = {
 				position_x = 1,
 				position_y = 2,
 				props = {
-					label = hash("travel_mission"),
+					label = hash("btn_travel_mission"),
 					callback = hash("travel_mission_frontier"),
 					enabled = false
 				},
@@ -567,7 +569,7 @@ local LAY = {
 				position_x = 1,
 				position_y = 3,
 				props = {
-					label = hash("travel_mission"),
+					label = hash("btn_travel_mission"),
 					callback = hash("travel_mission_rim"),
 					enabled = false
 				},
@@ -576,19 +578,19 @@ local LAY = {
 				type = hash("label"),
 				position_x = -1,
 				position_y = 1,
-				text = hash("travel_core")
+				text = hash("lbl_travel_core")
 			},
 			{
 				type = hash("label"),
 				position_x = -1,
 				position_y = 2,
-				text = hash("travel_frontier")
+				text = hash("lbl_travel_frontier")
 			},
 			{
 				type = hash("label"),
 				position_x = -1,
 				position_y = 3,
-				text = hash("travel_rim")
+				text = hash("lbl_travel_rim")
 			},
 		}
 	},
@@ -596,12 +598,20 @@ local LAY = {
 		background = true,
 		elements = {
 			{
-				type = hash("button_main"),
+				type = hash("textbox"),
 				position_x = 0,
 				position_y = 1,
+				text = function() return EVENT.current[EVENT.stage].text end
+			},
+			{
+				id = hash("event_option"),
+				repeating = {"EVENT", "links"},
+				type = hash("button_option"),
+				position_x = 0,
+				position_y = 5,
 				props = {
-					label = hash("error_ok"),
-					callback = hash("close"),
+					label =  "text",
+					callback = hash("event_option"),
 					enabled = true
 				},
 			},
@@ -616,7 +626,7 @@ local LAY = {
 				position_x = 0,
 				position_y = 1,
 				props = {
-					label = hash("error_ok"),
+					label = hash("btn_error_ok"),
 					callback = hash("close"),
 					enabled = true
 				},

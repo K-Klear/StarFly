@@ -1,108 +1,110 @@
 local STR = {
 	en = {
 		ui = {
-			button = {
-				[hash("")] = "",
-				
-				[hash("buy")] = "BUY",
-				[hash("repair")] = "REPAIR",
-				[hash("upgrade")] = "UPGRADE",
-				[hash("recruit")] = "RECRUIT",
-				[hash("crew")] = "CREW",
-				[hash("jobs")] = "JOBS",
-				[hash("travel")] = "TRAVEL",
-				[hash("continue")] = "CONTINUE",
-				[hash("land")] = "LAND",
+			-- general
+			[hash("")] = "",
 
-				[hash("recruit_talk")] = "INTERVIEW",
-				[hash("recruit_hire")] = "HIRE",
-				
-				[hash("crew_background")] = "About",
-				[hash("crew_skills")] = "Skills",
-				[hash("crew_dismiss")] = "Dismiss",
+			[hash("role_none")] = "None",
+			[hash("role_pilot")] = "Pilot",
+			[hash("role_engineer")] = "Engineer",
+			[hash("role_medic")] = "Medic",
+			[hash("role_comms")] = "Comms",
+			[hash("role_gunner")] = "Gunner",
+			[hash("role_passenger")] = "Passenger",
 
-				[hash("role_none")] = "None",
-				[hash("role_pilot")] = "Pilot",
-				[hash("role_engineer")] = "Engineer",
-				[hash("role_medic")] = "Medic",
-				[hash("role_comms")] = "Comms",
-				[hash("role_gunner")] = "Gunner",
-				[hash("role_passenger")] = "Passenger",
-				
-				[hash("crew_plus")] = "+",
-				[hash("crew_minus")] = "-",
-				
-				[hash("jobs_accept")] = "ACCEPT",
+			[hash("core")] = "Core",
+			[hash("frontier")] = "Frontier",
+			[hash("rim")] = "Outer rim",
 
-				[hash("travel_explore")] = "EXPLORE",
-				[hash("travel_mission")] = "MISSION",
+			[hash("megalopolis")] = "Megalopolis",
+			[hash("city")] = "City",
+			[hash("outpost")] = "Outpost",
 
-				[hash("error_ok")] = "OK",
-			},
-			dialog_title = {
-				[hash("buy")] = "BUY",
-				[hash("repair")] = "REPAIR",
-				[hash("upgrade")] = "UPGRADE",
-				[hash("recruit")] = "RECRUIT",
-				[hash("crew")] = "CREW",
-				[hash("jobs")] = "AVAILABLE JOBS",
-				[hash("travel")] = "TRAVEL",
+			[hash("federation")] = "Federation",
+			[hash("independent")] = "Independent",
+			[hash("rebels")] = "Rebel",
 
-				[hash("error_no_recruits")] = "There is nobody here to recruit.",
-				
-				[hash("role_selection")] = "Assign a new role.",
+			[hash("delivery")] = "Delivery",
+			[hash("smuggling")] = "Smuggling",
+			[hash("passage")] = "Passage",
+			[hash("assasination")] = "Assasination",
+			[hash("espionage")] = "Espionage",
+			
+			-- buttons
+			[hash("btn_buy")] = "BUY",
+			[hash("btn_repair")] = "REPAIR",
+			[hash("btn_upgrade")] = "UPGRADE",
+			[hash("btn_recruit")] = "RECRUIT",
+			[hash("btn_crew")] = "CREW",
+			[hash("btn_jobs")] = "JOBS",
+			[hash("btn_travel")] = "TRAVEL",
+			[hash("btn_continue")] = "CONTINUE",
+			[hash("btn_land")] = "LAND",
 
-				[hash("error_no_crew")] = "You have no crew!",
-				[hash("error_crew_full")] = "You don't have room for more crew!",
-				
-				[hash("error_no_jobs")] = "There are no jobs available here.",
+			[hash("btn_recruit_talk")] = "INTERVIEW",
+			[hash("btn_recruit_hire")] = "HIRE",
+			
+			[hash("btn_crew_background")] = "About",
+			[hash("btn_crew_skills")] = "Skills",
+			[hash("btn_crew_dismiss")] = "Dismiss",
+			[hash("btn_crew_plus")] = "+",
+			[hash("btn_crew_minus")] = "-",
+			
+			[hash("btn_jobs_accept")] = "ACCEPT",
 
-				[hash("error_no_fuel")] = "You don't have enough fuel!",
-				[hash("error_no_food")] = "You don't have enough rations!",
-				[hash("error_no_pilot")] = "You must assign a pilot!",
-			},
-			label = {
-				[hash("core")] = "Core",
-				[hash("frontier")] = "Frontier",
-				[hash("rim")] = "Outer rim",
-				
-				[hash("megalopolis")] = "Megalopolis",
-				[hash("city")] = "City",
-				[hash("outpost")] = "Outpost",
-				
-				[hash("federation")] = "Federation",
-				[hash("independent")] = "Independent",
-				[hash("rebels")] = "Rebel",
-				
-				[hash("info_fuel")] = "FUEL:",
-				[hash("info_food")] = "RATIONS:",
-				[hash("info_money")] = "CREDITS:",
+			[hash("btn_travel_explore")] = "EXPLORE",
+			[hash("btn_travel_mission")] = "MISSION",
 
-				[hash("recruit_name")] = "NAME",
+			[hash("btn_error_ok")] = "OK",
 
-				[hash("crew_name")] = "NAME",
-				[hash("crew_role")] = "ROLE",
-				[hash("crew_wage")] = "WAGE %",
+			-- dialog titles
+			[hash("title_buy")] = "BUY",
+			[hash("title_repair")] = "REPAIR",
+			[hash("title_upgrade")] = "UPGRADE",
+			[hash("title_recruit")] = "RECRUIT",
+			[hash("title_crew")] = "CREW",
+			[hash("title_jobs")] = "AVAILABLE JOBS",
+			[hash("title_travel")] = "TRAVEL",
 
-				[hash("crew_earnings")] = "PERCENT EARNED:",
-				
-				[hash("jobs_type")] = "TYPE",
-				[hash("jobs_region")] = "REGION",
-				[hash("jobs_wage")] = "WAGE",
+			[hash("title_role_selection")] = "Assign a new role.",
 
-				[hash("job_delivery")] = "Delivery",
-				[hash("job_smuggling")] = "Smuggling",
-				[hash("job_passage")] = "Passage",
-				[hash("job_assasination")] = "Assasination",
-				[hash("job_espionage")] = "Espionage",
+			[hash("title_error_no_crew")] = "You have no crew!",
+			[hash("title_error_crew_full")] = "You don't have room for more crew!",
+			[hash("title_error_no_recruits")] = "There is nobody here to recruit.",
+			[hash("title_error_no_jobs")] = "There are no jobs available here.",
+			[hash("title_error_no_fuel")] = "You don't have enough fuel!",
+			[hash("title_error_no_food")] = "You don't have enough rations!",
+			[hash("title_error_no_pilot")] = "You must assign a pilot!",
 
-				[hash("jobs_accept")] = "Accept",
-				
-				[hash("travel_core")] = "CORE WORLDS",
-				[hash("travel_frontier")] = "FRONTIER",
-				[hash("travel_rim")] = "OUTER RIM",
+			-- dialog labels
+			[hash("lbl_info_fuel")] = "FUEL:",
+			[hash("lbl_info_food")] = "RATIONS:",
+			[hash("lbl_info_money")] = "CREDITS:",
 
-			}
+			[hash("lbl_recruit_name")] = "NAME",
+
+			[hash("lbl_crew_name")] = "NAME",
+			[hash("lbl_crew_role")] = "ROLE",
+			[hash("lbl_crew_wage")] = "WAGE %",
+			[hash("lbl_crew_earnings")] = "PERCENT EARNED:",
+			
+			[hash("lbl_jobs_type")] = "TYPE",
+			[hash("lbl_jobs_region")] = "REGION",
+			[hash("lbl_jobs_wage")] = "WAGE",
+			
+			[hash("lbl_travel_core")] = "CORE WORLDS",
+			[hash("lbl_travel_frontier")] = "FRONTIER",
+			[hash("lbl_travel_rim")] = "OUTER RIM",
+
+			-- events
+			[hash("distress_signal_true/signal_detected")] = "You have detected an emergency signal from a nearby vessel. Someone may be in trouble. Or they are setting an ambush...",
+			[hash("distress_signal_true/signal_missed")] = "Nothing of importance happened during travel.",
+			[hash("distress_signal_true/signal_ignored")] = "Whoever sent the signal will have to fend for themselves.",
+			[hash("distress_signal_true/crew_rescued")] = "You find a damaged vessel and rescue one of its crew. They agree to join you.",
+			[hash("distress_signal_true/no_survivors")] = "There's nothing you can do to help here. There are no survivors and nothing of value.",
+			
+			[hash("distress_signal_true/link/investigate")] = "Investigate",
+			[hash("distress_signal_true/link/ignore")] = "Ignore",
 		},
 		names = {
 			[hash("male")] = {

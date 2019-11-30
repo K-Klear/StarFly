@@ -88,6 +88,18 @@ images {
 images {
   image: "/assets/images/ui/dialog/dialog_tr_disabled.png"
 }
+images {
+  image: "/assets/images/ui/buttons/button_option.png"
+}
+images {
+  image: "/assets/images/ui/buttons/button_option_disabled.png"
+}
+images {
+  image: "/assets/images/ui/buttons/button_option_inactive.png"
+}
+images {
+  image: "/assets/images/ui/buttons/button_option_pressed.png"
+}
 margin: 1
 extrude_borders: 1
 inner_padding: 1

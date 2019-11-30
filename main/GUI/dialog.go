@@ -121,3 +121,39 @@ embedded_components {
     w: 1.0
   }
 }
+embedded_components {
+  id: "textbox"
+  type: "factory"
+  data: "prototype: \"/main/GUI/dialog_textbox.go\"\n"
+  "load_dynamically: false\n"
+  ""
+  position {
+    x: 0.0
+    y: 0.0
+    z: 0.0
+  }
+  rotation {
+    x: 0.0
+    y: 0.0
+    z: 0.0
+    w: 1.0
+  }
+}
+embedded_components {
+  id: "button_option"
+  type: "factory"
+  data: "prototype: \"/main/GUI/button_event_option.go\"\n"
+  "load_dynamically: false\n"
+  ""
+  position {
+    x: 0.0
+    y: 0.0
+    z: 0.0
+  }
+  rotation {
+    x: 0.0
+    y: 0.0
+    z: 0.0
+    w: 1.0
+  }
+}

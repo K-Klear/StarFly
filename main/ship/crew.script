@@ -123,7 +123,7 @@ local function set_role(self)
 	else
 		sprite.set_constant("#role_icon", "tint", vmath.vector4(1, 1, 1, 1))
 		sprite.play_flipbook("#role_icon", role_icons[self.role])
-		label.set_text("#role_label", STR.en.ui.button[self.role])
+		label.set_text("#role_label", STR.en.ui[self.role])
 		set_target(rooms[self.role].x, rooms[self.role].y, self)
 	end
 end

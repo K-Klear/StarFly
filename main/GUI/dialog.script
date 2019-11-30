@@ -1,6 +1,11 @@
 local STR = require("main/modules/strings")
 local LAY = require("main/GUI/dialog_layouts")
-local modules = {CREW = require("main/modules/crew"), PLANET = require("main/modules/planets"), STATS = require("main/modules/stats")}
+local modules = {
+	CREW = require("main/modules/crew"),
+	PLANET = require("main/modules/planets"),
+	STATS = require("main/modules/stats"),
+	EVENT = require("main/modules/events")
+}
 
 go.property("size", vmath.vector3(0, 0, 1))
 go.property("title", hash(""))
@@ -40,7 +45,12 @@ function init(self)
 
 	if self.title ~= hash("") then
 		object = factory.create("#label", vmath.vector3(0, half_y - 16, 0))
-		go.set_parent(object, "."); label.set_text(object, STR.en.ui.dialog_title[self.title])
+		go.set_parent(object, ".")
+		if type(self.title) == "string" then
+			label.set_text(object, self.title)
+		else
+			label.set_text(object, STR.en.ui[self.title])
+		end
 	end
 
 	if LAY[self.layout].elements then
@@ -49,6 +59,8 @@ function init(self)
 			[hash("label")] = "#label",
 			[hash("icon_face")] = "#icon_face",
 			[hash("button_tiny")] = "#button_tiny",
+			[hash("button_option")] = "#button_option",
+			[hash("textbox")] = "#textbox",
 		}
 		for key, val in ipairs(LAY[self.layout].elements) do
 			if val.repeating then
@@ -76,9 +88,9 @@ function init(self)
 						self.elements[val.id] = self.elements[val.id] or {}
 						table.insert(self.elements[val.id], object)
 					end
-					if val.type == hash("label") then
+					if val.type == hash("label") or val.type == hash("textbox") then
 						if type(tab[_][val.text]) == "userdata" then
-							label.set_text(object, STR.en.ui.label[tab[_][val.text]])
+							label.set_text(object, STR.en.ui[tab[_][val.text]])
 						else
 							label.set_text(object, tab[_][val.text])
 						end
@@ -89,16 +101,18 @@ function init(self)
 				object = factory.create(factory_type[val.type], vmath.vector3(val.position_x * 116, half_y - (54 * val.position_y) - 8, 0), nil, val.props, val.scale)
 				go.set_parent(object, ".")
 				if val.id then self.elements[val.id] = object end
-				if val.type == hash("label") then
+				if val.type == hash("label") or val.type == hash("textbox") then
 					if type(val.text) == "userdata" then
-						label.set_text(object, STR.en.ui.label[val.text])
+						label.set_text(object, STR.en.ui[val.text])
 					elseif type(val.text) == "table" then
 						local tab = modules
 						for _ = 1, #val.text do
 							tab = tab[val.text[_]]
 						end
-						if type(tab) == "userdata" then tab = STR.en.ui.label[tab] end
+						if type(tab) == "userdata" then tab = STR.en.ui[tab] end
 						label.set_text(object, tab)
+					elseif type(val.text) == "function" then
+						label.set_text(object, STR.en.ui[val.text()])
 					else
 						label.set_text(object, val.text)
 					end

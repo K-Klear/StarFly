@@ -22,7 +22,7 @@ local region_stats = {
 
 local mission_stats = {
 	target = {hash("core"), hash("frontier"), hash("rim")},
-	type = {hash("job_delivery"), hash("job_smuggling"), hash("job_passage"), hash("job_assasination"), hash("job_espionage")}
+	type = {hash("delivery"), hash("smuggling"), hash("passage"), hash("assasination"), hash("espionage")}
 }
 
 local settlement_stats = {

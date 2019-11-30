@@ -1,15 +1,15 @@
 {
   "passages": [
     {
-      "text": "[[->A distress signal!]][[->An uneventful journey]]",
+      "text": "[[auto->A distress signal!]][[auto->An uneventful journey]]",
       "links": [
         {
-          "name": "",
+          "name": "auto",
           "link": "A distress signal!",
           "pid": "2"
         },
         {
-          "name": "",
+          "name": "auto",
           "link": "An uneventful journey",
           "pid": "3"
         }
@@ -27,15 +27,15 @@
       ]
     },
     {
-      "text": "signal_detected[[Investigate->Investigate]][[Ignore->Not your problem]]",
+      "text": "You have detected an emergency signal from a vessel. Someone may be in trouble. Or they are setting an ambush...[[Investigate->Investigate]][[Ignore->Not your problem]]",
       "links": [
         {
-          "name": "investigate",
+          "name": "Investigate",
           "link": "Investigate",
           "pid": "4"
         },
         {
-          "name": "ignore",
+          "name": "Ignore",
           "link": "Not your problem",
           "pid": "5"
         }
@@ -51,7 +51,7 @@
       ]
     },
     {
-      "text": "signal_missed",
+      "text": "Nothing of importance happened during travel.",
       "name": "An uneventful journey",
       "pid": "3",
       "position": {
@@ -89,7 +89,7 @@
       ]
     },
     {
-      "text": "signal_ignored",
+      "text": "Whoever sent the signal will have to fend for himself.",
       "name": "Not your problem",
       "pid": "5",
       "position": {
@@ -101,7 +101,7 @@
       ]
     },
     {
-      "text": "crew_rescued",
+      "text": "You find a damaged vessel and rescue one of its crew. They agree to join you.",
       "name": "A survivor!",
       "pid": "6",
       "position": {
@@ -114,7 +114,7 @@
       ]
     },
     {
-      "text": "no_survivors",
+      "text": "There's nothing you can do to help here. There are no survivors and nothing of value.",
       "name": "Dead ship",
       "pid": "7",
       "position": {

@@ -4,8 +4,8 @@ local EVENT = {}
 
 local list_space = {
 	"distress_signal_true",
-	"ambush_pirate",
-	"asteroids",
+--	"ambush_pirate",
+--	"asteroids",
 }
 
 local event_list = {[hash("space")] = {}, [hash("orbit")] = {}, [hash("landing")] = {}}
@@ -35,12 +35,20 @@ local function load_event(event, event_type)
 		val.pid = nil
 		local break_char = string.find(val.text, "%[")
 		if break_char then val.text = string.sub(val.text, 1, break_char - 1) end
+		if val.text ~= "" then val.text = hash(event.."/"..val.text) end
 		local type, effect, test, diff = get_tags(val)
 		val.stage_type = type
 		val.effect = effect
 		val.dice_type = test
 		val.dice_difficulty = diff
 		val.tags = nil
+		if val.links then
+			for k, v in ipairs(val.links) do
+				if v.name ~= "" then v.text = hash(event.."/link/"..v.name) end
+				v.name = nil; v.link = nil
+				v.stage = v.pid; v.pid = nil
+			end
+		end
 	end
 	event_list[event_type][event] = data
 end
@@ -74,7 +82,7 @@ function EVENT.progress(dialog)
 	end
 end
 
-function EVENT.getEvent(event_type)		-- I think here I will add factors making various events more or less likely
+function EVENT.get_event(event_type)		-- I think here I will add factors making various events more or less likely
 	local randomizer = {}
 	for key, val in pairs(event_list[event_type]) do
 		table.insert(randomizer, key)
@@ -83,8 +91,9 @@ function EVENT.getEvent(event_type)		-- I think here I will add factors making v
 end
 
 function EVENT.new(event_type)
-	EVENT.current = event_list[event_type][EVENT.getEvent(event_type)]
+	EVENT.current = event_list[event_type][EVENT.get_event(event_type)]
 	EVENT.stage = 1
+	pprint(EVENT.current)
 end
 
 

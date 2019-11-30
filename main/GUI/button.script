@@ -28,11 +28,17 @@ local types = {
 		sprite_pressed = "button_close_pressed",
 		sprite_disabled = "button_close_pressed",
 		sprite_inactive = "button_close_inactive"
+	},
+	[hash("event_option")] = {
+		sprite = "button_option",
+		sprite_pressed = "button_option_pressed",
+		sprite_disabled = "button_option_pressed",
+		sprite_inactive = "button_option_inactive"
 	}
 }
 
 function init(self)
-	label.set_text("#label", STR.en.ui.button[self.label])
+	label.set_text("#label", STR.en.ui[self.label])
 	if self.enabled then
 		go.set("#label", "color", default_colour)
 		self.state = hash("up")
