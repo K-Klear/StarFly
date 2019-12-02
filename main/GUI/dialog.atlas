@@ -38,12 +38,6 @@ images {
   image: "/assets/images/ui/dialog/dialog_tr.png"
 }
 images {
-  image: "/assets/images/ui/buttons/button_close.png"
-}
-images {
-  image: "/assets/images/ui/buttons/button_close_pressed.png"
-}
-images {
   image: "/assets/images/ui/buttons/button_main_inactive.png"
 }
 images {
@@ -99,6 +93,12 @@ images {
 }
 images {
   image: "/assets/images/ui/buttons/button_option_pressed.png"
+}
+images {
+  image: "/assets/images/ui/buttons/button_close.png"
+}
+images {
+  image: "/assets/images/ui/buttons/button_close_pressed.png"
 }
 margin: 1
 extrude_borders: 1

@@ -4,9 +4,7 @@ math.random(); math.random(); math.random();
 local STR = require("main/modules/strings")
 local STATS = require("main/modules/stats")
 
-local CREW = {
-	list = {}
-}
+local CREW = {list = {}}
 
 local function normal_dist(factor, zeroMean)
 	local value = 0
@@ -93,12 +91,12 @@ function CREW.new()
 	
 	local list = {}
 	repeat
-		for key in ipairs(STR.en.names[gender]) do
+		for key in pairs(STR.en.names[gender]) do
 			if used_names[gender][key] == nil then
 				table.insert(list, {key = key, gender = gender})
 			end
 		end
-		for key in ipairs(STR.en.names[hash("both")]) do
+		for key in pairs(STR.en.names[hash("both")]) do
 			if used_names[hash("both")][key] == nil then
 				table.insert(list, {key = key, gender = hash("both")})
 			end
@@ -125,7 +123,6 @@ function CREW.new()
 
 	local _ = math.random(1, #list)
 	local name = {gender = list[_].gender, key = list[_].key}
-	local name_string = STR.en.names[name.gender][name.key]
 	used_names[name.gender][name.key] = false
 	
 	local face = {
@@ -203,8 +200,8 @@ function CREW.new()
 	--]]
 
 	return {
-		gender = gender, name = name, name_string = name_string, skills = skills, stats = stats, attributes = attributes,
-		knowledge = knowledge, face = face, id = IDCount, goal = goal, role = hash("role_none"), wage = 0
+		gender = gender, name = name, skills = skills, stats = stats, attributes = attributes,
+		knowledge = knowledge, face = face, goal = goal, role = hash("role_none"), wage = 0
 	}
 end
 

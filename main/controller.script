@@ -45,8 +45,7 @@ end
 
 function on_message(self, message_id, message, sender)
 	if message_id == hash("buy_pressed") then
-		EVENT.new(hash("space"))
-		msg.post(".", hash("event_progress"))
+
 	elseif message_id == hash("recruit_pressed") then
 		if #PLANET.current.recruits == 0 then
 			local props = {size = vmath.vector3(button_x * 3, button_y, 0), title = hash("title_error_no_recruits"), layout = hash("error")}
@@ -134,6 +133,12 @@ function on_message(self, message_id, message, sender)
 		end
 		close_all_dialogs()
 		msg.post(".", hash("crew_pressed"))
+	elseif message_id == hash("crew_background") then
+		local props = {size = vmath.vector3(button_x * 6, button_y * 7, 0), layout = hash("crew_background"), id = message.id}
+		table.insert(stack, factory.create("#dialog", vmath.vector3(centre.x, centre.y, 0.8 + #stack * 0.02), nil, props))
+		msg.post(stack[#stack - 1], "disable_all")
+
+		
 	elseif message_id == hash("crew_dismiss") then
 		msg.post(CREW.list[message.id].go, "dismiss")
 		CREW.dismiss(message.id)
@@ -216,28 +221,42 @@ function on_message(self, message_id, message, sender)
 			msg.post("/cursor", hash("crew_selection"), {enabled = true})
 		end
 	elseif message_id == hash("transition_space") then
-		open_main(hash("main_space"))
-		--EVENTS.new_event(dialog)
+		EVENT.new(hash("space"))
+		msg.post(".", hash("event_progress"))
 	elseif message_id == hash("transition_orbit") then
 		open_main(hash("main_orbit"))
 	elseif message_id == hash("transition_planet") then
 		open_main(hash("main"))
 	elseif message_id == hash("event_progress") then
 		local event_stage = EVENT.current[EVENT.stage]
+		EVENT.links = event_stage.links
+		
+		if event_stage.effect == hash("recruit_random") then
+			CREW.add()
+			msg.post("/main", "spawn_crew", {crewID = #CREW.list, x = math.random(10, 13), y = 2, z = #CREW.list})
+		end
+
 		if event_stage.stage_type == "choice" then
-			EVENT.links = event_stage.links
 			local props = {size = vmath.vector3(button_x * 6, button_y * (4 + #EVENT.links), 0), layout = hash("event")}
 			table.insert(stack, factory.create("#dialog", vmath.vector3(centre.x, centre.y, 0.8 + #stack * 0.02), nil, props))
 		elseif event_stage.stage_type == "dice" then
 			if DICE.roll(event_stage.dice_type, event_stage.dice_difficulty) then
-				print("yes")
+				EVENT.stage = event_stage.links[1].stage
 			else
-				print("no")
+				EVENT.stage = event_stage.links[2].stage
 			end
-			--EVENT.stage = EVENT.stage + 1
-			--msg.post(".", hash("event_progress"))
+			msg.post(".", hash("event_progress"))
 		elseif EVENT.current[EVENT.stage].stage_type == "end" then
-
+			local props = {size = vmath.vector3(button_x * 6, button_y * 5, 0), layout = hash("event_end")}
+			table.insert(stack, factory.create("#dialog", vmath.vector3(centre.x, centre.y, 0.8 + #stack * 0.02), nil, props))
 		end
+	elseif message_id == hash("event_option") then
+		EVENT.stage = EVENT.current[EVENT.stage].links[message.id].stage
+		go.delete(stack[#stack], true); stack[#stack] = nil
+		msg.post(".", hash("event_progress"))
+	elseif message_id == hash("event_end") then
+		EVENT.stage = 0; EVENT.current = nil
+		go.delete(stack[#stack], true); stack[#stack] = nil
+		open_main(hash("main_space"))
 	end
 end

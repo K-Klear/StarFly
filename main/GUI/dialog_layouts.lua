@@ -1,4 +1,8 @@
 local EVENT = require("main/modules/events")
+local PLANET = require("main/modules/planets")
+local STATS = require("main/modules/stats")
+local STR = require("main/modules/strings")
+local CREW = require("main/modules/crew")
 
 local LAY = {
 	[hash("infobox")] = {
@@ -9,21 +13,21 @@ local LAY = {
 				type = hash("label"),
 				position_x = -0.9,
 				position_y = 0.2,
-				text = {"PLANET", "current", "region"}
+				text = function() return PLANET.current.region end
 			},
 			{
 				id = hash("info_government"),
 				type = hash("label"),
 				position_x = 0,
 				position_y = 0.2,
-				text = {"PLANET", "current", "government"}
+				text =  function() return PLANET.current.government end
 			},
 			{
 				id = hash("info_settlement"),
 				type = hash("label"),
 				position_x = 0.9,
 				position_y = 0.2,
-				text = {"PLANET", "current", "settlement"}
+				text = function() return PLANET.current.settlement end
 			},
 			{
 				type = hash("label"),
@@ -48,21 +52,21 @@ local LAY = {
 				type = hash("label"),
 				position_x = 0.5,
 				position_y = 1,
-				text = {"STATS", "fuel"}
+				text = function() return STATS.fuel end
 			},
 			{
 				id = hash("info_food"),
 				type = hash("label"),
 				position_x = 0.5,
 				position_y = 2,
-				text = {"STATS", "food"}
+				text = function() return STATS.food end
 			},
 			{
 				id = hash("info_money"),
 				type = hash("label"),
 				position_x = 0.5,
 				position_y = 3,
-				text = {"STATS", "money"}
+				text = function() return STATS.money end
 			},
 		}
 	},
@@ -76,7 +80,7 @@ local LAY = {
 				props = {
 					label = hash("btn_buy"),
 					callback = hash("buy_pressed"),
-					enabled = true
+					enabled = false
 				},
 			},
 			{
@@ -207,22 +211,23 @@ local LAY = {
 		background = true,
 		elements = {
 			{
-				repeating = {"PLANET", "current", "recruits"},
+				repeating = function() return #PLANET.current.recruits end,
 				type = hash("icon_face"),
+				image = function(id) return PLANET.current.recruits[id].face end,
 				position_x = -1.6,
 				position_y = 1,
 				scale = vmath.vector3(2, 2, 2)
 			},
 			{
-				repeating = {"PLANET", "current", "recruits"},
+				repeating = function() return #PLANET.current.recruits end,
 				type = hash("label"),
 				position_x = -1,
 				position_y = 1,
-				text = "name_string"
+				text = function(id) return STR.en.names[PLANET.current.recruits[id].name.gender][PLANET.current.recruits[id].name.key] end
 			},
 			{
 				id = hash("recruit_talk"),
-				repeating = {"PLANET", "current", "recruits"},
+				repeating = function() return #PLANET.current.recruits end,
 				type = hash("button_main"),
 				position_x = 0,
 				position_y = 1,
@@ -234,7 +239,7 @@ local LAY = {
 			},
 			{
 				id = hash("recruit_hire"),
-				repeating = {"PLANET", "current", "recruits"},
+				repeating = function() return #PLANET.current.recruits end,
 				type = hash("button_main"),
 				position_x = 1,
 				position_y = 1,
@@ -278,37 +283,38 @@ local LAY = {
 				type = hash("label"),
 				position_x = 2.5,
 				position_y = 1,
-				text = {"STATS", "wage"}
+				text = function() return STATS.wage end
 			},
 			{
-				repeating = {"CREW", "list"},
+				repeating = function() return #CREW.list end,
 				type = hash("icon_face"),
+				image = function(id) return CREW.list[id].face end,
 				position_x = -3.1,
 				position_y = 2,
 				scale = vmath.vector3(2, 2, 2)
 			},
 			{
-				repeating = {"CREW", "list"},
+				repeating = function() return #CREW.list end,
 				type = hash("label"),
 				position_x = -2.5,
 				position_y = 2,
-				text = "name_string"
+				text = function(id) return STR.en.names[CREW.list[id].name.gender][CREW.list[id].name.key] end
 			},
 			{
 				id = hash("crew_role"),
-				repeating = {"CREW", "list"},
+				repeating = function() return #CREW.list end,
 				type = hash("button_main"),
 				position_x = -1.5,
 				position_y = 2,
 				props = {
-					label = "role",
+					label = function(id) return CREW.list[id].role end,
 					callback = hash("crew_role"),
 					enabled = true
 				},
 			},
 			{
 				id = hash("crew_wage_plus"),
-				repeating = {"CREW", "list"},
+				repeating = function() return #CREW.list end,
 				type = hash("button_tiny"),
 				position_x = -0.8,
 				position_y = 2,
@@ -319,15 +325,15 @@ local LAY = {
 				},
 			},
 			{
-				repeating = {"CREW", "list"},
+				repeating = function() return #CREW.list end,
 				type = hash("label"),
 				position_x = -0.5,
 				position_y = 2,
-				text = "wage"
+				text = function(id) return CREW.list[id].wage end
 			},
 			{
 				id = hash("crew_wage_minus"),
-				repeating = {"CREW", "list"},
+				repeating = function() return #CREW.list end,
 				type = hash("button_tiny"),
 				position_x = -0.2,
 				position_y = 2,
@@ -339,7 +345,7 @@ local LAY = {
 			},
 			{
 				id = hash("crew_background"),
-				repeating = {"CREW", "list"},
+				repeating = function() return #CREW.list end,
 				type = hash("button_main"),
 				position_x = 0.5,
 				position_y = 2,
@@ -351,7 +357,7 @@ local LAY = {
 			},
 			{
 				id = hash("crew_skills"),
-				repeating = {"CREW", "list"},
+				repeating = function() return #CREW.list end,
 				type = hash("button_main"),
 				position_x = 1.5,
 				position_y = 2,
@@ -363,7 +369,7 @@ local LAY = {
 			},
 			{
 				id = hash("crew_dismiss"),
-				repeating = {"CREW", "list"},
+				repeating = function() return #CREW.list end,
 				type = hash("button_main"),
 				position_x = 2.5,
 				position_y = 2,
@@ -376,6 +382,39 @@ local LAY = {
 			
 		}
 	},
+	[hash("crew_background")] = {
+		background = true,
+		elements = {
+			{
+				type = hash("textbox"),
+				position_x = 0,
+				position_y = 1,
+				text = 5
+			},
+			{
+				type = hash("icon_face"),
+				image = function(id) return CREW.list[id].face end,
+				position_x = -3,
+				position_y = 1,
+				scale = vmath.vector3(2, 2, 2)
+			},
+			{
+				id = hash("crew_background_done"),
+				type = hash("button_main"),
+				position_x = 0,
+				position_y = 7,
+				props = {
+					label = hash("btn_event_done"),
+					callback = hash("close"),
+					enabled = true
+				},
+			},
+		}
+	},
+
+
+
+	
 	[hash("crew_role")] = {
 		close_button = true,
 		background = true,
@@ -471,28 +510,28 @@ local LAY = {
 				text = hash("lbl_jobs_wage")
 			},
 			{
-				repeating = {"PLANET", "current", "jobs"},
+				repeating = function() return #PLANET.current.jobs end,
 				type = hash("label"),
 				position_x = -1.5,
 				position_y = 2,
-				text = "type"
+				text = function(id) return PLANET.current.jobs[id].type end
 			},
 			{
-				repeating = {"PLANET", "current", "jobs"},
+				repeating = function() return #PLANET.current.jobs end,
 				type = hash("label"),
 				position_x = -0.5,
 				position_y = 2,
-				text = "region"
+				text = function(id) return PLANET.current.jobs[id].region end
 			},
 			{
-				repeating = {"PLANET", "current", "jobs"},
+				repeating = function() return #PLANET.current.jobs end,
 				type = hash("label"),
 				position_x = 0.5,
 				position_y = 2,
-				text = "wage"
+				text = function(id) return PLANET.current.jobs[id].wage end
 			},
 			{
-				repeating = {"PLANET", "current", "jobs"},
+				repeating = function() return #PLANET.current.jobs end,
 				type = hash("button_main"),
 				position_x = 1.5,
 				position_y = 2,
@@ -605,12 +644,12 @@ local LAY = {
 			},
 			{
 				id = hash("event_option"),
-				repeating = {"EVENT", "links"},
+				repeating = function() return #EVENT.links end,
 				type = hash("button_option"),
 				position_x = 0,
 				position_y = 5,
 				props = {
-					label =  "text",
+					label = function(id) return EVENT.links[id].text end,
 					callback = hash("event_option"),
 					enabled = true
 				},

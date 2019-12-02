@@ -56,6 +56,7 @@ local STR = {
 			[hash("btn_travel_mission")] = "MISSION",
 
 			[hash("btn_error_ok")] = "OK",
+			[hash("btn_event_done")] = "DONE",
 
 			-- dialog titles
 			[hash("title_buy")] = "BUY",
@@ -108,22 +109,41 @@ local STR = {
 		},
 		names = {
 			[hash("male")] = {
-				"Mal", "Wash", "Simon", "Jean-Luc", "Wolf", "Wesley", "Crusher", "Chekov", "Geordi", "Scott", "Odo",
-				"Quark", "Garrus", "Korben", "Cornelius", "Ziggy", "Tom", "Reed", "Flash", "Ace",
-				"Gordon", "Memnon", "Cutter", "Mathesar", "Rimmer", "Lister", "Spiff", "Ijon", "Kaidan", "Jacob"
+				[hash("mal")] = "Mal", [hash("wash")] = "Wash", [hash("simon")] = "Simon", [hash("jean_luc")] = "Jean-Luc",
+				[hash("wolf")] = "Wolf", [hash("wesley")] = "Wesley", [hash("crusher")] = "Crusher", [hash("chekov")] = "Chekov",
+				[hash("geordi")] = "Geordi", [hash("scott")] = "Scott", [hash("odo")] = "Odo", [hash("quark")] = "Quark",
+				[hash("garrus")] = "Garrus", [hash("korben")] = "Korben", [hash("cornelius")] = "Cornelius",
+				[hash("ziggy")] = "Ziggy", [hash("tom")] = "Tom", [hash("reed")] = "Reed", [hash("flash")] = "Flash",
+				[hash("ace")] = "Ace", [hash("gordon")] = "Gordon", [hash("memnon")] = "Memnon", [hash("cutter")] = "Cutter",
+				[hash("mathesar")] = "Mathesar", [hash("rimmer")] = "Rimmer", [hash("lister")] = "Lister", [hash("spiff")] = "Spiff",
+				[hash("ijon")] = "Ijon", [hash("kaidan")] = "Kaidan", [hash("jacob")] = "Jacob"
 			},
 			[hash("female")] = {
-				"Nyota", "Deanna", "Kira", "Kim", "Cat", "Holly", "Tali", "Ruby", "Beverley", "Jinx",
-				"Jovia", "Inara", "Kaylee", "Zoe", "River", "Tawny", "Trishka", "Miranda", "Kasumi", "Kelly"
+				[hash("nyota")] = "Nyota", [hash("deanna")] = "Deanna", [hash("kira")] = "Kira", [hash("kim")] = "Kim",
+				[hash("cat")] = "Cat", [hash("holly")] = "Holly", [hash("tali")] = "Tali", [hash("ruby")] = "Ruby",
+				[hash("beverley")] = "Beverley", [hash("jinx")] = "Jinx", [hash("jovia")] = "Jovia", [hash("inara")] = "Inara",
+				[hash("kaylee")] = "Kaylee", [hash("zoe")] = "Zoe", [hash("river")] = "River", [hash("tawny")] = "Tawny",
+				[hash("trishka")] = "Trishka", [hash("miranda")] = "Miranda", [hash("kasumi")] = "Kasumi", [hash("kelly")] = "Kelly"
 			},
 			[hash("both")] = {
-				"Jayne", "Book", "Shepard", "Picard", "Riker", "Kirk", "McCoy", "Janeway", "LaForge", "O'Brien",
-				"Uhura", "Bashir", "Dax", "Paris", "Torres", "Kochanski", "Holister", "Reynolds", "Ripley", "Dallas",
-				"Ashley", "Brannigan", "Solo", "Carlissan", "Jameson", "Ripcord", "Archer", "Quill", "Buzz", "Eisenhorn",
-				"Gaunt", "Sanchez", "Batty", "Richards", "Storm", "Grimm", "Vanderbeam", "Edgewise", "Quine", "Starr",
-				"Taggart", "Madison", "Lazarus", "Chen", "Laredo", "Sarris", "Grayson", "Hunt", "Sarrano", "Novak", "Sato",
-				"Troi", "Adama", "Thrace", "Tichy", "Lawson", "Chakwas", "Moreau", "Taylor", "Goto", "Massani", "Chambers",
-				"Vega", "Cortez", "Traynor", "Denton"
+				[hash("jayne")] = "Jayne", [hash("book")] = "Book", [hash("shepard")] = "Shepard", [hash("picard")] = "Picard",
+				[hash("riker")] = "Riker", [hash("kirk")] = "Kirk", [hash("mccoy")] = "McCoy", [hash("janeway")] = "Janeway",
+				[hash("laforge")] = "LaForge", [hash("obrien")] = "O'Brien", [hash("uhura")] = "Uhura", [hash("bashir")] = "Bashir",
+				[hash("dax")] = "Dax", [hash("paris")] = "Paris", [hash("torres")] = "Torres", [hash("kochanski")] = "Kochanski",
+				[hash("holister")] = "Holister", [hash("reynolds")] = "Reynolds", [hash("ripley")] = "Ripley",
+				[hash("dallas")] = "Dallas", [hash("ashley")] = "Ashley", [hash("brannigan")] = "Brannigan", [hash("solo")] = "Solo",
+				[hash("carlissan")] = "Carlissan", [hash("jameson")] = "Jameson", [hash("ripcord")] = "Ripcord",
+				[hash("archer")] = "Archer", [hash("quill")] = "Quill", [hash("buzz")] = "Buzz", [hash("einsenhorn")] = "Eisenhorn",
+				[hash("gaunt")] = "Gaunt", [hash("sanchez")] = "Sanchez", [hash("batty")] = "Batty", [hash("richards")] = "Richards",
+				[hash("storm")] = "Storm", [hash("grimm")] = "Grimm", [hash("vanderbeam")] = "Vanderbeam",
+				[hash("edgewise")] = "Edgewise", [hash("quine")] = "Quine", [hash("starr")] = "Starr", [hash("taggart")] = "Taggart",
+				[hash("madison")] = "Madison", [hash("lazarus")] = "Lazarus", [hash("chen")] = "Chen", [hash("laredo")] = "Laredo",
+				[hash("sarris")] = "Sarris", [hash("grayson")] = "Grayson", [hash("hunt")] = "Hunt", [hash("sarrano")] = "Sarrano",
+				[hash("novak")] = "Novak", [hash("sato")] = "Sato", [hash("troi")] = "Troi", [hash("adama")] = "Adama",
+				[hash("thrace")] = "Thrace", [hash("tichy")] = "Tichy", [hash("lawson")] = "Lawson", [hash("chakwas")] = "Chakwas",
+				[hash("moreau")] = "Moreau", [hash("taylor")] = "Taylor", [hash("goto")] = "Goto", [hash("massani")] = "Massani",
+				[hash("chambers")] = "Chambers", [hash("vega")] = "Vega", [hash("cortez")] = "Cortez", [hash("traynor")] = "Traynor",
+				[hash("denton")] = "Denton", [hash("raynor")] = "Raynor"
 			}
 		}
 	}

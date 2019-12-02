@@ -4,7 +4,7 @@ go.property("skin_colour", vmath.vector4(1, 1, 1, 1))
 go.property("hair_colour", vmath.vector4(1, 1, 1, 1))
 go.property("clothes_colour", vmath.vector4(1, 1, 1, 1))
 go.property("hair", 1)
-go.property("name_key", 1)
+go.property("name_key", hash(""))
 go.property("name_gender", hash("male"))
 go.property("role", hash("role_none"))
 go.property("x", 0)
@@ -14,7 +14,6 @@ go.property("z", 0)
 local pos = vmath.vector3(-176, -128, 0.05)
 local speed = 0.02
 local speed_climb = 0.015
-
 
 local ladders = {
 	{up = {5, 7}},
@@ -147,7 +146,7 @@ function init(self)
 	set_role(self)
 end
 
-function on_message(self, message_id, message, senřžpčder)
+function on_message(self, message_id, message, sender)
 	if message_id == hash("highlight") then
 		msg.post("#reticle", hash("enable"))
 		msg.post("#name", hash("enable"))

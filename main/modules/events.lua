@@ -18,7 +18,7 @@ local function get_tags(stage)
 		elseif string.sub(val, 1, 11) == "difficulty:" then
 			diff = tonumber(string.sub(val, 12, -1))
 		elseif string.sub(val, 1, 7) == "effect:" then
-			effect = string.sub(val, 8, -1)
+			effect = hash(string.sub(val, 8, -1))
 		elseif val == "dice" or val == "end" or val == "choice" then
 			type = val
 		end
@@ -46,7 +46,7 @@ local function load_event(event, event_type)
 			for k, v in ipairs(val.links) do
 				if v.name ~= "" then v.text = hash(event.."/link/"..v.name) end
 				v.name = nil; v.link = nil
-				v.stage = v.pid; v.pid = nil
+				v.stage = tonumber(v.pid); v.pid = nil
 			end
 		end
 	end
@@ -93,7 +93,6 @@ end
 function EVENT.new(event_type)
 	EVENT.current = event_list[event_type][EVENT.get_event(event_type)]
 	EVENT.stage = 1
-	pprint(EVENT.current)
 end
 
 

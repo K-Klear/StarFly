@@ -10,7 +10,7 @@ local modules = {
 go.property("size", vmath.vector3(0, 0, 1))
 go.property("title", hash(""))
 go.property("layout", hash(""))
-go.property("id", 0)
+go.property("id", 999)
 
 local background_sprite = {
 	enabled = {"dialog_bl", "dialog_b", "dialog_br", "dialog_l", "dialog_mid", "dialog_r", "dialog_tl", "dialog_t", "dialog_tr"},
@@ -63,58 +63,45 @@ function init(self)
 			[hash("textbox")] = "#textbox",
 		}
 		for key, val in ipairs(LAY[self.layout].elements) do
-			if val.repeating then
-				local tab = modules
-				for _ = 1, #val.repeating do
-					tab = tab[val.repeating[_]]
+			local repeat_count = 1
+			if val.repeating then repeat_count = val.repeating() end
+			for id = 1, repeat_count do
+				local props = {}
+				if val.type == hash("icon_face") then
+					props = val.image(id)
+				elseif val.props then
+					for k, v in pairs(val.props) do
+						local property = v
+						if type(property) == "function" then property = property(id) end
+						props[k] = property
+					end
 				end
-				for _ = 1, #tab do
-					local props = {}
-					if val.type == hash("icon_face") then
-						props = tab[_].face
-					elseif val.props then
-						for k, v in pairs(val.props) do
-							if type(v) == "string" then
-								props[k] = tab[_][v]
+				if self.id < 999 then props.id = self.id else props.id = id end
+				object = factory.create(factory_type[val.type], vmath.vector3(val.position_x * 116, half_y - (54 * (val.position_y + id - 1)) - 8, 0), nil, props, val.scale)
+				go.set_parent(object, ".")
+				if val.id then
+					self.elements[val.id] = self.elements[val.id] or {}
+					table.insert(self.elements[val.id], object)
+				end
+				if val.type == hash("label") or val.type == hash("textbox") then
+					local text = val.text
+					if type(text) == "function" then text = text(id) end
+					if type(text) == "userdata" then
+						label.set_text(object, STR.en.ui[text])
+					elseif type(text) == "table" then
+						local str = ""
+						for k, v in ipairs(text) do
+							if type(v) == "userdata" then
+								str = str..STR.en.ui[v]
+							elseif type(v) == "table" then
+								str = str..STR.en.ui[v[math.random(1, #v)]]
 							else
-								props[k] = v
+								str = str..v
 							end
 						end
-						props.id = _
-					end
-					object = factory.create(factory_type[val.type], vmath.vector3(val.position_x * 116, half_y - (54 * (val.position_y + _ - 1)) - 8, 0), nil, props, val.scale)
-					go.set_parent(object, ".")
-					if val.id then
-						self.elements[val.id] = self.elements[val.id] or {}
-						table.insert(self.elements[val.id], object)
-					end
-					if val.type == hash("label") or val.type == hash("textbox") then
-						if type(tab[_][val.text]) == "userdata" then
-							label.set_text(object, STR.en.ui[tab[_][val.text]])
-						else
-							label.set_text(object, tab[_][val.text])
-						end
-					end
-				end
-			else
-				if self.id > 0 then val.props.id = self.id end
-				object = factory.create(factory_type[val.type], vmath.vector3(val.position_x * 116, half_y - (54 * val.position_y) - 8, 0), nil, val.props, val.scale)
-				go.set_parent(object, ".")
-				if val.id then self.elements[val.id] = object end
-				if val.type == hash("label") or val.type == hash("textbox") then
-					if type(val.text) == "userdata" then
-						label.set_text(object, STR.en.ui[val.text])
-					elseif type(val.text) == "table" then
-						local tab = modules
-						for _ = 1, #val.text do
-							tab = tab[val.text[_]]
-						end
-						if type(tab) == "userdata" then tab = STR.en.ui[tab] end
-						label.set_text(object, tab)
-					elseif type(val.text) == "function" then
-						label.set_text(object, STR.en.ui[val.text()])
+						label.set_text(object, str)
 					else
-						label.set_text(object, val.text)
+						label.set_text(object, text)
 					end
 				end
 			end
@@ -163,14 +150,13 @@ function on_message(self, message_id, message, sender)
 		if message.id then
 			msg.post(self.elements[message.button][message.id], "turn_on")
 		else
-			msg.post(self.elements[message.button], "turn_on")
+			msg.post(self.elements[message.button][1], "turn_on")
 		end
 	elseif message_id == hash("turn_button_off") then
 		if message.id then
 			msg.post(self.elements[message.button][message.id], "turn_off")
 		else
-			msg.post(self.elements[message.button], "turn_off")
+			msg.post(self.elements[message.button][1], "turn_off")
 		end
 	end
-	
 end
