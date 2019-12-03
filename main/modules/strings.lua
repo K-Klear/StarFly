@@ -97,6 +97,39 @@ local STR = {
 			[hash("lbl_travel_frontier")] = "FRONTIER",
 			[hash("lbl_travel_rim")] = "OUTER RIM",
 
+			-- conversation
+			[hash("talk_says")] = " says:",
+
+			[hash("talk_greeting")] = {"Hello!", "Greetings.", "Nice to meet you.", "Hello there!", "Good day, Captain."},
+			[hash("talk_my_name_is")] = {"I'm", "You can call me", "My name is", "They call me"},
+			[hash("talk_no_skill")] = {"I'm not really skilled in anything in particular, but I can learn! ", "I'm afraid I'm not very skilled in anything. "},
+			
+			[hash("talk_goal_fun")] = {"This place is boring. I want to have some fun. ", "I'm looking for some excitement. You wouldn't believe how boring colony life can be. "},
+			[hash("talk_goal_travel")] = {"I want to see all the universe has to offer. ", "I just want to see the stars. "},
+			[hash("talk_goal_work")] = {"It's impossible to find a job here. Joining your crew might be my last chance. ", "Frankly? I'm after the money. I will get paid, right? ", "Honest work for honest pay, that's what I'm looking for. "},
+			[hash("talk_goal_home")] = {"I want to find a place where I belong. A place I could call a home. ", "I've been drifting from place to place for too long. It's time for me to find a home."},
+			[hash("talk_goal_running")] = {"Someone is after me. I need to vanish. ", "I've crossed someone. I need to get far away from here. ", "I made some mistakes. I have to run."},
+
+			[hash("talk_wage_percent")] = {"% of the take", "%", "% of what we earn"},
+			[hash("talk_wage_offer")] = {"I deserve at least ", "I think a fair wage would be ", "I'm expecting at least ", "I'm easily worth ", "You should pay me "},
+			[hash("talk_wage_negotiate")] = {"I'm willing to compromise.", "I'm open to negotiations."},
+			[hash("talk_wage_final_offer")] = {"That's my final offer", "That's as low as I can go.", "Take it or leave it.", "I can't really accept anything lower than that."},
+			[hash("talk_wage_food_only")] = {"I'm willing to work just for food.", "You won't even have to pay me."},
+
+			[hash("talk_qualifier_none")] = {" don't know anything about", " have no clue when it comes to", " can't possilby be"},
+			[hash("talk_qualifier_terrible")] = {" suck at", "'m terrible at", " don't have much experience with"},
+			[hash("talk_qualifier_poor")] = {" have some basic expertise at", " know a little about"},
+			[hash("talk_qualifier_average")] = {"'m competent at", "'m decent enough at"},
+			[hash("talk_qualifier_good")] = {"'m good at", " won't let you down when"},
+			[hash("talk_qualifier_great")] = {"'m excellent at", " know a lot about"},
+			[hash("talk_qualifier_top")] = {"'m the best at", "'m the elite when it comes to", " know everything about", " 'm a master of"},
+
+			[hash("talk_role_pilot")] = {"flying", "piloting", "helming the ship"},
+			[hash("talk_role_mech")] = {"mechanics", "engineering", "keeping the machine in one piece"},
+			[hash("talk_role_medic")] = {"keeping people healthy", "being doctor", "healing injuries", "medicine"},
+			[hash("talk_role_gunner")] = {"shooting stuff out of the sky", "manning the big gun", "exploding enemies", "turning enemy ships into stardust"},
+			[hash("talk_role_comms")] = {"using comm systems", "using the radio", "communications"},
+			
 			-- events
 			[hash("distress_signal_true/signal_detected")] = "You have detected an emergency signal from a nearby vessel. Someone may be in trouble. Or they are setting an ambush...",
 			[hash("distress_signal_true/signal_missed")] = "Nothing of importance happened during travel.",
@@ -148,5 +181,26 @@ local STR = {
 		}
 	}
 }
+
+function STR.STRING(input)
+	if type(input) ~= "table" then input = {input} end
+	local str = ""
+	for k, v in ipairs(input) do
+		if type(v) == "number" or type(v) == "string" then
+			str = str..v
+		else
+			local val = STR.en.ui[v]
+			if type(val) == "string" then
+				str = str..val
+			elseif type(val) == "table" then
+				str = str..val[math.random(1, #val)]
+			else
+				error("Unexpected type in the lookup table!")
+			end
+		end
+	end
+	return str
+end
+
 
 return STR

@@ -67,16 +67,16 @@ function init(self)
 			if val.repeating then repeat_count = val.repeating() end
 			for id = 1, repeat_count do
 				local props = {}
+				if self.id < 999 then props.id = self.id else props.id = id end
 				if val.type == hash("icon_face") then
-					props = val.image(id)
+					props = val.image(props.id)
 				elseif val.props then
 					for k, v in pairs(val.props) do
 						local property = v
-						if type(property) == "function" then property = property(id) end
+						if type(property) == "function" then property = property(props.id) end
 						props[k] = property
 					end
 				end
-				if self.id < 999 then props.id = self.id else props.id = id end
 				object = factory.create(factory_type[val.type], vmath.vector3(val.position_x * 116, half_y - (54 * (val.position_y + id - 1)) - 8, 0), nil, props, val.scale)
 				go.set_parent(object, ".")
 				if val.id then
@@ -85,24 +85,32 @@ function init(self)
 				end
 				if val.type == hash("label") or val.type == hash("textbox") then
 					local text = val.text
-					if type(text) == "function" then text = text(id) end
+					if type(text) == "function" then text = text(props.id) end
+					label.set_text(object, STR.STRING(text, props.id))
+					--[[
+					if type(text) == "function" then text = text(props.id) end
 					if type(text) == "userdata" then
 						label.set_text(object, STR.en.ui[text])
 					elseif type(text) == "table" then
 						local str = ""
 						for k, v in ipairs(text) do
+							str = str..STR.STRING(v)
+							--[[
 							if type(v) == "userdata" then
-								str = str..STR.en.ui[v]
+								str = str..STR.STRING(v)
 							elseif type(v) == "table" then
+								error("This still happens?")
 								str = str..STR.en.ui[v[math.random(1, #v)]]
-							else
-								str = str..v
-							end
+							--else
+							--	str = str..v
+							--end
+							--[[
 						end
 						label.set_text(object, str)
 					else
 						label.set_text(object, text)
 					end
+					--]]
 				end
 			end
 		end

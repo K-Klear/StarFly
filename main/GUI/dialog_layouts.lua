@@ -3,6 +3,7 @@ local PLANET = require("main/modules/planets")
 local STATS = require("main/modules/stats")
 local STR = require("main/modules/strings")
 local CREW = require("main/modules/crew")
+local TALK = require("main/modules/conversation")
 
 local LAY = {
 	[hash("infobox")] = {
@@ -389,17 +390,22 @@ local LAY = {
 				type = hash("textbox"),
 				position_x = 0,
 				position_y = 1,
-				text = 5
+				text = function(id) return {STR.en.names[CREW.list[id].name.gender][CREW.list[id].name.key], hash("talk_says")} end
+			},
+			{
+				type = hash("textbox"),
+				position_x = 0,
+				position_y = 2.5,
+				text = TALK.crew_about,
 			},
 			{
 				type = hash("icon_face"),
 				image = function(id) return CREW.list[id].face end,
-				position_x = -3,
+				position_x = -2.5,
 				position_y = 1,
-				scale = vmath.vector3(2, 2, 2)
+				scale = vmath.vector3(4, 4, 4)
 			},
 			{
-				id = hash("crew_background_done"),
 				type = hash("button_main"),
 				position_x = 0,
 				position_y = 7,

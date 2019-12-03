@@ -3,7 +3,7 @@ local Ftext = require("main.text")
 M = {}
 
 local qualifier = {
-	none = {" don't know anything about", " have no clue when it comes to", " can't imagine"},
+	none = {" don't know anything about", " have no clue when it comes to", " can't possilby be"},
 	terrible = {" suck at", "'m terrible at", " don't have much experience with"},
 	poor = {" have some basic expertise at", " know a little about"},
 	average = {"'m competent at", "'m decent enough at"},
@@ -13,11 +13,11 @@ local qualifier = {
 }
 
 local jobs = {
-	pilot = {"flying", "piloting"},
+	pilot = {"flying", "piloting", "helming the ship"},
 	mech = {"mechanics", "engineering", "keeping the machine in one piece"},
 	medic = {"keeping people healthy", "being doctor", "healing injuries", "medicine"},
-	gunner = {"shooting stuff out of the sky", "manning the big gun", "exploding enemies"},
-	comms = {"using comm systems", "listening to space"},
+	gunner = {"shooting stuff out of the sky", "manning the big gun", "exploding enemies", "turning enemy ships into stardust"},
+	comms = {"using comm systems", "using the radio", "communications"},
 	fight = {"fighting off boarders", "fighting", "security"}
 }
 

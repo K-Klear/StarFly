@@ -63,6 +63,7 @@ local goal_list = {
 	hash("running"),
 }
 
+
 function CREW.get_role(role)
 	for key, val in ipairs(CREW.list) do
 		if val.role == role then
@@ -242,6 +243,14 @@ function CREW.getRole(role)				-- WIP (possibly free to delete?
 		end
 	end
 	return 0
+end
+
+function STR.crew_about(id)
+	return {
+		hash("talk_greeting"), " ",
+		hash("talk_my_name_is"), " ",
+		STR.en.names[CREW.list[id].name.gender][CREW.list[id].name.key], ".",
+	}
 end
 
 CREW.add(); CREW.add(); CREW.add()
