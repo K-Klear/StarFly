@@ -662,6 +662,27 @@ local LAY = {
 			},
 		}
 	},
+	[hash("event_end")] = {
+		background = true,
+		elements = {
+			{
+				type = hash("textbox"),
+				position_x = 0,
+				position_y = 1,
+				text = function() return EVENT.current[EVENT.stage].text end
+			},
+			{
+				type = hash("button_main"),
+				position_x = 0,
+				position_y = 5,
+				props = {
+					label = hash("btn_event_done"),
+					callback = hash("event_end"),
+					enabled = true
+				},
+			},
+		}
+	},
 	[hash("error")] = {
 		close_button = true,
 		background = true,
