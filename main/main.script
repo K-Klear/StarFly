@@ -16,6 +16,9 @@ local function travel(target, mission)
 end
 
 function spawn_crew(crewID, x, y, z)
+	if not x then x = 10 + math.random(0, 3) end
+	if not y then y = 2 end
+	if not z then z = crewID end
 	local props = {
 		skin_colour = CREW.list[crewID].face.skin_colour,
 		hair_colour = CREW.list[crewID].face.hair_colour,
@@ -31,7 +34,7 @@ end
 
 function init(self)
 	for key, val in ipairs(CREW.list) do
-		spawn_crew(key, 9 + key, 2, key)
+		spawn_crew(key, 9 + key)
 	end
 end
 
@@ -40,5 +43,15 @@ function on_message(self, message_id, message, sender)
 		travel(message.target, message.mission)
 	elseif message_id == hash("spawn_crew") then
 		spawn_crew(message.crewID, message.x, message.y, message.z)
+	elseif message_id == hash("job_accepted") then
+		table.insert(STATS.jobs, PLANET.current.jobs[message.id])
+		table.remove(PLANET.current.jobs, message.id)
+		local new_job = STATS.jobs[#STATS.jobs]
+		if new_job.type == hash("passage") then
+			CREW.add(nil, true)
+			spawn_crew(#CREW.list)
+		end
+		new_job.passengers = {CREW.list[#CREW.list].go}
+		pprint(new_job)
 	end
 end

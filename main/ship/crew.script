@@ -116,7 +116,7 @@ local role_icons = {
 }
 
 local function set_role(self)
-	if self.role == hash("role_none") then
+	if self.role == hash("role_none") or self.role == hash("role_passenger") then
 		sprite.set_constant("#role_icon", "tint", vmath.vector4(1, 1, 1, 0))
 		label.set_text("#role_label", "")
 	else

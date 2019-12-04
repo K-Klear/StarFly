@@ -99,6 +99,8 @@ local STR = {
 
 			-- conversation
 			[hash("talk_says")] = " says:",
+			[hash("talk_I")] = "I",
+			[hash("talk_and")] = " and",
 
 			[hash("talk_greeting")] = {"Hello!", "Greetings.", "Nice to meet you.", "Hello there!", "Good day, Captain."},
 			[hash("talk_my_name_is")] = {"I'm", "You can call me", "My name is", "They call me"},
@@ -116,7 +118,7 @@ local STR = {
 			[hash("talk_wage_final_offer")] = {"That's my final offer", "That's as low as I can go.", "Take it or leave it.", "I can't really accept anything lower than that."},
 			[hash("talk_wage_food_only")] = {"I'm willing to work just for food.", "You won't even have to pay me."},
 
-			[hash("talk_qualifier_none")] = {" don't know anything about", " have no clue when it comes to", " can't possilby be"},
+			[hash("talk_qualifier_none")] = {" don't know anything about", " have no clue when it comes to"},
 			[hash("talk_qualifier_terrible")] = {" suck at", "'m terrible at", " don't have much experience with"},
 			[hash("talk_qualifier_poor")] = {" have some basic expertise at", " know a little about"},
 			[hash("talk_qualifier_average")] = {"'m competent at", "'m decent enough at"},
@@ -126,7 +128,7 @@ local STR = {
 
 			[hash("talk_role_pilot")] = {"flying", "piloting", "helming the ship"},
 			[hash("talk_role_mech")] = {"mechanics", "engineering", "keeping the machine in one piece"},
-			[hash("talk_role_medic")] = {"keeping people healthy", "being doctor", "healing injuries", "medicine"},
+			[hash("talk_role_medic")] = {"keeping people healthy", "treating injuries", "healing duties", "medicine"},
 			[hash("talk_role_gunner")] = {"shooting stuff out of the sky", "manning the big gun", "exploding enemies", "turning enemy ships into stardust"},
 			[hash("talk_role_comms")] = {"using comm systems", "using the radio", "communications"},
 			

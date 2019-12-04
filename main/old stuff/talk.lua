@@ -43,9 +43,6 @@ local wage = {
 	free = {"I'm willing to work just for food.", "You won't even have to pay me."}
 }
 
-local function pickLine(table)
-	return table[math.random(1, #table)]
-end
 
 function M.skills(crewID)
 	local levels = {
@@ -97,37 +94,6 @@ function M.skills(crewID)
 	return string
 end
 
-local function get_skills(peep)
-	local levels = {
-		none = {},
-		terrible = {},
-		poor = {},
-		average = {},
-		good = {},
-		great = {},
-		top = {}
-	}
-	for key, val in pairs(peep.skills) do
-		local eval = val + ((peep.attributes.confidence - 0.5) * 0.4)
-		if eval < 0 then eval = 0 elseif eval > 1 then eval = 1 end
-		if eval < 0.1 then
-			table.insert(levels.none, key)
-		elseif eval < 0.2 then
-			table.insert(levels.terrible, key)
-		elseif eval < 0.35 then
-			table.insert(levels.poor, key)
-		elseif eval < 0.5 then
-			table.insert(levels.average, key)
-		elseif eval < 0.6 then
-			table.insert(levels.good, key)
-		elseif eval < 0.9 then
-			table.insert(levels.great, key)
-		else
-			table.insert(levels.top, key)
-		end
-	end
-	return levels
-end
 
 local function get_skill_level(levels, level)
 	local output = {}
@@ -198,53 +164,5 @@ function M.recruit_wage_initial(peep, maxWage, minWage)
 	return string
 end
 
-function M.recruit_background(peep)
-	--local string = 
-
-end
-
-function M.openDialog(dialog, talker, text, reply1, reply2, reply3)
-	for key, val in ipairs(dialog.ico) do
-		for k, v in pairs(val) do
-			gui.delete_node(v)
-		end
-	end
-	dialog.ico = {}
-	table.insert(dialog.ico, FACE.drawFace(talker.face, vmath.vector3(-120, 130, 0), 2))
-	for key, val in ipairs(dialog.ico) do
-		for k, v in pairs(val) do
-			gui.set_parent(v, dialog.frame)
-		end
-		gui.move_above(val.hair, val.forehead)
-		gui.move_below(val.body, val.chin)
-	end
-	gui.set_text(dialog.lbl.text, text)
-	gui.set_text(dialog.lbl.name, Ftext.getName(talker).." says:")
-	if reply1 then
-		gui.set_text(dialog.btn.reply1, reply1)
-		local matrix = gui.get_text_metrics_from_node(dialog.btn.reply1)
-		gui.set_size(dialog.btn.reply1, vmath.vector3(matrix.width, matrix.height, 1))
-		gui.set_enabled(dialog.btn.reply1, true)
-	else
-		gui.set_enabled(dialog.btn.reply1, false)
-	end
-	if reply2 then
-		gui.set_text(dialog.btn.reply2, reply2)
-		local matrix = gui.get_text_metrics_from_node(dialog.btn.reply2)
-		gui.set_size(dialog.btn.reply2, vmath.vector3(matrix.width, matrix.height, 1))
-		gui.set_enabled(dialog.btn.reply2, true)
-	else
-		gui.set_enabled(dialog.btn.reply2, false)
-	end
-	if reply3 then
-		gui.set_text(dialog.btn.reply3, reply3)
-		local matrix = gui.get_text_metrics_from_node(dialog.btn.reply3)
-		gui.set_size(dialog.btn.reply3, vmath.vector3(matrix.width, matrix.height, 1))
-		gui.set_enabled(dialog.btn.reply3, true)
-	else
-		gui.set_enabled(dialog.btn.reply3, false)
-	end
-	gui.set_enabled(dialog.frame, true)
-end
 
 return M

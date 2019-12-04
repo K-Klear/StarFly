@@ -146,8 +146,7 @@ function CREW.new()
 		mech = normal_dist(2, true),
 		gunner = normal_dist(2, true),
 		comms = normal_dist(2, true),
-		pilot = normal_dist(2, true),
-		fight = normal_dist(2, true)
+		pilot = normal_dist(2, true)
 	}
 
 	local stats = {
@@ -206,8 +205,12 @@ function CREW.new()
 	}
 end
 
-function CREW.add(recruit)
+function CREW.add(recruit, passenger)
 	if not recruit then recruit = CREW.new() end
+	if passenger then
+		recruit.role = hash("role_passenger")
+		recruit.goal = hash("travel")
+	end
 	table.insert(CREW.list, recruit)
 	used_names[recruit.name.gender][recruit.name.key] = true
 end
@@ -236,7 +239,7 @@ function CREW.getWage(peep)				-- WIP
 end
 
 
-function CREW.getRole(role)				-- WIP (possibly free to delete?
+function CREW.getRole(role)				-- WIP (possibly free to delete?)
 	for key, val in ipairs(CREW.list) do
 		if val.role == role then
 			return key
@@ -245,7 +248,7 @@ function CREW.getRole(role)				-- WIP (possibly free to delete?
 	return 0
 end
 
-function STR.crew_about(id)
+function STR.crew_about(id)				-- Maybe no longer used? Check and delete.
 	return {
 		hash("talk_greeting"), " ",
 		hash("talk_my_name_is"), " ",

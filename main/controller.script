@@ -85,6 +85,10 @@ function on_message(self, message_id, message, sender)
 				end
 				if val.role == hash("role_passenger") then
 					msg.post(stack[#stack], "turn_button_off", {button = hash("crew_role"), id = key})
+					msg.post(stack[#stack], "delete_element", {button = hash("crew_wage_plus"), id = key})
+					msg.post(stack[#stack], "delete_element", {button = hash("crew_wage_minus"), id = key})
+					msg.post(stack[#stack], "delete_element", {button = hash("crew_wage_label"), id = key})
+					msg.post(stack[#stack], "delete_element", {button = hash("crew_dismiss"), id = key})
 				end
 			end
 		end
@@ -137,8 +141,10 @@ function on_message(self, message_id, message, sender)
 		local props = {size = vmath.vector3(button_x * 6, button_y * 7, 0), layout = hash("crew_background"), id = message.id}
 		table.insert(stack, factory.create("#dialog", vmath.vector3(centre.x, centre.y, 0.8 + #stack * 0.02), nil, props))
 		msg.post(stack[#stack - 1], "disable_all")
-
-		
+	elseif message_id == hash("crew_skills") then
+		local props = {size = vmath.vector3(button_x * 6, button_y * 7, 0), layout = hash("crew_skills"), id = message.id}
+		table.insert(stack, factory.create("#dialog", vmath.vector3(centre.x, centre.y, 0.8 + #stack * 0.02), nil, props))
+		msg.post(stack[#stack - 1], "disable_all")
 	elseif message_id == hash("crew_dismiss") then
 		msg.post(CREW.list[message.id].go, "dismiss")
 		CREW.dismiss(message.id)
@@ -154,8 +160,7 @@ function on_message(self, message_id, message, sender)
 		end
 		msg.post(stack[#stack - 1], "disable_all")
 	elseif message_id == hash("jobs_accept") then
-		table.insert(STATS.jobs, PLANET.current.jobs[message.id])
-		table.remove(PLANET.current.jobs, message.id)
+		msg.post("/main", hash("job_accepted"), {id = message.id})
 		close_all_dialogs(true)
 	elseif message_id == hash("travel_pressed") then
 		if STATS.fuel == 0 then

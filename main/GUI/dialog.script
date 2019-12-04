@@ -166,5 +166,11 @@ function on_message(self, message_id, message, sender)
 		else
 			msg.post(self.elements[message.button][1], "turn_off")
 		end
+	elseif message_id == hash("delete_element") then
+		if message.id then
+			go.delete(self.elements[message.button][message.id])
+		else
+			go.delete(self.elements[message.button][1])
+		end
 	end
 end

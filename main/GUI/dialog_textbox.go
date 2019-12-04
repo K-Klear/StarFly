@@ -2,7 +2,7 @@ embedded_components {
   id: "label"
   type: "label"
   data: "size {\n"
-  "  x: 512.0\n"
+  "  x: 704.0\n"
   "  y: 32.0\n"
   "  z: 0.0\n"
   "  w: 0.0\n"
