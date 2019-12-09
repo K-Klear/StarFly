@@ -673,6 +673,174 @@ local LAY = {
 			},
 		}
 	},
+	[hash("job_selection_core")] = {
+		background = true,
+		close_button = true,
+		elements = {
+			{
+				type = hash("label"),
+				position_x = -1.5,
+				position_y = 1,
+				text = hash("lbl_jobs_type")
+			},
+			{
+				type = hash("label"),
+				position_x = -0.5,
+				position_y = 1,
+				text = hash("lbl_jobs_planet")
+			},
+			{
+				type = hash("label"),
+				position_x = 0.5,
+				position_y = 1,
+				text = hash("lbl_jobs_wage")
+			},
+			{
+				repeating = function() return #STATS.jobs[hash("core")] end,
+				type = hash("label"),
+				position_x = -1.5,
+				position_y = 2,
+				text = function(id) return STATS.jobs[hash("core")][id].type end
+			},
+			{
+				repeating = function() return #STATS.jobs[hash("core")] end,
+				type = hash("label"),
+				position_x = -0.5,
+				position_y = 2,
+				text = function(id) return STATS.jobs[hash("core")][id].planet.name end
+			},
+			{
+				repeating = function() return #STATS.jobs[hash("core")] end,
+				type = hash("label"),
+				position_x = 0.5,
+				position_y = 2,
+				text = function(id) return STATS.jobs[hash("core")][id].wage end
+			},
+			{
+				repeating = function() return #STATS.jobs[hash("core")] end,
+				type = hash("button_main"),
+				position_x = 1.5,
+				position_y = 2,
+				props = {
+					label = hash("btn_jobs_accept"),
+					callback = hash("jobs_selected_core"),
+					enabled = true
+				},
+			},
+		}
+	},
+	[hash("job_selection_frontier")] = {
+		background = true,
+		close_button = true,
+		elements = {
+			{
+				type = hash("label"),
+				position_x = -1.5,
+				position_y = 1,
+				text = hash("lbl_jobs_type")
+			},
+			{
+				type = hash("label"),
+				position_x = -0.5,
+				position_y = 1,
+				text = hash("lbl_jobs_planet")
+			},
+			{
+				type = hash("label"),
+				position_x = 0.5,
+				position_y = 1,
+				text = hash("lbl_jobs_wage")
+			},
+			{
+				repeating = function() return #STATS.jobs[hash("frontier")] end,
+				type = hash("label"),
+				position_x = -1.5,
+				position_y = 2,
+				text = function(id) return STATS.jobs[hash("frontier")][id].type end
+			},
+			{
+				repeating = function() return #STATS.jobs[hash("frontier")] end,
+				type = hash("label"),
+				position_x = -0.5,
+				position_y = 2,
+				text = function(id) return STATS.jobs[hash("frontier")][id].planet.name end
+			},
+			{
+				repeating = function() return #STATS.jobs[hash("frontier")] end,
+				type = hash("label"),
+				position_x = 0.5,
+				position_y = 2,
+				text = function(id) return STATS.jobs[hash("frontier")][id].wage end
+			},
+			{
+				repeating = function() return #STATS.jobs[hash("frontier")] end,
+				type = hash("button_main"),
+				position_x = 1.5,
+				position_y = 2,
+				props = {
+					label = hash("btn_jobs_accept"),
+					callback = hash("jobs_selected_frontier"),
+					enabled = true
+				},
+			},
+		}
+	},
+	[hash("job_selection_rim")] = {
+		background = true,
+		close_button = true,
+		elements = {
+			{
+				type = hash("label"),
+				position_x = -1.5,
+				position_y = 1,
+				text = hash("lbl_jobs_type")
+			},
+			{
+				type = hash("label"),
+				position_x = -0.5,
+				position_y = 1,
+				text = hash("lbl_jobs_planet")
+			},
+			{
+				type = hash("label"),
+				position_x = 0.5,
+				position_y = 1,
+				text = hash("lbl_jobs_wage")
+			},
+			{
+				repeating = function() return #STATS.jobs[hash("rim")] end,
+				type = hash("label"),
+				position_x = -1.5,
+				position_y = 2,
+				text = function(id) return STATS.jobs[hash("rim")][id].type end
+			},
+			{
+				repeating = function() return #STATS.jobs[hash("rim")] end,
+				type = hash("label"),
+				position_x = -0.5,
+				position_y = 2,
+				text = function(id) return STATS.jobs[hash("rim")][id].planet.name end
+			},
+			{
+				repeating = function() return #STATS.jobs[hash("rim")] end,
+				type = hash("label"),
+				position_x = 0.5,
+				position_y = 2,
+				text = function(id) return STATS.jobs[hash("rim")][id].wage end
+			},
+			{
+				repeating = function() return #STATS.jobs[hash("rim")] end,
+				type = hash("button_main"),
+				position_x = 1.5,
+				position_y = 2,
+				props = {
+					label = hash("btn_jobs_accept"),
+					callback = hash("jobs_selected_rim"),
+					enabled = true
+				},
+			},
+		}
+	},
 	[hash("event")] = {
 		background = true,
 		elements = {

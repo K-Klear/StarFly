@@ -67,6 +67,8 @@ local STR = {
 			[hash("title_jobs")] = "AVAILABLE JOBS",
 			[hash("title_travel")] = "TRAVEL",
 
+			[hash("job_selection")] = "Select mission",
+
 			[hash("title_role_selection")] = "Assign a new role.",
 
 			[hash("title_error_no_crew")] = "You have no crew!",
@@ -92,6 +94,7 @@ local STR = {
 			[hash("lbl_jobs_type")] = "TYPE",
 			[hash("lbl_jobs_region")] = "REGION",
 			[hash("lbl_jobs_wage")] = "WAGE",
+			[hash("lbl_jobs_planet")] = "PLANET",
 			
 			[hash("lbl_travel_core")] = "CORE WORLDS",
 			[hash("lbl_travel_frontier")] = "FRONTIER",
@@ -360,13 +363,13 @@ function STR.STRING(input)
 		if type(v) == "number" or type(v) == "string" then
 			str = str..v
 		else
-			local val = STR.en.ui[v]
+			local val = STR.en.ui[v] or STR.en.planets[v]
 			if type(val) == "string" then
 				str = str..val
 			elseif type(val) == "table" then
 				str = str..val[math.random(1, #val)]
 			else
-				error("Unexpected type in the lookup table!")
+				error("Unexpected type in the lookup table! "..type(val))
 			end
 		end
 	end

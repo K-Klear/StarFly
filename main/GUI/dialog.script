@@ -1,5 +1,6 @@
 local STR = require("main/modules/strings")
 local LAY = require("main/GUI/dialog_layouts")
+local STATS = require("main/modules/stats")
 local modules = {
 	CREW = require("main/modules/crew"),
 	PLANET = require("main/modules/planets"),
@@ -87,30 +88,6 @@ function init(self)
 					local text = val.text
 					if type(text) == "function" then text = text(props.id) end
 					label.set_text(object, STR.STRING(text, props.id))
-					--[[
-					if type(text) == "function" then text = text(props.id) end
-					if type(text) == "userdata" then
-						label.set_text(object, STR.en.ui[text])
-					elseif type(text) == "table" then
-						local str = ""
-						for k, v in ipairs(text) do
-							str = str..STR.STRING(v)
-							--[[
-							if type(v) == "userdata" then
-								str = str..STR.STRING(v)
-							elseif type(v) == "table" then
-								error("This still happens?")
-								str = str..STR.en.ui[v[math.random(1, #v)]]
-							--else
-							--	str = str..v
-							--end
-							--[[
-						end
-						label.set_text(object, str)
-					else
-						label.set_text(object, text)
-					end
-					--]]
 				end
 			end
 		end

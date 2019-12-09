@@ -2,15 +2,26 @@ local STATS = require("main/modules/stats")
 local CREW = require("main/modules/crew")
 local PLANET = require("main/modules/planets")
 
-local function travel(target, mission)
+local function travel(target, job_id)
 	if target == hash("orbit") then
 		msg.post("/background", "orbit")
 	elseif target == hash("planet")	then
 		msg.post("/background", "land")
-	else
+	elseif target == hash("core") or target == hash("frontier") or target == hash("rim") then
 		STATS.fuel = STATS.fuel - 1
 		STATS.food = STATS.food - #CREW.list
-		PLANET.new(target)
+		if job_id then
+			PLANET.current = STATS.jobs[target][job_id].planet
+			STATS.current_job = {region = target, job_id = job_id}
+		else
+			PLANET.current = PLANET.new(target)
+			STATS.current_job = nil
+		end
+		msg.post("/background", "space")
+	elseif type(target) == "number" then
+		STATS.fuel = STATS.fuel - 1
+		STATS.food = STATS.food - #CREW.list
+		PLANET.current = STATS.jobs[target].planet
 		msg.post("/background", "space")
 	end
 end
@@ -40,18 +51,24 @@ end
 
 function on_message(self, message_id, message, sender)
 	if message_id == hash("travel") then
-		travel(message.target, message.mission)
+		travel(message.target, message.job_id)
 	elseif message_id == hash("spawn_crew") then
 		spawn_crew(message.crewID, message.x, message.y, message.z)
 	elseif message_id == hash("job_accepted") then
-		table.insert(STATS.jobs, PLANET.current.jobs[message.id])
+		local region = PLANET.current.jobs[message.id].region
+		table.insert(STATS.jobs[region], PLANET.current.jobs[message.id])
 		table.remove(PLANET.current.jobs, message.id)
-		local new_job = STATS.jobs[#STATS.jobs]
+		local new_job = STATS.jobs[region][#STATS.jobs[region]]
 		if new_job.type == hash("passage") then
 			CREW.add(nil, true)
 			spawn_crew(#CREW.list)
+			new_job.passengers = {CREW.list[#CREW.list].go}
 		end
-		new_job.passengers = {CREW.list[#CREW.list].go}
-		pprint(new_job)
+	elseif message_id == hash("job_completed") then
+		local job = STATS.jobs[STATS.current_job.region][STATS.current_job.job_id]
+		for key, val in ipairs(CREW.list) do
+			val.money = val.money + (job.wage * (val.wage / 100))
+		end
+		STATS.money = STATS.money + (job.wage * (STATS.wage / 100))
 	end
 end

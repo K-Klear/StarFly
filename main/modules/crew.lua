@@ -18,8 +18,8 @@ local function normal_dist(factor, zeroMean)
 	return value
 end
 
-local next_id = 0
 local used_names = {[hash("male")] = {}, [hash("female")] = {}, [hash("both")] = {}}
+
 
 local skin_colour = {
 	vmath.vector4(1, 0.85, 0.67, 1),
@@ -85,8 +85,6 @@ function CREW.set_role(crewID, role, replace)
 end
 
 function CREW.new()
-	next_id = next_id + 1
-	
 	local gender = hash("male")
 	if math.random() > 0.5 then gender = hash("female") end
 	
@@ -201,7 +199,7 @@ function CREW.new()
 
 	return {
 		gender = gender, name = name, skills = skills, stats = stats, attributes = attributes,
-		knowledge = knowledge, face = face, goal = goal, role = hash("role_none"), wage = 0
+		knowledge = knowledge, face = face, goal = goal, role = hash("role_none"), wage = 0, money = 0
 	}
 end
 

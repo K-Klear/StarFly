@@ -1,6 +1,9 @@
 local CREW = require("main/modules/crew")
+local STR = require("main/modules/strings")
 
 local PLANET = {current = {}}
+
+local used_names = {}
 
 local region_stats = {
 	[hash("core")] = {
@@ -41,13 +44,20 @@ local settlement_stats = {
 }
 
 
-local function new_mission()
-	local mission = {
-		region = mission_stats.target[math.random(1, #mission_stats.target)],
-		type = mission_stats.type[math.random(1, #mission_stats.target)],
-		wage = math.random(1, 20) * 100,
-	}
-	return mission
+function PLANET.add_jobs(planet)
+	if planet.jobs > 0 then
+		local count = planet.jobs
+		planet.jobs = {}
+		for x = 1, count do
+			local region = mission_stats.target[math.random(1, #mission_stats.target)]
+			table.insert(planet.jobs, {
+				region = region,
+				type = mission_stats.type[math.random(1, #mission_stats.target)],
+				wage = math.random(1, 20) * 100,
+				planet = PLANET.new(region)
+			})
+		end
+	end
 end
 
 function PLANET.new(region, start)
@@ -62,14 +72,12 @@ function PLANET.new(region, start)
 			settlement = hash("outpost"),
 			government = hash("federation"),
 			recruits = {},
-			jobs = {}
+			jobs = 3,
 		}
 		for x = 1, 5 do
 			table.insert(planet.recruits, 1, CREW.new())
 		end
-		for x = 1, 3 do
-			table.insert(planet.jobs, new_mission())
-		end
+		PLANET.add_jobs(planet)
 	else
 		planet = {
 			price = {
@@ -78,7 +86,7 @@ function PLANET.new(region, start)
 			},
 			region = region,
 			recruits = {},
-			jobs = {}
+			jobs = math.random(1, 4)
 		}
 		planet.government = region_stats[region].government[math.random(1, #region_stats[region].government)]
 		planet.settlement = region_stats[region].settlement[math.random(1, #region_stats[region].settlement)]
@@ -86,10 +94,20 @@ function PLANET.new(region, start)
 		for x = 1, recruit_count do
 			table.insert(planet.recruits, 1, CREW.new())
 		end
-		for x = 1, math.random(1, 4) do
-			table.insert(planet.jobs, new_mission())
-		end
 	end
+
+	local list = {}
+	repeat
+		for key in pairs(STR.en.planets) do
+			if used_names[key] == nil then
+				table.insert(list, key)
+			end
+		end
+		if #list < 1 then used_name = {} end
+	until #list > 0
+
+	local _ = math.random(1, #list)
+	planet.name = list[_]; used_names[planet.name] = true
 
 	local goal_stats = {
 		[hash("fun")] = {
@@ -113,15 +131,14 @@ function PLANET.new(region, start)
 			desperation_min = 0
 		}
 	}
-	
 	planet.wealth = math.random() * (settlement_stats[planet.settlement].wealth_max - settlement_stats[planet.settlement].wealth_min) + settlement_stats[planet.settlement].wealth_min
 	for key, peep in ipairs(planet.recruits) do
 		local desperation = math.random() * (goal_stats[peep.goal].desperation_max - goal_stats[peep.goal].desperation_min) + goal_stats[peep.goal].desperation_min
 		peep.desperation = math.min(desperation * planet.wealth, 1)
 	end
-	PLANET.current = planet
+	return planet
 end
 
-PLANET.new(hash("frontier"), true)
+PLANET.current = PLANET.new(hash("frontier"), true)
 
 return PLANET
