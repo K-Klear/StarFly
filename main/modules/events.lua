@@ -7,7 +7,7 @@ local list_space = {
 --	"ambush_pirate",
 --	"asteroids",
 }
-
+;
 local event_list = {[hash("space")] = {}, [hash("orbit")] = {}, [hash("landing")] = {}}
 
 local function get_tags(stage)
@@ -27,7 +27,7 @@ local function get_tags(stage)
 end
 
 local function load_event(event, event_type)
-	local data, err = sys.load_resource("/assets/json/"..event..".json")
+	local data, err = sys.load_resource("/assets/json/events/"..event..".json")
 	if err then pprint(err) end
 	data = json.decode(data).passages
 	for key, val in ipairs(data) do

@@ -45,8 +45,8 @@ tag effect:XXX (recruit_random for example) has an in game effect set up in even
 
 DIALOGUE JSON formatting:
 
-Room name is ignored (instead there's "XXX says")
-Text in the body consists of snips aimed at talk.lua
+Room name is ignored (instead there's "XXX says" and a face icon)
+Text in the body consists of snips aimed at conversation.lua
 
 
 Credits:

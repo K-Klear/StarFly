@@ -62,7 +62,7 @@ function on_message(self, message_id, message, sender)
 		if new_job.type == hash("passage") then
 			CREW.add(nil, true)
 			spawn_crew(#CREW.list)
-			new_job.passengers = {CREW.list[#CREW.list].go}
+			new_job.passengers = {CREW.list[#CREW.list].id}
 		end
 	elseif message_id == hash("job_completed") then
 		local job = STATS.jobs[STATS.current_job.region][STATS.current_job.job_id]
@@ -70,5 +70,14 @@ function on_message(self, message_id, message, sender)
 			val.money = val.money + (job.wage * (val.wage / 100))
 		end
 		STATS.money = STATS.money + (job.wage * (STATS.wage / 100))
+		if job.type == hash("passage") then
+			for key, val in ipairs(job.passengers) do
+				local passenger = CREW.get_id(val)
+				CREW.dismiss(passenger)
+			end
+		end
+		table.remove(STATS.jobs[STATS.current_job.region], STATS.current_job.job_id)
+		STATS.current_job = {}
+		msg.post("#controller", hash("refresh_infobox"))
 	end
 end

@@ -146,7 +146,6 @@ function on_message(self, message_id, message, sender)
 		table.insert(stack, factory.create("#dialog", vmath.vector3(centre.x, centre.y, 0.8 + #stack * 0.02), nil, props))
 		msg.post(stack[#stack - 1], "disable_all")
 	elseif message_id == hash("crew_dismiss") then
-		msg.post(CREW.list[message.id].go, "dismiss")
 		CREW.dismiss(message.id)
 		close_all_dialogs()
 		msg.post(".", hash("crew_pressed"))
@@ -291,5 +290,9 @@ function on_message(self, message_id, message, sender)
 		EVENT.stage = 0; EVENT.current = nil
 		go.delete(stack[#stack], true); stack[#stack] = nil
 		open_main(hash("main_space"))
+	elseif message_id == hash("refresh_infobox") then
+		go.delete(infobox, true)
+		local props = {size = vmath.vector3(button_x * 2.25, button_y * 3, 0), layout = hash("infobox")}
+		infobox = factory.create("#dialog", vmath.vector3(1110, 780, centre.z), nil, props)
 	end
 end

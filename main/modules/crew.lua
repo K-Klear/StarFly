@@ -4,6 +4,8 @@ math.random(); math.random(); math.random();
 local STR = require("main/modules/strings")
 local STATS = require("main/modules/stats")
 
+local next_id = 0
+
 local CREW = {list = {}}
 
 local function normal_dist(factor, zeroMean)
@@ -63,6 +65,11 @@ local goal_list = {
 	hash("running"),
 }
 
+function CREW.get_id(crew_id)
+	for key, val in ipairs(CREW.list) do
+		if val.id == crew_id then return key end
+	end
+end
 
 function CREW.get_role(role)
 	for key, val in ipairs(CREW.list) do
@@ -209,11 +216,14 @@ function CREW.add(recruit, passenger)
 		recruit.role = hash("role_passenger")
 		recruit.goal = hash("travel")
 	end
+	next_id = next_id + 1
+	recruit.id = next_id
 	table.insert(CREW.list, recruit)
 	used_names[recruit.name.gender][recruit.name.key] = true
 end
 
 function CREW.dismiss(crewID)
+	msg.post(CREW.list[crewID].go, "dismiss")
 	STATS.wage = STATS.wage + CREW.list[crewID].wage
 	table.remove(CREW.list, crewID)
 end
@@ -246,14 +256,9 @@ function CREW.getRole(role)				-- WIP (possibly free to delete?)
 	return 0
 end
 
-function STR.crew_about(id)				-- Maybe no longer used? Check and delete.
-	return {
-		hash("talk_greeting"), " ",
-		hash("talk_my_name_is"), " ",
-		STR.en.names[CREW.list[id].name.gender][CREW.list[id].name.key], ".",
-	}
-end
-
 CREW.add(); CREW.add(); CREW.add()
+CREW.list[1].role = hash("role_pilot")
+CREW.list[2].role = hash("role_comms")
+CREW.list[3].role = hash("role_engineer")
 
 return CREW
