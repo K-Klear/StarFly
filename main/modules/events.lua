@@ -7,7 +7,7 @@ local list_space = {
 --	"ambush_pirate",
 --	"asteroids",
 }
-;
+
 local event_list = {[hash("space")] = {}, [hash("orbit")] = {}, [hash("landing")] = {}}
 
 local function get_tags(stage)

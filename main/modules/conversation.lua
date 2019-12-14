@@ -3,6 +3,59 @@ local STR = require("main/modules/strings")
 
 local TALK = {}
 
+local talk_list = {"recruitment"}
+
+local talks = {}
+
+local function get_tags(stage)
+	local type, effect, test, diff
+	for key, val in ipairs(stage.tags) do
+		if string.sub(val, 1, 5) == "test:" then
+			test = string.sub(val, 6, -1)
+		elseif string.sub(val, 1, 11) == "difficulty:" then
+			diff = tonumber(string.sub(val, 12, -1))
+		elseif string.sub(val, 1, 7) == "effect:" then
+			effect = hash(string.sub(val, 8, -1))
+		elseif val == "dice" or val == "end" or val == "choice" then
+			type = val
+		end
+	end
+	return type, effect, test, diff
+end
+
+local function load_talk(talk)
+	local data, err = sys.load_resource("/assets/json/conversations/"..talk..".json")
+	if err then pprint(err) end
+	data = json.decode(data).passages
+	for key, val in ipairs(data) do
+		val.position = nil
+		val.pid = nil
+		local break_char = string.find(val.text, "%[")
+		if break_char then val.text = string.sub(val.text, 1, break_char - 1) end
+		if val.text ~= "" then val.text = hash(talk.."/"..val.text) end
+		local type, effect, test, diff = get_tags(val)
+		val.stage_type = type
+		val.effect = effect
+		val.dice_type = test
+		val.dice_difficulty = diff
+		val.tags = nil
+		if val.links then
+			for k, v in ipairs(val.links) do
+				if v.name ~= "" then v.text = hash(talk.."/link/"..v.name) end
+				v.name = nil; v.link = nil
+				v.stage = tonumber(v.pid); v.pid = nil
+			end
+		end
+	end
+	talk_list[talk] = data
+	pprint(data)
+end
+
+for key, val in ipairs(talk_list) do
+	load_talk(val)
+end
+
+
 function TALK.crew_about(id)
 	local goal_strings = {
 		[hash("home")] = hash("talk_goal_home"),

@@ -1,0 +1,198 @@
+
+
+{
+  "passages": [
+    {
+      "text": "intro[[skills]][[wages]]",
+      "links": [
+        {
+          "name": "skills",
+          "link": "skills",
+          "pid": "2"
+        },
+        {
+          "name": "wages",
+          "link": "wages",
+          "pid": "3"
+        }
+      ],
+      "name": "intro",
+      "pid": "1",
+      "position": {
+        "x": "1198.3333333333335",
+        "y": "3"
+      },
+      "tags": [
+        "choice"
+      ]
+    },
+    {
+      "text": "skills[[wages]][[not_hired]]",
+      "links": [
+        {
+          "name": "wages",
+          "link": "wages",
+          "pid": "3"
+        },
+        {
+          "name": "not_hired",
+          "link": "not_hired",
+          "pid": "5"
+        }
+      ],
+      "name": "skills",
+      "pid": "2",
+      "position": {
+        "x": "758.6666666666665",
+        "y": "345"
+      },
+      "tags": [
+        "choice"
+      ]
+    },
+    {
+      "text": "wages[[skills]][[wage_too_high]][[hired]]",
+      "links": [
+        {
+          "name": "skills",
+          "link": "skills",
+          "pid": "2"
+        },
+        {
+          "name": "wage_too_high",
+          "link": "wage_too_high",
+          "pid": "6"
+        },
+        {
+          "name": "hired",
+          "link": "hired",
+          "pid": "4"
+        }
+      ],
+      "name": "wages",
+      "pid": "3",
+      "position": {
+        "x": "1642.6666666666667",
+        "y": "339"
+      },
+      "tags": [
+        "choice"
+      ]
+    },
+    {
+      "text": "hired",
+      "name": "hired",
+      "pid": "4",
+      "position": {
+        "x": "1746.9999999999998",
+        "y": "1223.6666666666665"
+      },
+      "tags": [
+        "end",
+        "effect:recruit"
+      ]
+    },
+    {
+      "text": "not_hired",
+      "name": "not_hired",
+      "pid": "5",
+      "position": {
+        "x": "664",
+        "y": "1201.6666666666667"
+      },
+      "tags": [
+        "end"
+      ]
+    },
+    {
+      "text": "[[wage_lower]][[wage_lowest]]",
+      "links": [
+        {
+          "name": "wage_lower",
+          "link": "wage_lower",
+          "pid": "8"
+        },
+        {
+          "name": "wage_lowest",
+          "link": "wage_lowest",
+          "pid": "7"
+        }
+      ],
+      "name": "wage_too_high",
+      "pid": "6",
+      "position": {
+        "x": "1197.3333333333335",
+        "y": "706.3333333333331"
+      },
+      "tags": [
+        "dice",
+        "difficulty:0.5",
+        "test:wage_lower"
+      ]
+    },
+    {
+      "text": "wage_lowest[[skills]][[not_hired]][[hired]]",
+      "links": [
+        {
+          "name": "skills",
+          "link": "skills",
+          "pid": "2"
+        },
+        {
+          "name": "not_hired",
+          "link": "not_hired",
+          "pid": "5"
+        },
+        {
+          "name": "hired",
+          "link": "hired",
+          "pid": "4"
+        }
+      ],
+      "name": "wage_lowest",
+      "pid": "7",
+      "position": {
+        "x": "1159.3333333333333",
+        "y": "1165.0000000000002"
+      },
+      "tags": [
+        "choice"
+      ]
+    },
+    {
+      "text": "wage_lower[[skills]][[not_hired]][[hired]]",
+      "links": [
+        {
+          "name": "skills",
+          "link": "skills",
+          "pid": "2"
+        },
+        {
+          "name": "not_hired",
+          "link": "not_hired",
+          "pid": "5"
+        },
+        {
+          "name": "hired",
+          "link": "hired",
+          "pid": "4"
+        }
+      ],
+      "name": "wage_lower",
+      "pid": "8",
+      "position": {
+        "x": "1259.9999999999998",
+        "y": "1028"
+      },
+      "tags": [
+        "choice"
+      ]
+    }
+  ],
+  "name": "dialogue_recruit",
+  "startnode": "1",
+  "creator": "Twine",
+  "creator-version": "2.3.5",
+  "ifid": "B98C623F-1487-4677-9FF4-A247E447FEFA"
+}
+

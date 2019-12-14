@@ -134,7 +134,7 @@ local STR = {
 			[hash("talk_role_medic")] = {"keeping people healthy", "treating injuries", "healing duties", "medicine"},
 			[hash("talk_role_gunner")] = {"shooting stuff out of the sky", "manning the big gun", "exploding enemies", "turning enemy ships into stardust"},
 			[hash("talk_role_comms")] = {"using comm systems", "using the radio", "communications"},
-			
+
 			-- events
 			[hash("distress_signal_true/signal_detected")] = "You have detected an emergency signal from a nearby vessel. Someone may be in trouble. Or they are setting an ambush...",
 			[hash("distress_signal_true/signal_missed")] = "Nothing of importance happened during travel.",
