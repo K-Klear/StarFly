@@ -3,9 +3,20 @@ local STR = require("main/modules/strings")
 
 local TALK = {}
 
-local talk_list = {"recruitment"}
-
 local talks = {}
+
+local goal_strings = {
+	[hash("home")] = hash("talk_goal_home"),
+	[hash("fun")] = hash("talk_goal_fun"),
+	[hash("travel")] = hash("talk_goal_travel"),
+	[hash("work")] = hash("talk_goal_work"),
+	[hash("running")] = hash("talk_goal_running")
+}
+local qualifier = {hash("talk_qualifier_none"), hash("talk_qualifier_terrible"), hash("talk_qualifier_poor"),
+hash("talk_qualifier_average"), hash("talk_qualifier_good"), hash("talk_qualifier_great"), hash("talk_qualifier_top")}
+
+local role = {pilot = hash("talk_role_pilot"), mech = hash("talk_role_mech"), medic = hash("talk_role_medic"),
+gunner = hash("talk_role_gunner"), comms = hash("talk_role_comms")}
 
 local function get_tags(stage)
 	local type, effect, test, diff
@@ -32,7 +43,7 @@ local function load_talk(talk)
 		val.pid = nil
 		local break_char = string.find(val.text, "%[")
 		if break_char then val.text = string.sub(val.text, 1, break_char - 1) end
-		if val.text ~= "" then val.text = hash(talk.."/"..val.text) end
+		if val.text ~= "" then val.text = hash("talk/"..talk.."/"..val.text) end
 		local type, effect, test, diff = get_tags(val)
 		val.stage_type = type
 		val.effect = effect
@@ -41,29 +52,72 @@ local function load_talk(talk)
 		val.tags = nil
 		if val.links then
 			for k, v in ipairs(val.links) do
-				if v.name ~= "" then v.text = hash(talk.."/link/"..v.name) end
+				if v.name ~= "" then v.text = hash("talk/"..talk.."/link/"..v.name) end
 				v.name = nil; v.link = nil
 				v.stage = tonumber(v.pid); v.pid = nil
 			end
 		end
 	end
-	talk_list[talk] = data
-	pprint(data)
+	return data
 end
 
-for key, val in ipairs(talk_list) do
-	load_talk(val)
+function TALK.start(talk, speaker)
+	TALK.current = load_talk(talk)
+	TALK.speaker = speaker
+	TALK.stage = 1
+	pprint(TALK.current)
 end
 
+local function get_skill_level(skill)
+	if skill < 0 then skill = 0 end
+	if skill < 0.1 then return 1
+	elseif skill < 0.2 then	return 2
+	elseif skill < 0.35 then return 3
+	elseif skill < 0.5 then	return 4
+	elseif skill < 0.6 then	return 5
+	elseif skill < 0.9 then	return 6
+	else return 7 end
+end
+
+function TALK.text(text)
+	local text_table = {}
+	if text == hash("talk/recruitment/intro") then
+		text_table = {hash("talk_greeting"), " ", hash("talk_my_name_is"), " ",
+		STR.en.names[TALK.speaker.name.gender][TALK.speaker.name.key], ".\n\n",
+		goal_strings[TALK.speaker.goal], "\n\n"}
+		local best_num, best_skill = -1
+		for key, val in pairs(TALK.speaker.skills) do
+			if val > best_num then
+				best_num = val; best_skill = key
+			end
+		end
+		best_num = best_num + (TALK.speaker.attributes.confidence - 0.5) * 0.4
+		local skill_level = get_skill_level(best_num)
+		if skill_level ~= hash("none") then
+			table.insert(text_table, hash("talk_I"))
+			table.insert(text_table, qualifier[skill_level])
+			table.insert(text_table, " ")
+			table.insert(text_table, role[best_skill])
+			table.insert(text_table, ". ")
+		end
+		--string = string..skills_to_speech(get_skill_level(get_skills(peep), "best"))
+	elseif text == hash("talk/recruitment/skills") then
+		return --TALK.crew_skills(id)
+	elseif text == hash("talk/recruitment/wages") then
+	elseif text == hash("talk/recruitment/hired") then
+		text_table = hash("talk_hired")
+	elseif text == hash("talk/recruitment/not_hired") then
+		text_table = hash("talk_not_hired")
+	elseif text == hash("talk/recruitment/wage_lowest") then
+	elseif text == hash("talk/recruitment/wage_lower") then
+	else
+		pprint(TALK.current[TALK.stage])
+		error("Unknown parametre in TALK.text: "..tostring(text))
+	end
+	return text_table
+end
 
 function TALK.crew_about(id)
-	local goal_strings = {
-		[hash("home")] = hash("talk_goal_home"),
-		[hash("fun")] = hash("talk_goal_fun"),
-		[hash("travel")] = hash("talk_goal_travel"),
-		[hash("work")] = hash("talk_goal_work"),
-		[hash("running")] = hash("talk_goal_running")
-	}
 	local crew = CREW.list[id]
 	return {
 		hash("talk_greeting"), " ",
@@ -100,12 +154,7 @@ end
 function TALK.crew_skills(id)
 	local crew = CREW.list[id]
 	local skill_levels = get_skills(crew)
-	local qualifier = {hash("talk_qualifier_none"), hash("talk_qualifier_terrible"), hash("talk_qualifier_poor"),
-	hash("talk_qualifier_average"), hash("talk_qualifier_good"), hash("talk_qualifier_great"), hash("talk_qualifier_top")}
-	local role = {pilot = hash("talk_role_pilot"), mech = hash("talk_role_mech"), medic = hash("talk_role_medic"),
-	gunner = hash("talk_role_gunner"), comms = hash("talk_role_comms")}
 	local return_value = {}
-	
 	for level = 7, 1, -1 do
 		if #skill_levels[level] > 0 then
 			table.insert(return_value, hash("talk_I"))

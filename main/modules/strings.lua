@@ -41,7 +41,7 @@ local STR = {
 			[hash("btn_continue")] = "CONTINUE",
 			[hash("btn_land")] = "LAND",
 
-			[hash("btn_recruit_talk")] = "INTERVIEW",
+			[hash("btn_recruit_interview")] = "INTERVIEW",
 			[hash("btn_recruit_hire")] = "HIRE",
 			
 			[hash("btn_crew_background")] = "About",
@@ -135,6 +135,15 @@ local STR = {
 			[hash("talk_role_gunner")] = {"shooting stuff out of the sky", "manning the big gun", "exploding enemies", "turning enemy ships into stardust"},
 			[hash("talk_role_comms")] = {"using comm systems", "using the radio", "communications"},
 
+			[hash("talk/recruitment/link/skills")] = "Tell me more about your skills.",
+			[hash("talk/recruitment/link/wages")] = "Let's talk wages.",
+			[hash("talk/recruitment/link/not_hired")] = "Sorry. Not interested.",
+			[hash("talk/recruitment/link/wage_too_high")] = "That's too much.",
+			[hash("talk/recruitment/link/hired")] = "You're hired!",
+
+			[hash("talk_hired")] = {"Thank you, Captain!", "I'm looking forward to working with you.", "Great. Thanks for having me."},
+			[hash("talk_not_hired")] = {"I'll be here if you change your mind."},
+			
 			-- events
 			[hash("distress_signal_true/signal_detected")] = "You have detected an emergency signal from a nearby vessel. Someone may be in trouble. Or they are setting an ambush...",
 			[hash("distress_signal_true/signal_missed")] = "Nothing of importance happened during travel.",
@@ -145,6 +154,7 @@ local STR = {
 			[hash("distress_signal_true/link/investigate")] = "Investigate",
 			[hash("distress_signal_true/link/ignore")] = "Ignore",
 		},
+		
 		names = {
 			[hash("male")] = {
 				[hash("mal")] = "Mal", [hash("wash")] = "Wash", [hash("simon")] = "Simon", [hash("jean_luc")] = "Jean-Luc",

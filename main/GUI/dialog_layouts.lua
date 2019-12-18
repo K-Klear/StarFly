@@ -210,6 +210,8 @@ local LAY = {
 	[hash("recruit")] = {
 		close_button = true,
 		background = true,
+		size_x = 3.6,
+		size_y = function() return #PLANET.current.recruits end,
 		elements = {
 			{
 				repeating = function() return #PLANET.current.recruits end,
@@ -227,14 +229,14 @@ local LAY = {
 				text = function(id) return STR.en.names[PLANET.current.recruits[id].name.gender][PLANET.current.recruits[id].name.key] end
 			},
 			{
-				id = hash("recruit_talk"),
+				id = hash("recruit_interview"),
 				repeating = function() return #PLANET.current.recruits end,
 				type = hash("button_main"),
 				position_x = 0,
 				position_y = 1,
 				props = {
-					label =  hash("btn_recruit_talk"),
-					callback = hash("recruit_talk"),
+					label =  hash("btn_recruit_interview"),
+					callback = hash("recruit_interview"),
 					enabled = true
 				},
 			},
@@ -255,6 +257,8 @@ local LAY = {
 	[hash("crew")] = {
 		close_button = true,
 		background = true,
+		size_x = 6.5,
+		size_y = function() return #CREW.list + 1 end,
 		elements = {
 			{
 				type = hash("label"),
@@ -386,6 +390,8 @@ local LAY = {
 	},
 	[hash("crew_background")] = {
 		background = true,
+		size_x = 6,
+		size_y = 7,
 		elements = {
 			{
 				type = hash("textbox"),
@@ -420,6 +426,8 @@ local LAY = {
 	},
 	[hash("crew_skills")] = {
 		background = true,
+		size_x = 6,
+		size_y = 7,
 		elements = {
 			{
 				type = hash("textbox"),
@@ -452,12 +460,11 @@ local LAY = {
 			},
 		}
 	},
-
-
-	
 	[hash("crew_role")] = {
 		close_button = true,
 		background = true,
+		size_x = 3,
+		size_y = 2,
 		elements = {
 			{
 				id = hash("crew_role_pilot"),
@@ -530,6 +537,8 @@ local LAY = {
 	[hash("jobs")] = {
 		close_button = true,
 		background = true,
+		size_x = 4,
+		size_y = function() return #PLANET.current.jobs + 1 end,
 		elements = {
 			{
 				type = hash("label"),
@@ -586,6 +595,8 @@ local LAY = {
 	[hash("travel")] = {
 		close_button = true,
 		background = true,
+		size_x = 3,
+		size_y = 3,
 		elements = {
 			{
 				id = hash("explore_core"),
@@ -676,6 +687,8 @@ local LAY = {
 	[hash("job_selection_core")] = {
 		background = true,
 		close_button = true,
+		size_x = 4,
+		size_y = function() return #STATS.jobs[hash("core")] + 1 end,
 		elements = {
 			{
 				type = hash("label"),
@@ -732,6 +745,8 @@ local LAY = {
 	[hash("job_selection_frontier")] = {
 		background = true,
 		close_button = true,
+		size_x = 4,
+		size_y = function() return #STATS.jobs[hash("frontier")] + 1 end,
 		elements = {
 			{
 				type = hash("label"),
@@ -788,6 +803,8 @@ local LAY = {
 	[hash("job_selection_rim")] = {
 		background = true,
 		close_button = true,
+		size_x = 4,
+		size_y = function() return #STATS.jobs[hash("rim")] + 1 end,
 		elements = {
 			{
 				type = hash("label"),
@@ -843,6 +860,8 @@ local LAY = {
 	},
 	[hash("event")] = {
 		background = true,
+		size_x = 6,
+		size_y = function() return #EVENT.links + 4 end,
 		elements = {
 			{
 				type = hash("textbox"),
@@ -866,6 +885,8 @@ local LAY = {
 	},
 	[hash("event_end")] = {
 		background = true,
+		size_x = 6,
+		size_y = 5,
 		elements = {
 			{
 				type = hash("textbox"),
@@ -885,9 +906,85 @@ local LAY = {
 			},
 		}
 	},
+	[hash("talk")] = {
+		background = true,
+		size_x = 6,
+		size_y = function() return #TALK.links + 8 end,
+		elements = {
+			{
+				type = hash("textbox"),
+				position_x = 0,
+				position_y = 1,
+				text = function(id) return {STR.en.names[TALK.speaker.name.gender][TALK.speaker.name.key], hash("talk_says")} end
+			},
+			{
+				type = hash("icon_face"),
+				image = function(id) return TALK.speaker.face end,
+				position_x = -2.5,
+				position_y = 1,
+				scale = vmath.vector3(4, 4, 4)
+			},
+			{
+				type = hash("textbox"),
+				position_x = 0,
+				position_y = 2.5,
+				text = function() return TALK.text(TALK.current[TALK.stage].text) end
+			},
+			{
+				id = hash("talk_option"),
+				repeating = function() return #TALK.links end,
+				type = hash("button_option"),
+				position_x = 0,
+				position_y = 9,
+				props = {
+					label = function(id) return TALK.links[id].text end,
+					callback = hash("talk_option"),
+					enabled = true
+				},
+			},
+		}
+	},
+	[hash("talk_end")] = {
+		background = true,
+		size_x = 6,
+		size_y = 9,
+		elements = {
+			{
+				type = hash("textbox"),
+				position_x = 0,
+				position_y = 1,
+				text = function(id) return {STR.en.names[TALK.speaker.name.gender][TALK.speaker.name.key], hash("talk_says")} end
+			},
+			{
+				type = hash("icon_face"),
+				image = function(id) return TALK.speaker.face end,
+				position_x = -2.5,
+				position_y = 1,
+				scale = vmath.vector3(4, 4, 4)
+			},
+			{
+				type = hash("textbox"),
+				position_x = 0,
+				position_y = 2.5,
+				text = function() return TALK.text(TALK.current[TALK.stage].text) end
+			},
+			{
+				type = hash("button_main"),
+				position_x = 0,
+				position_y = 9,
+				props = {
+					label = hash("btn_event_done"),
+					callback = hash("talk_end"),
+					enabled = true
+				},
+			},
+		}
+	},
 	[hash("error")] = {
 		close_button = true,
 		background = true,
+		size_x = 3,
+		size_y = 1,
 		elements = {
 			{
 				type = hash("button_main"),

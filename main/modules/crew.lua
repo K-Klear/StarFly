@@ -206,7 +206,7 @@ function CREW.new()
 
 	return {
 		gender = gender, name = name, skills = skills, stats = stats, attributes = attributes,
-		knowledge = knowledge, face = face, goal = goal, role = hash("role_none"), wage = 0, money = 0
+		knowledge = knowledge, face = face, goal = goal, role = hash("role_none"), wage = 0, wage_promised = 0, money = 0
 	}
 end
 
@@ -220,6 +220,7 @@ function CREW.add(recruit, passenger)
 	recruit.id = next_id
 	table.insert(CREW.list, recruit)
 	used_names[recruit.name.gender][recruit.name.key] = true
+	msg.post("main:/main", "spawn_crew", {crewID = #CREW.list, x = math.random(10, 13), y = 2, z = #CREW.list})
 end
 
 function CREW.dismiss(crewID)

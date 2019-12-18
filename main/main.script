@@ -44,9 +44,7 @@ function spawn_crew(crewID, x, y, z)
 end
 
 function init(self)
-	for key, val in ipairs(CREW.list) do
-		spawn_crew(key, 9 + key)
-	end
+
 end
 
 function on_message(self, message_id, message, sender)
@@ -61,7 +59,6 @@ function on_message(self, message_id, message, sender)
 		local new_job = STATS.jobs[region][#STATS.jobs[region]]
 		if new_job.type == hash("passage") then
 			CREW.add(nil, true)
-			spawn_crew(#CREW.list)
 			new_job.passengers = {CREW.list[#CREW.list].id}
 		end
 	elseif message_id == hash("job_completed") then
