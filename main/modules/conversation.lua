@@ -1,5 +1,6 @@
 local CREW = require("main/modules/crew")
 local STR = require("main/modules/strings")
+local BRAIN = require("main/modules/brain")
 
 local TALK = {}
 
@@ -65,65 +66,6 @@ function TALK.start(talk, speaker)
 	TALK.current = load_talk(talk)
 	TALK.speaker = speaker
 	TALK.stage = 1
-	pprint(TALK.current)
-end
-
-local function get_skill_level(skill)
-	if skill < 0 then skill = 0 end
-	if skill < 0.1 then return 1
-	elseif skill < 0.2 then	return 2
-	elseif skill < 0.35 then return 3
-	elseif skill < 0.5 then	return 4
-	elseif skill < 0.6 then	return 5
-	elseif skill < 0.9 then	return 6
-	else return 7 end
-end
-
-function TALK.text(text)
-	local text_table = {}
-	if text == hash("talk/recruitment/intro") then
-		text_table = {hash("talk_greeting"), " ", hash("talk_my_name_is"), " ",
-		STR.en.names[TALK.speaker.name.gender][TALK.speaker.name.key], ".\n\n",
-		goal_strings[TALK.speaker.goal], "\n\n"}
-		local best_num, best_skill = -1
-		for key, val in pairs(TALK.speaker.skills) do
-			if val > best_num then
-				best_num = val; best_skill = key
-			end
-		end
-		best_num = best_num + (TALK.speaker.attributes.confidence - 0.5) * 0.4
-		local skill_level = get_skill_level(best_num)
-		if skill_level ~= hash("none") then
-			table.insert(text_table, hash("talk_I"))
-			table.insert(text_table, qualifier[skill_level])
-			table.insert(text_table, " ")
-			table.insert(text_table, role[best_skill])
-			table.insert(text_table, ". ")
-		end
-		--string = string..skills_to_speech(get_skill_level(get_skills(peep), "best"))
-	elseif text == hash("talk/recruitment/skills") then
-		return --TALK.crew_skills(id)
-	elseif text == hash("talk/recruitment/wages") then
-	elseif text == hash("talk/recruitment/hired") then
-		text_table = hash("talk_hired")
-	elseif text == hash("talk/recruitment/not_hired") then
-		text_table = hash("talk_not_hired")
-	elseif text == hash("talk/recruitment/wage_lowest") then
-	elseif text == hash("talk/recruitment/wage_lower") then
-	else
-		pprint(TALK.current[TALK.stage])
-		error("Unknown parametre in TALK.text: "..tostring(text))
-	end
-	return text_table
-end
-
-function TALK.crew_about(id)
-	local crew = CREW.list[id]
-	return {
-		hash("talk_greeting"), " ",
-		hash("talk_my_name_is"), " ",
-		STR.en.names[crew.name.gender][crew.name.key], ".\n\n", goal_strings[crew.goal]
-	}
 end
 
 local function get_skills(crew)
@@ -152,7 +94,8 @@ local function get_skills(crew)
 end
 
 function TALK.crew_skills(id)
-	local crew = CREW.list[id]
+	local crew = id
+	if type(id) == "number" then crew = CREW.list[id] end
 	local skill_levels = get_skills(crew)
 	local return_value = {}
 	for level = 7, 1, -1 do
@@ -175,6 +118,49 @@ function TALK.crew_skills(id)
 		end
 	end
 	return return_value
+end
+
+function TALK.text(text)
+	local text_table = {}
+	if text == hash("talk/recruitment/intro") then
+		text_table = {hash("talk_greeting"), " ", hash("talk_my_name_is"), " ",
+		STR.en.names[TALK.speaker.name.gender][TALK.speaker.name.key], ".\n\n",
+		goal_strings[TALK.speaker.goal], "\n\n"}
+		local best_skill, best_skill_level = BRAIN.get_best_skill(TALK.speaker)
+		if best_skill_level > 0 then
+			table.insert(text_table, hash("talk_I"))
+			table.insert(text_table, qualifier[best_skill_level])
+			table.insert(text_table, " ")
+			table.insert(text_table, role[best_skill])
+			table.insert(text_table, ". ")
+		elseif BRAIN.recruitment_admit_no_skill(TALK.speaker) then
+			table.insert(text_table, hash("talk_no_skill"))
+		end
+	elseif text == hash("talk/recruitment/skills") then
+		return TALK.crew_skills(TALK.speaker)
+	elseif text == hash("talk/recruitment/wages") then
+		local wage, min_wage = BRAIN.get_wage(TALK.speaker)
+		text_table = {"I want ", wage, " or at least ", min_wage, "."}
+	elseif text == hash("talk/recruitment/hired") then
+		text_table = hash("talk_hired")
+	elseif text == hash("talk/recruitment/not_hired") then
+		text_table = hash("talk_not_hired")
+	elseif text == hash("talk/recruitment/wage_lowest") then
+	elseif text == hash("talk/recruitment/wage_lower") then
+	else
+		pprint(TALK.current[TALK.stage])
+		error("Unknown parametre in TALK.text: "..tostring(text))
+	end
+	return text_table
+end
+
+function TALK.crew_about(id)
+	local crew = CREW.list[id]
+	return {
+		hash("talk_greeting"), " ",
+		hash("talk_my_name_is"), " ",
+		STR.en.names[crew.name.gender][crew.name.key], ".\n\n", goal_strings[crew.goal]
+	}
 end
 
 return TALK
