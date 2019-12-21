@@ -45,6 +45,7 @@ function BRAIN.get_wage(crew)
 	best = best / 4 + 0.05
 	secondary = secondary / (10 * skillCount)
 	local wage = (best + secondary) * (crew.attributes.greed + 0.5)
+	if not crew.desperation then pprint(crew) end
 	return math.floor(wage * 20 + 0.5) / 0.2, math.floor(wage * crew.desperation * 20 + 0.5) / 0.2
 end
 

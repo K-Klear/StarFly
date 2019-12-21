@@ -140,13 +140,42 @@ function TALK.text(text)
 		return TALK.crew_skills(TALK.speaker)
 	elseif text == hash("talk/recruitment/wages") then
 		local wage, min_wage = BRAIN.get_wage(TALK.speaker)
-		text_table = {"I want ", wage, " or at least ", min_wage, "."}
+		wage = TALK.speaker.wage_promised or wage
+		if wage == 0 then
+			text_table = {hash("talk_wage_food_only")}
+		elseif wage == 5 then
+			text_table = {hash("talk_wage_offer"), wage, hash("talk_wage_percent"), "."}
+		else
+			text_table = {hash("talk_wage_offer"), wage, hash("talk_wage_percent")}
+			if wage == min_wage then
+				table.insert(text_table, ". ")
+				table.insert(text_table, hash("talk_wage_final_offer"))
+			else
+				table.insert(text_table, ", but ")
+				table.insert(text_table, hash("talk_wage_negotiate"))
+			end
+		end
+	elseif text == hash("talk/recruitment/wage_negotiate") then
+		local wage, min_wage = BRAIN.get_wage(TALK.speaker)
+		wage = TALK.speaker.wage_promised or wage
+		if wage == min_wage then
+			if wage == 0 then
+				text_table = hash("talk_wage_lower_wage_impossible")
+			else
+				text_table = {wage, hash("talk_wage_percent"), ". ", hash("talk_wage_final_offer")}
+			end
+		else
+			if min_wage == 0 then
+				text_table = {hash("talk_wage_concession"), hash("talk_wage_food_only")}
+			else
+				text_table = {hash("talk_wage_concession"), hash("talk_wage_lower_offer"), min_wage, hash("talk_wage_percent"), ". "}
+			end
+			TALK.speaker.wage_promised = min_wage
+		end
 	elseif text == hash("talk/recruitment/hired") then
 		text_table = hash("talk_hired")
 	elseif text == hash("talk/recruitment/not_hired") then
 		text_table = hash("talk_not_hired")
-	elseif text == hash("talk/recruitment/wage_lowest") then
-	elseif text == hash("talk/recruitment/wage_lower") then
 	else
 		pprint(TALK.current[TALK.stage])
 		error("Unknown parametre in TALK.text: "..tostring(text))

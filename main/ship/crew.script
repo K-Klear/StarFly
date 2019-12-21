@@ -142,6 +142,8 @@ function init(self)
 	msg.post("#name", hash("disable"))
 	msg.post("#role_icon", hash("disable"))
 	msg.post("#role_label", hash("disable"))
+	msg.post("#speech_bubble", hash("disable"))
+	go.set("#speech_bubble", "scale", vmath.vector3(0.5, 0.5, 0.5))
 	go.set("#role_icon", "scale", vmath.vector3(1/2, 1/2, 1/2))
 	set_role(self)
 end
@@ -180,5 +182,11 @@ function on_message(self, message_id, message, sender)
 	elseif message_id == hash("dismiss") then
 		msg.post("/cursor", "deleted", {id = go.get_id()})
 		go.delete(true)
+	elseif message_id == hash("issue_raised") then
+		print("This sucks!")
+		msg.post("#speech_bubble", hash("enable"))
+	elseif message_id == hash("issue_solved") then
+		print("OK, fine!")
+		msg.post("#speech_bubble", hash("disable"))
 	end
 end

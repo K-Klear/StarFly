@@ -255,10 +255,10 @@ local LAY = {
 		}
 	},
 	[hash("crew")] = {
-		close_button = true,
+		close_button = false,
 		background = true,
 		size_x = 6.5,
-		size_y = function() return #CREW.list + 1 end,
+		size_y = function() return #CREW.list + 2 end,
 		elements = {
 			{
 				type = hash("label"),
@@ -385,7 +385,17 @@ local LAY = {
 					enabled = true
 				},
 			},
-			
+			{
+				id = hash("crew_confirm"),
+				type = hash("button_main"),
+				position_x = 0,
+				position_y = function() return #CREW.list + 2 end,
+				props = {
+					label = hash("btn_crew_confirm"),
+					callback = hash("crew_confirm"),
+					enabled = true
+				},
+			}
 		}
 	},
 	[hash("crew_background")] = {

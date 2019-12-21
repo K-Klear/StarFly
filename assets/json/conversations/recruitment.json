@@ -19,7 +19,7 @@
       "name": "intro",
       "pid": "1",
       "position": {
-        "x": "1198.3333333333335",
+        "x": "1198",
         "y": "3"
       },
       "tags": [
@@ -43,15 +43,15 @@
       "name": "skills",
       "pid": "2",
       "position": {
-        "x": "758.6666666666665",
-        "y": "345"
+        "x": "721",
+        "y": "373"
       },
       "tags": [
         "choice"
       ]
     },
     {
-      "text": "wages[[skills]][[wage_too_high]][[hired]]",
+      "text": "wages[[skills]][[wage_negotiate]][[hired]]",
       "links": [
         {
           "name": "skills",
@@ -59,8 +59,8 @@
           "pid": "2"
         },
         {
-          "name": "wage_too_high",
-          "link": "wage_too_high",
+          "name": "wage_negotiate",
+          "link": "wage_negotiate",
           "pid": "6"
         },
         {
@@ -72,8 +72,8 @@
       "name": "wages",
       "pid": "3",
       "position": {
-        "x": "1642.6666666666667",
-        "y": "339"
+        "x": "1675",
+        "y": "379"
       },
       "tags": [
         "choice"
@@ -84,8 +84,8 @@
       "name": "hired",
       "pid": "4",
       "position": {
-        "x": "1746.9999999999998",
-        "y": "1223.6666666666665"
+        "x": "1746",
+        "y": "1223"
       },
       "tags": [
         "end",
@@ -98,91 +98,36 @@
       "pid": "5",
       "position": {
         "x": "664",
-        "y": "1201.6666666666667"
+        "y": "1201"
       },
       "tags": [
         "end"
       ]
     },
     {
-      "text": "[[wage_lower]][[wage_lowest]]",
+      "text": "wage_negotiate[[skills]][[not_hired]][[hired]]",
       "links": [
         {
-          "name": "wage_lower",
-          "link": "wage_lower",
-          "pid": "8"
+          "name": "skills",
+          "link": "skills",
+          "pid": "2"
         },
         {
-          "name": "wage_lowest",
-          "link": "wage_lowest",
-          "pid": "7"
+          "name": "not_hired",
+          "link": "not_hired",
+          "pid": "5"
+        },
+        {
+          "name": "hired",
+          "link": "hired",
+          "pid": "4"
         }
       ],
-      "name": "wage_too_high",
+      "name": "wage_negotiate",
       "pid": "6",
       "position": {
-        "x": "1197.3333333333335",
-        "y": "706.3333333333331"
-      },
-      "tags": [
-        "dice",
-        "difficulty:0.5",
-        "test:wage_lower"
-      ]
-    },
-    {
-      "text": "wage_lowest[[skills]][[not_hired]][[hired]]",
-      "links": [
-        {
-          "name": "skills",
-          "link": "skills",
-          "pid": "2"
-        },
-        {
-          "name": "not_hired",
-          "link": "not_hired",
-          "pid": "5"
-        },
-        {
-          "name": "hired",
-          "link": "hired",
-          "pid": "4"
-        }
-      ],
-      "name": "wage_lowest",
-      "pid": "7",
-      "position": {
-        "x": "1159.3333333333333",
-        "y": "1165.0000000000002"
-      },
-      "tags": [
-        "choice"
-      ]
-    },
-    {
-      "text": "wage_lower[[skills]][[not_hired]][[hired]]",
-      "links": [
-        {
-          "name": "skills",
-          "link": "skills",
-          "pid": "2"
-        },
-        {
-          "name": "not_hired",
-          "link": "not_hired",
-          "pid": "5"
-        },
-        {
-          "name": "hired",
-          "link": "hired",
-          "pid": "4"
-        }
-      ],
-      "name": "wage_lower",
-      "pid": "8",
-      "position": {
-        "x": "1259.9999999999998",
-        "y": "1028"
+        "x": "1212",
+        "y": "954"
       },
       "tags": [
         "choice"

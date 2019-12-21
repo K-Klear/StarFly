@@ -49,6 +49,7 @@ local STR = {
 			[hash("btn_crew_dismiss")] = "Dismiss",
 			[hash("btn_crew_plus")] = "+",
 			[hash("btn_crew_minus")] = "-",
+			[hash("btn_crew_confirm")] = "Confirm",
 			
 			[hash("btn_jobs_accept")] = "ACCEPT",
 
@@ -120,6 +121,9 @@ local STR = {
 			[hash("talk_wage_negotiate")] = {"I'm willing to compromise.", "I'm open to negotiations."},
 			[hash("talk_wage_final_offer")] = {"That's my final offer", "That's as low as I can go.", "Take it or leave it.", "I can't really accept anything lower than that."},
 			[hash("talk_wage_food_only")] = {"I'm willing to work just for food.", "You won't even have to pay me."},
+			[hash("talk_wage_concession")] = {"Fine. ", "You got me. ", "I'm not happy about it, but OK. "},
+			[hash("talk_wage_lower_offer")] = {"I'll take ", "I can take just ", "I can live with just "},
+			[hash("talk_wage_lower_wage_impossible")] = {"I said you don't have to pay me!", "It's literally impossible to go any lower.", "How is food and shelter too much?"},
 
 			[hash("talk_qualifier_none")] = {" don't know anything about", " have no clue when it comes to"},
 			[hash("talk_qualifier_terrible")] = {" suck at", "'m terrible at", " don't have much experience with"},
@@ -138,7 +142,7 @@ local STR = {
 			[hash("talk/recruitment/link/skills")] = "Tell me more about your skills.",
 			[hash("talk/recruitment/link/wages")] = "Let's talk wages.",
 			[hash("talk/recruitment/link/not_hired")] = "Sorry. Not interested.",
-			[hash("talk/recruitment/link/wage_too_high")] = "That's too much.",
+			[hash("talk/recruitment/link/wage_negotiate")] = "That's too much.",
 			[hash("talk/recruitment/link/hired")] = "You're hired!",
 
 			[hash("talk_hired")] = {"Thank you, Captain!", "I'm looking forward to working with you.", "Great. Thanks for having me."},

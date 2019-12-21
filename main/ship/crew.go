@@ -330,3 +330,23 @@ embedded_components {
     w: 1.0
   }
 }
+embedded_components {
+  id: "speech_bubble"
+  type: "sprite"
+  data: "tile_set: \"/main/ship/icons.atlas\"\n"
+  "default_animation: \"speech_bubble_exclamation\"\n"
+  "material: \"/builtins/materials/sprite.material\"\n"
+  "blend_mode: BLEND_MODE_ALPHA\n"
+  ""
+  position {
+    x: 18.0
+    y: 42.0
+    z: -0.001
+  }
+  rotation {
+    x: 0.0
+    y: 0.0
+    z: 0.0
+    w: 1.0
+  }
+}
