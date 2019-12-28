@@ -158,10 +158,18 @@ function on_message(self, message_id, message, sender)
 		open_dialog(hash("crew_skills"), nil, message.id)
 	elseif message_id == hash("crew_dismiss") then
 		CREW.dismiss(message.id)
+<<<<<<< HEAD
 		refresh_dialog(false)
 	elseif message_id == hash("crew_confirm") then
 		CREW.check_wages()
 		refresh_dialog(true)
+=======
+		close_all_dialogs()
+		msg.post(".", hash("crew_pressed"))
+	elseif message_id == hash("crew_confirm") then
+		CREW.check_wages()
+		msg.post("#", hash("close"))
+>>>>>>> 3e295eac08fdd69f0739eb8a36fe00a124ab79f9
 	elseif message_id == hash("jobs_pressed") then
 		if #PLANET.current.jobs == 0 then
 			open_dialog(hash("error"), hash("title_error_no_jobs"))
@@ -307,12 +315,24 @@ function on_message(self, message_id, message, sender)
 		refresh_dialog(false)
 	elseif message_id == hash("talk_end") then
 		TALK.stage = 0; TALK.current = nil; TALK.speaker = nil
+<<<<<<< HEAD
 		refresh_dialog(true)
+=======
+		close_all_dialogs(true)
+>>>>>>> 3e295eac08fdd69f0739eb8a36fe00a124ab79f9
 	elseif message_id == hash("refresh_infobox") then
 		go.delete(infobox, true)
 		local props = {size = vmath.vector3(button_x * 2.25, button_y * 3, 0), layout = hash("infobox")}
 		infobox = factory.create("#dialog", vmath.vector3(1110, 780, centre.z), nil, props)
 	elseif message_id == hash("close") then
+<<<<<<< HEAD
 		refresh_dialog(true)
+=======
+		go.delete(stack[#stack], true); stack[#stack] = nil
+		msg.post(stack[#stack], "enable_all")
+		if #stack == 1 then
+			msg.post("/cursor", hash("crew_selection"), {enabled = true})
+		end
+>>>>>>> 3e295eac08fdd69f0739eb8a36fe00a124ab79f9
 	end
 end

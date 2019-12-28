@@ -350,6 +350,7 @@ embedded_components {
     w: 1.0
   }
 }
+<<<<<<< HEAD
 embedded_components {
   id: "factory_button"
   type: "factory"
@@ -368,3 +369,5 @@ embedded_components {
     w: 1.0
   }
 }
+=======
+>>>>>>> 3e295eac08fdd69f0739eb8a36fe00a124ab79f9

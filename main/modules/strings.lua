@@ -50,9 +50,12 @@ local STR = {
 			[hash("btn_crew_plus")] = "+",
 			[hash("btn_crew_minus")] = "-",
 			[hash("btn_crew_confirm")] = "Confirm",
+<<<<<<< HEAD
 
 			[hash("btn_crew_talk")] = "TALK",
 			[hash("btn_crew_role")] = "SET ROLE",
+=======
+>>>>>>> 3e295eac08fdd69f0739eb8a36fe00a124ab79f9
 			
 			[hash("btn_jobs_accept")] = "ACCEPT",
 
