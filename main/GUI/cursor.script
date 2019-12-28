@@ -52,6 +52,9 @@ function on_message(self, message_id, message, sender)
 		end
 	elseif message_id == hash("crew_selection") then
 		crew_selection_enabled = message.enabled
+		if not message.enabled then
+			if crew_selected then msg.post(crew_selected, hash("deselect")); crew_selected = nil end
+		end
 	end
 end
 

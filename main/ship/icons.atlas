@@ -19,6 +19,9 @@ images {
 images {
   image: "/assets/images/Icons/empty.png"
 }
+images {
+  image: "/assets/images/crew_speech/speech_bubble_exclamation.png"
+}
 margin: 0
 extrude_borders: 0
 inner_padding: 1

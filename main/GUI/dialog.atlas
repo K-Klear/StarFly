@@ -100,6 +100,18 @@ images {
 images {
   image: "/assets/images/ui/buttons/button_close_pressed.png"
 }
+images {
+  image: "/assets/images/ui/buttons/button_crew.png"
+}
+images {
+  image: "/assets/images/ui/buttons/button_crew_disabled.png"
+}
+images {
+  image: "/assets/images/ui/buttons/button_crew_inactive.png"
+}
+images {
+  image: "/assets/images/ui/buttons/button_crew_pressed.png"
+}
 margin: 1
 extrude_borders: 1
 inner_padding: 1

@@ -1,4 +1,5 @@
 local STR = require("main/modules/strings")
+local CREW = require("main/modules/crew")
 
 go.property("skin_colour", vmath.vector4(1, 1, 1, 1))
 go.property("hair_colour", vmath.vector4(1, 1, 1, 1))
@@ -142,6 +143,8 @@ function init(self)
 	msg.post("#name", hash("disable"))
 	msg.post("#role_icon", hash("disable"))
 	msg.post("#role_label", hash("disable"))
+	msg.post("#speech_bubble", hash("disable"))
+	go.set("#speech_bubble", "scale", vmath.vector3(0.5, 0.5, 0.5))
 	go.set("#role_icon", "scale", vmath.vector3(1/2, 1/2, 1/2))
 	set_role(self)
 end
@@ -161,6 +164,18 @@ function on_message(self, message_id, message, sender)
 		sound.play("#selected")
 		msg.post("#co", hash("disable"))
 		sprite.play_flipbook("#reticle", "crew_reticle_active")
+		local id
+		for key, val in ipairs(CREW.list) do
+			if go.get_id() == val.go then
+				id = key; break
+			end
+		end
+		local props = {label = hash("btn_crew_talk"),	callback = hash("crew_skills"),	enabled = true, id = id}
+		self.button_talk = factory.create("#factory_button", vmath.vector3(-25, 10, 0), nil, props, vmath.vector3(0.5, 0.5, 0.5))
+		go.set_parent(self.button_talk, go.get_id())
+		local props = {label = hash("btn_crew_role"), callback = hash("crew_role"),	enabled = true, id = id}
+		self.button_role = factory.create("#factory_button", vmath.vector3(-25, 30, 0), nil, props, vmath.vector3(0.5, 0.5, 0.5))
+		go.set_parent(self.button_role, go.get_id())
 	elseif message_id == hash("deselect") then
 		msg.post("#co", hash("enable"))
 		sprite.play_flipbook("#reticle", "crew_reticle")
@@ -168,6 +183,8 @@ function on_message(self, message_id, message, sender)
 		msg.post("#name", hash("disable"))
 		msg.post("#role_icon", hash("disable"))
 		msg.post("#role_label", hash("disable"))
+		go.delete(self.button_talk, true)
+		go.delete(self.button_role, true)
 	elseif message_id == hash("move") then
 		if message.role then
 			set_target(rooms[message.role].x, rooms[message.role].y, self)
@@ -180,5 +197,11 @@ function on_message(self, message_id, message, sender)
 	elseif message_id == hash("dismiss") then
 		msg.post("/cursor", "deleted", {id = go.get_id()})
 		go.delete(true)
+	elseif message_id == hash("issue_raised") then
+		print("This sucks!")
+		msg.post("#speech_bubble", hash("enable"))
+	elseif message_id == hash("issue_solved") then
+		print("OK, fine!")
+		msg.post("#speech_bubble", hash("disable"))
 	end
 end

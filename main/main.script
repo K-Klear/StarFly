@@ -41,10 +41,16 @@ function spawn_crew(crewID, x, y, z)
 		x = x, y = y, z = z
 	}
 	CREW.list[crewID].go = factory.create("/ship#spawn_crew", nil, nil, props)
+	CREW.check_wages(CREW.list[crewID])
 end
 
 function init(self)
-
+	--[[
+	CREW.add(); CREW.add(); CREW.add()
+	CREW.list[1].role = hash("role_pilot")
+	CREW.list[2].role = hash("role_comms")
+	CREW.list[3].role = hash("role_engineer")
+	--]]
 end
 
 function on_message(self, message_id, message, sender)

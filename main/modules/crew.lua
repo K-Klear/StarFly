@@ -3,6 +3,7 @@ math.random(); math.random(); math.random();
 
 local STR = require("main/modules/strings")
 local STATS = require("main/modules/stats")
+local BRAIN = require("main/modules/brain")
 
 local next_id = 0
 
@@ -206,7 +207,8 @@ function CREW.new()
 
 	return {
 		gender = gender, name = name, skills = skills, stats = stats, attributes = attributes,
-		knowledge = knowledge, face = face, goal = goal, role = hash("role_none"), wage = 0, wage_promised = 0, money = 0
+		knowledge = knowledge, face = face, goal = goal, role = hash("role_none"), wage = 0, money = 0,
+		issues = {low_wage = false}
 	}
 end
 
@@ -221,6 +223,14 @@ function CREW.add(recruit, passenger)
 	table.insert(CREW.list, recruit)
 	used_names[recruit.name.gender][recruit.name.key] = true
 	msg.post("main:/main", "spawn_crew", {crewID = #CREW.list, x = math.random(10, 13), y = 2, z = #CREW.list})
+	if not recruit.wage_promised then
+		recruit.wage_promised = BRAIN.get_wage(recruit)
+	end
+	if STATS.wage < recruit.wage_promised then
+		recruit.wage = STATS.wage; STATS.wage = 0
+	else
+		recruit.wage = recruit.wage_promised; STATS.wage = STATS.wage - recruit.wage_promised
+	end
 end
 
 function CREW.dismiss(crewID)
@@ -257,9 +267,25 @@ function CREW.getRole(role)				-- WIP (possibly free to delete?)
 	return 0
 end
 
-CREW.add(); CREW.add(); CREW.add()
-CREW.list[1].role = hash("role_pilot")
-CREW.list[2].role = hash("role_comms")
-CREW.list[3].role = hash("role_engineer")
+function CREW.check_wages(crew)
+	if not crew then
+		for key, val in ipairs(CREW.list) do
+			CREW.check_wages(val)
+		end
+	else
+		if crew.wage < crew.wage_promised then
+			if not crew.issues.low_wage then
+				crew.issues.low_wage = true
+				msg.post(crew.go, hash("issue_raised"), {issue = hash("low_wage")})
+			end
+		else
+			if crew.issues.low_wage then
+				crew.issues.low_wage = false
+				msg.post(crew.go, hash("issue_solved"), {issue = hash("low_wage")})
+			end
+		end
+	end
+end
+
 
 return CREW

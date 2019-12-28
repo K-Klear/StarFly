@@ -18,7 +18,7 @@ local button_x, button_y = 116, 54
 
 local function open_main(main)
 	local props = {size = vmath.vector3(800, 0, 0), layout = main}
-	stack[1] = factory.create("#dialog", vmath.vector3(centre.x, 100, centre.z), nil, props)
+	stack[1] = {dialog = factory.create("#dialog", vmath.vector3(centre.x, 100, centre.z), nil, props)}
 	local props = {size = vmath.vector3(button_x * 2.25, button_y * 3, 0), layout = hash("infobox")}
 	infobox = factory.create("#dialog", vmath.vector3(1110, 780, centre.z), nil, props)
 	msg.post("/cursor", hash("crew_selection"), {enabled = true})
@@ -30,137 +30,144 @@ end
 
 local function close_all_dialogs(main_on, main_gone)
 	while #stack > 1 do
-		go.delete(stack[#stack], true); stack[#stack] = nil
+		go.delete(stack[#stack].dialog, true); stack[#stack] = nil
 	end
 	if main_on then
-		msg.post(stack[1], "enable_all")
+		msg.post(stack[1].dialog, "enable_all")
 		msg.post("/cursor", hash("crew_selection"), {enabled = true})
 	else
 		msg.post("/cursor", hash("crew_selection"), {enabled = false})
 	end
 	if main_gone then
-		go.delete(stack[#stack], true); stack[#stack] = nil
-		go.delete(infobox, true); infobox = nil
+		print(stack[#stack].dialog, infobox)
+		go.delete(stack[#stack].dialog, true); stack[#stack] = nil
+		if infobox then
+			go.delete(infobox, true); infobox = nil
+		end
 		msg.post("/cursor", hash("crew_selection"), {enabled = false})
 	end
 end
 
-local function open_dialog(layout, title, id)
+local function open_dialog(layout, title, id, refresh_message)
 	local size_x, size_y = LAY[layout].size_x, LAY[layout].size_y
 	if type(size_x) == "function" then size_x = size_x() end
 	if type(size_y) == "function" then size_y = size_y() end
 	local props = {size = vmath.vector3(button_x * size_x, button_y * size_y, 0), title = title, layout = layout, id = id}
-	table.insert(stack, factory.create("#dialog", vmath.vector3(centre.x, centre.y, 0.8 + #stack * 0.02), nil, props))
+	table.insert(stack, {dialog = factory.create("#dialog", vmath.vector3(centre.x, centre.y, 0.8 + #stack * 0.02), nil, props), refresh_message = refresh_message})
+	if stack[#stack - 1] then
+		msg.post(stack[#stack - 1].dialog, "disable_all")
+	end
+	msg.post("/cursor", hash("crew_selection"), {enabled = false})
+end
+
+local function refresh_dialog(close_first)
+	if close_first then
+		go.delete(stack[#stack].dialog, true); stack[#stack] = nil
+	end
+	local refresh = stack[#stack].refresh_message
+	if refresh then
+		go.delete(stack[#stack].dialog, true); stack[#stack] = nil
+		msg.post("#", refresh)
+	else
+		msg.post(stack[#stack].dialog, "enable_all")
+		if #stack == 1 then
+			msg.post("/cursor", hash("crew_selection"), {enabled = true})
+		end
+	end
 end
 
 function on_message(self, message_id, message, sender)
 	if message_id == hash("buy_pressed") then
+		
+	elseif message_id == hash("buy_pressed") then
 
 	elseif message_id == hash("recruit_pressed") then
 		if #PLANET.current.recruits == 0 then
 			open_dialog(hash("error"), hash("title_error_no_recruits"))
 		else
-			open_dialog(hash("recruit"), hash("title_recruit"))
+			open_dialog(hash("recruit"), hash("title_recruit"), nil, message_id)
 		end
-		msg.post(stack[#stack - 1], "disable_all")
-		msg.post("/cursor", hash("crew_selection"), {enabled = false})
 	elseif message_id == hash("recruit_interview") then
 		TALK.start("recruitment", PLANET.current.recruits[message.id])
-		msg.post(stack[#stack], "disable_all")
+		msg.post(stack[#stack].dialog, "disable_all")
 		msg.post(".", hash("talk_progress"))
 	elseif message_id == hash("recruit_hire") then
 		if #CREW.list >= STATS.max_crew then
 			open_dialog(hash("error"), hash("title_error_crew_full"))
-			msg.post(stack[#stack - 1], "disable_all")
-			msg.post("/cursor", hash("crew_selection"), {enabled = false})
 		else
 			CREW.add(PLANET.current.recruits[message.id])
 			table.remove(PLANET.current.recruits, message.id)
-			close_all_dialogs()
-			msg.post(".", hash("recruit_pressed"))
+			refresh_dialog()
 		end
 	elseif message_id == hash("crew_pressed") then
 		if #CREW.list == 0 then
 			open_dialog(hash("error"), hash("title_error_no_crew"))
 		else
-			open_dialog(hash("crew"), hash("title_crew"))
+			open_dialog(hash("crew"), hash("title_crew"), nil, message_id)
 			for key, val in ipairs(CREW.list) do
 				if val.wage == 0 then
-					msg.post(stack[#stack], "turn_button_off", {button = hash("crew_wage_minus"), id = key})
+					msg.post(stack[#stack].dialog, "turn_button_off", {button = hash("crew_wage_minus"), id = key})
 				end
 				if STATS.wage == 0 then
-					msg.post(stack[#stack], "turn_button_off", {button = hash("crew_wage_plus"), id = key})
+					msg.post(stack[#stack].dialog, "turn_button_off", {button = hash("crew_wage_plus"), id = key})
 				end
 				if val.role == hash("role_passenger") then
-					msg.post(stack[#stack], "turn_button_off", {button = hash("crew_role"), id = key})
-					msg.post(stack[#stack], "delete_element", {button = hash("crew_wage_plus"), id = key})
-					msg.post(stack[#stack], "delete_element", {button = hash("crew_wage_minus"), id = key})
-					msg.post(stack[#stack], "delete_element", {button = hash("crew_wage_label"), id = key})
-					msg.post(stack[#stack], "delete_element", {button = hash("crew_dismiss"), id = key})
+					msg.post(stack[#stack].dialog, "turn_button_off", {button = hash("crew_role"), id = key})
+					msg.post(stack[#stack].dialog, "delete_element", {button = hash("crew_wage_plus"), id = key})
+					msg.post(stack[#stack].dialog, "delete_element", {button = hash("crew_wage_minus"), id = key})
+					msg.post(stack[#stack].dialog, "delete_element", {button = hash("crew_wage_label"), id = key})
+					msg.post(stack[#stack].dialog, "delete_element", {button = hash("crew_dismiss"), id = key})
 				end
 			end
 		end
-		msg.post(stack[#stack - 1], "disable_all")
-		msg.post("/cursor", hash("crew_selection"), {enabled = false})
 	elseif message_id == hash("crew_role") then
-		open_dialog(hash("crew_role"), hash("title_role_selection"), message.id)
-		msg.post(stack[#stack - 1], "disable_all")
-		msg.post("/cursor", hash("crew_selection"), {enabled = false})
+		open_dialog(hash("crew_role"), hash("title_role_selection"), message.id, message_id)
 	elseif message_id == hash("crew_role_pilot") then
 		CREW.set_role(message.id, hash("role_pilot"), true)
-		close_all_dialogs()
-		msg.post(".", hash("crew_pressed"))
+		refresh_dialog(true)
 	elseif message_id == hash("crew_role_engineer") then
 		CREW.set_role(message.id, hash("role_engineer"), true)
-		close_all_dialogs()
-		msg.post(".", hash("crew_pressed"))
+		refresh_dialog(true)
 	elseif message_id == hash("crew_role_comms") then
 		CREW.set_role(message.id, hash("role_comms"), true)
-		close_all_dialogs()
-		msg.post(".", hash("crew_pressed"))
+		refresh_dialog(true)
 	elseif message_id == hash("crew_role_medic") then
 		CREW.set_role(message.id, hash("role_medic"), true)
-		close_all_dialogs()
-		msg.post(".", hash("crew_pressed"))
+		refresh_dialog(true)
 	elseif message_id == hash("crew_role_gunner") then
 		CREW.set_role(message.id, hash("role_gunner"), true)
-		close_all_dialogs()
-		msg.post(".", hash("crew_pressed"))
+		refresh_dialog(true)
 	elseif message_id == hash("crew_role_none") then
 		CREW.set_role(message.id, hash("role_none"))
-		close_all_dialogs()
-		msg.post(".", hash("crew_pressed"))
+		refresh_dialog(true)
 	elseif message_id == hash("crew_wage_plus") then
 		if STATS.wage > 0 and CREW.list[message.id].wage < 100 then
 			CREW.list[message.id].wage = CREW.list[message.id].wage + 5
 			STATS.wage = STATS.wage - 5
 		end
-		close_all_dialogs()
-		msg.post(".", hash("crew_pressed"))
+		refresh_dialog()
 	elseif message_id == hash("crew_wage_minus") then
 		if CREW.list[message.id].wage > 0 then
 			CREW.list[message.id].wage = CREW.list[message.id].wage - 5
 			STATS.wage = STATS.wage + 5
 		end
-		close_all_dialogs()
-		msg.post(".", hash("crew_pressed"))
+		refresh_dialog()
 	elseif message_id == hash("crew_background") then
 		open_dialog(hash("crew_background"), nil, message.id)
-		msg.post(stack[#stack - 1], "disable_all")
 	elseif message_id == hash("crew_skills") then
 		open_dialog(hash("crew_skills"), nil, message.id)
-		msg.post(stack[#stack - 1], "disable_all")
 	elseif message_id == hash("crew_dismiss") then
 		CREW.dismiss(message.id)
-		close_all_dialogs()
-		msg.post(".", hash("crew_pressed"))
+		refresh_dialog(false)
+	elseif message_id == hash("crew_confirm") then
+		CREW.check_wages()
+		refresh_dialog(true)
 	elseif message_id == hash("jobs_pressed") then
 		if #PLANET.current.jobs == 0 then
 			open_dialog(hash("error"), hash("title_error_no_jobs"))
 		else
-			open_dialog(hash("jobs"), hash("title_jobs"))
+			open_dialog(hash("jobs"), hash("title_jobs"), nil, message_id)
 		end
-		msg.post(stack[#stack - 1], "disable_all")
 	elseif message_id == hash("jobs_accept") then
 		msg.post("/main", hash("job_accepted"), {id = message.id})
 		close_all_dialogs(true)
@@ -172,15 +179,13 @@ function on_message(self, message_id, message, sender)
 		elseif not CREW.get_role(hash("role_pilot")) then
 			open_dialog(hash("error"), hash("title_error_no_pilot"))
 		else
-			open_dialog(hash("travel"), hash("title_travel"))
+			open_dialog(hash("travel"), hash("title_travel"), nil, message_id)
 			for key, val in pairs(STATS.jobs) do
 				if #val > 0 then
-					msg.post(stack[#stack], "turn_button_on", {button = key})
+					msg.post(stack[#stack].dialog, "turn_button_on", {button = key})
 				end
 			end
 		end
-		msg.post(stack[#stack - 1], "disable_all")
-		msg.post("/cursor", hash("crew_selection"), {enabled = false})
 	elseif message_id == hash("travel_explore_core") then
 		close_all_dialogs(false, true)
 		msg.post("#main", hash("travel"), {target = hash("core")})
@@ -192,24 +197,21 @@ function on_message(self, message_id, message, sender)
 		msg.post("#main", hash("travel"), {target = hash("rim")})
 	elseif message_id == hash("travel_mission_core") then
 		if #STATS.jobs[hash("core")] > 1 then
-			open_dialog(hash("job_selection_core"), hash("job_selection"))
-			msg.post(stack[#stack - 1], "disable_all")
+			open_dialog(hash("job_selection_core"), hash("job_selection"), nil, message_id)
 		else
 			close_all_dialogs(false, true)
 			msg.post("#main", hash("travel"), {job_id = 1, target = hash("core")})
 		end
 	elseif message_id == hash("travel_mission_frontier") then
 		if #STATS.jobs[hash("frontier")] > 1 then
-			open_dialog(hash("job_selection_frontier"), hash("job_selection"))
-			msg.post(stack[#stack - 1], "disable_all")
+			open_dialog(hash("job_selection_frontier"), hash("job_selection"), nil, message_id)
 		else
 			close_all_dialogs(false, true)
 			msg.post("#main", hash("travel"), {job_id = 1, target = hash("frontier")})
 		end
 	elseif message_id == hash("travel_mission_rim") then
 		if #STATS.jobs[hash("rim")] > 1 then
-			open_dialog(hash("job_selection_rim"), hash("job_selection"))
-			msg.post(stack[#stack - 1], "disable_all")
+			open_dialog(hash("job_selection_rim"), hash("job_selection"), nil, message_id)
 		else
 			close_all_dialogs(false, true)
 			msg.post("#main", hash("travel"), {job_id = 1, target = hash("rim")})
@@ -237,12 +239,6 @@ function on_message(self, message_id, message, sender)
 			close_all_dialogs(false, true)
 			msg.post("#main", hash("travel"), {target = hash("planet")})
 		end
-	elseif message_id == hash("close") then
-		go.delete(stack[#stack], true); stack[#stack] = nil
-		msg.post(stack[#stack], "enable_all")
-		if #stack == 1 then
-			msg.post("/cursor", hash("crew_selection"), {enabled = true})
-		end
 	elseif message_id == hash("transition_space") then
 		EVENT.new(hash("space"))
 		msg.post(".", hash("event_progress"))
@@ -256,12 +252,14 @@ function on_message(self, message_id, message, sender)
 		local stage = EVENT.current[EVENT.stage]
 		EVENT.links = stage.links	
 		if stage.effect == hash("recruit_random") then
-			CREW.add()
+			local new_crew = CREW.new()
+			new_crew.desperation = math.random(); new_crew.wage_promised = 0
+			CREW.add(new_crew)
 		elseif stage.effect then
 			error("Unknown event effect")
 		end
 		if stage.stage_type == "choice" then
-			open_dialog(hash("event"))
+			open_dialog(hash("event"), nil, nil, message_id)
 		elseif stage.stage_type == "dice" then
 			if DICE.roll(stage.dice_type, stage.dice_difficulty) then
 				EVENT.stage = stage.links[1].stage
@@ -270,22 +268,20 @@ function on_message(self, message_id, message, sender)
 			end
 			msg.post(".", hash("event_progress"))
 		elseif stage.stage_type == "end" then
-			open_dialog(hash("event_end"))
+			open_dialog(hash("event_end"), nil, nil, message_id)
 		end
 	elseif message_id == hash("event_option") then
 		EVENT.stage = EVENT.current[EVENT.stage].links[message.id].stage
-		go.delete(stack[#stack], true); stack[#stack] = nil
-		msg.post(".", hash("event_progress"))
+		refresh_dialog(false)
 	elseif message_id == hash("event_end") then
 		EVENT.stage = 0; EVENT.current = nil
-		go.delete(stack[#stack], true); stack[#stack] = nil
+		close_all_dialogs(false, true)
 		open_main(hash("main_space"))
 	elseif message_id == hash("talk_progress") then
 		local stage = TALK.current[TALK.stage]
 		TALK.links = stage.links
 		if stage.effect == hash("recruit") then
 			CREW.add(TALK.speaker)
-			--RECRUIT DIALOG DOESN'T GET UPDATED
 			for key, val in ipairs(PLANET.current.recruits) do
 				if val == TALK.speaker then
 					table.remove(PLANET.current.recruits, key); break
@@ -295,7 +291,7 @@ function on_message(self, message_id, message, sender)
 			error("Unknown conversation effect!")
 		end
 		if stage.stage_type == "choice" then
-			open_dialog(hash("talk"))
+			open_dialog(hash("talk"), nil, nil, message_id)
 		elseif stage.stage_type == "dice" then
 			if DICE.roll(stage.dice_type, stage.dice_difficulty) then
 				TALK.stage = stage.links[1].stage
@@ -304,20 +300,19 @@ function on_message(self, message_id, message, sender)
 			end
 			msg.post(".", hash("talk_progress"))
 		elseif stage.stage_type == "end" then
-			open_dialog(hash("talk_end"))
+			open_dialog(hash("talk_end"), nil, nil, message_id)
 		end
 	elseif message_id == hash("talk_option") then
 		TALK.stage = TALK.current[TALK.stage].links[message.id].stage
-		go.delete(stack[#stack], true); stack[#stack] = nil
-		msg.post(".", hash("talk_progress"))
+		refresh_dialog(false)
 	elseif message_id == hash("talk_end") then
 		TALK.stage = 0; TALK.current = nil; TALK.speaker = nil
-		msg.post(".", hash("close"))
-		--go.delete(stack[#stack], true); stack[#stack] = nil
-		--open_main(hash("main"))
+		refresh_dialog(true)
 	elseif message_id == hash("refresh_infobox") then
 		go.delete(infobox, true)
 		local props = {size = vmath.vector3(button_x * 2.25, button_y * 3, 0), layout = hash("infobox")}
 		infobox = factory.create("#dialog", vmath.vector3(1110, 780, centre.z), nil, props)
+	elseif message_id == hash("close") then
+		refresh_dialog(true)
 	end
 end

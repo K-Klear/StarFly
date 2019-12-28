@@ -78,7 +78,10 @@ function init(self)
 						props[k] = property
 					end
 				end
-				object = factory.create(factory_type[val.type], vmath.vector3(val.position_x * 116, half_y - (54 * (val.position_y + id - 1)) - 8, 0), nil, props, val.scale)
+				local pos_x, pos_y = val.position_x, val.position_y
+				if type(pos_x) == "function" then pos_x = pos_x() end
+				if type(pos_y) == "function" then pos_y = pos_y() end
+				object = factory.create(factory_type[val.type], vmath.vector3(pos_x * 116, half_y - (54 * (pos_y + id - 1)) - 8, 0), nil, props, val.scale)
 				go.set_parent(object, ".")
 				if val.id then
 					self.elements[val.id] = self.elements[val.id] or {}

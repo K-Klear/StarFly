@@ -34,6 +34,12 @@ local types = {
 		sprite_pressed = "button_option_pressed",
 		sprite_disabled = "button_option_pressed",
 		sprite_inactive = "button_option_inactive"
+	},
+	[hash("crew")] = {
+		sprite = "button_crew",
+		sprite_pressed = "button_crew_pressed",
+		sprite_disabled = "button_crew_disabled",
+		sprite_inactive = "button_crew_inactive"
 	}
 }
 
