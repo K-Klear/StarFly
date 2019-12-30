@@ -13,6 +13,7 @@ local goal_strings = {
 	[hash("work")] = hash("talk_goal_work"),
 	[hash("running")] = hash("talk_goal_running")
 }
+
 local qualifier = {hash("talk_qualifier_none"), hash("talk_qualifier_terrible"), hash("talk_qualifier_poor"),
 hash("talk_qualifier_average"), hash("talk_qualifier_good"), hash("talk_qualifier_great"), hash("talk_qualifier_top")}
 
@@ -28,6 +29,8 @@ local function get_tags(stage)
 			diff = tonumber(string.sub(val, 12, -1))
 		elseif string.sub(val, 1, 7) == "effect:" then
 			effect = hash(string.sub(val, 8, -1))
+		elseif string.sub(val, 1, 6) == "brain:" then
+			type = "brain"; test = string.sub(val, 7, -1)
 		elseif val == "dice" or val == "end" or val == "choice" then
 			type = val
 		end
@@ -66,6 +69,7 @@ function TALK.start(talk, speaker)
 	TALK.current = load_talk(talk)
 	TALK.speaker = speaker
 	TALK.stage = 1
+	msg.post("main:/main#controller", hash("talk_progress"))
 end
 
 local function get_skills(crew)
@@ -176,6 +180,24 @@ function TALK.text(text)
 		text_table = hash("talk_hired")
 	elseif text == hash("talk/recruitment/not_hired") then
 		text_table = hash("talk_not_hired")
+
+		
+	elseif text == hash("talk/crew_talk_general/we_need_to_talk") then
+		text_table = {hash("talk_captain"), ", ", hash("talk_we_need_to_talk")}
+	elseif text == hash("talk/crew_talk_general/hello_captain") then
+		text_table = {hash("talk_captain"), ". ", hash("talk_we_can_talk")}
+	elseif text == hash("talk/crew_talk_general/about") then
+		text_table = {goal_strings[TALK.speaker.goal], "\n\n"}
+		local best_skill, best_skill_level = BRAIN.get_best_skill(TALK.speaker)
+		if best_skill_level > 0 then
+			table.insert(text_table, hash("talk_I"))
+			table.insert(text_table, qualifier[best_skill_level])
+			table.insert(text_table, " ")
+			table.insert(text_table, role[best_skill])
+			table.insert(text_table, ". ")
+		elseif BRAIN.recruitment_admit_no_skill(TALK.speaker) then
+			table.insert(text_table, hash("talk_no_skill"))
+		end
 	else
 		pprint(TALK.current[TALK.stage])
 		error("Unknown parametre in TALK.text: "..tostring(text))

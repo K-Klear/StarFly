@@ -48,6 +48,12 @@ DIALOGUE JSON formatting:
 Room name is ignored (instead there's "XXX says" and a face icon)
 Text in the body consists of snips aimed at conversation.lua
 
+New tag:
+
+brain
+	Basically same as dice, but points to brain.lua. Used for decisions and circumstances concerning the speaker.
+	Doesn't use difficulty tag, so there's only brain:XXX.
+
 
 Credits:
 https://www.dafont.com/the-wastes-of-space.font

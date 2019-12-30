@@ -45,17 +45,14 @@ local STR = {
 			[hash("btn_recruit_hire")] = "HIRE",
 			
 			[hash("btn_crew_background")] = "About",
-			[hash("btn_crew_skills")] = "Skills",
+			[hash("btn_crew_talk")] = "Talk",
 			[hash("btn_crew_dismiss")] = "Dismiss",
 			[hash("btn_crew_plus")] = "+",
 			[hash("btn_crew_minus")] = "-",
 			[hash("btn_crew_confirm")] = "Confirm",
-<<<<<<< HEAD
 
 			[hash("btn_crew_talk")] = "TALK",
 			[hash("btn_crew_role")] = "SET ROLE",
-=======
->>>>>>> 3e295eac08fdd69f0739eb8a36fe00a124ab79f9
 			
 			[hash("btn_jobs_accept")] = "ACCEPT",
 
@@ -115,6 +112,9 @@ local STR = {
 			[hash("talk_greeting")] = {"Hello!", "Greetings.", "Nice to meet you.", "Hello there!", "Good day, Captain."},
 			[hash("talk_my_name_is")] = {"I'm", "You can call me", "My name is", "They call me"},
 			[hash("talk_no_skill")] = {"I'm not really skilled in anything in particular, but I can learn! ", "I'm afraid I'm not very skilled in anything. "},
+			[hash("talk_captain")] = {"Captain", "Sir"},
+			[hash("talk_we_need_to_talk")] = {"can we speak for a minute?", "there's something on my mind.", "I need to speak with you.", "can I talk to you about something?"},
+			[hash("talk_we_can_talk")] = {"Do you need anything?", "What can I do for you?", "You wanted to talk?", "Something on your mind?"},
 			
 			[hash("talk_goal_fun")] = {"This place is boring. I want to have some fun. ", "I'm looking for some excitement. You wouldn't believe how boring colony life can be. "},
 			[hash("talk_goal_travel")] = {"I want to see all the universe has to offer. ", "I just want to see the stars. "},
@@ -150,6 +150,15 @@ local STR = {
 			[hash("talk/recruitment/link/not_hired")] = "Sorry. Not interested.",
 			[hash("talk/recruitment/link/wage_negotiate")] = "That's too much.",
 			[hash("talk/recruitment/link/hired")] = "You're hired!",
+
+			[hash("talk/crew_talk_general/link/about")] = "Tell me about yourself.",
+			[hash("talk/crew_talk_general/link/skills")] = "Tell me what you can do.",
+			[hash("talk/crew_talk_general/link/how_are_you")] = "How are you feeling today?",
+			[hash("talk/crew_talk_general/link/carry_on")] = "That will be all for now.",
+			
+			[hash("talk/crew_talk_general/link/what_is_it")] = "What's the problem?",
+			[hash("talk/crew_talk_general/link/can_it_wait")] = "Can it wait?",
+			[hash("talk/crew_talk_general/link/not_now")] = "Not right now.",
 
 			[hash("talk_hired")] = {"Thank you, Captain!", "I'm looking forward to working with you.", "Great. Thanks for having me."},
 			[hash("talk_not_hired")] = {"I'll be here if you change your mind."},

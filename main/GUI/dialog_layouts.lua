@@ -362,14 +362,14 @@ local LAY = {
 				},
 			},
 			{
-				id = hash("crew_skills"),
+				id = hash("crew_talk"),
 				repeating = function() return #CREW.list end,
 				type = hash("button_main"),
 				position_x = 1.5,
 				position_y = 2,
 				props = {
-					label = hash("btn_crew_skills"),
-					callback = hash("crew_skills"),
+					label = hash("btn_crew_talk"),
+					callback = hash("crew_talk"),
 					enabled = true
 				},
 			},
@@ -414,42 +414,6 @@ local LAY = {
 				position_x = 0,
 				position_y = 2.5,
 				text = TALK.crew_about,
-			},
-			{
-				type = hash("icon_face"),
-				image = function(id) return CREW.list[id].face end,
-				position_x = -2.5,
-				position_y = 1,
-				scale = vmath.vector3(4, 4, 4)
-			},
-			{
-				type = hash("button_main"),
-				position_x = 0,
-				position_y = 7,
-				props = {
-					label = hash("btn_event_done"),
-					callback = hash("close"),
-					enabled = true
-				},
-			},
-		}
-	},
-	[hash("crew_skills")] = {
-		background = true,
-		size_x = 6,
-		size_y = 7,
-		elements = {
-			{
-				type = hash("textbox"),
-				position_x = 0,
-				position_y = 1,
-				text = function(id) return {STR.en.names[CREW.list[id].name.gender][CREW.list[id].name.key], hash("talk_says")} end
-			},
-			{
-				type = hash("textbox"),
-				position_x = 0,
-				position_y = 2.5,
-				text = TALK.crew_skills,
 			},
 			{
 				type = hash("icon_face"),

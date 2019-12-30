@@ -1,0 +1,327 @@
+{
+  "passages": [
+    {
+      "text": "[[issues]][[hello_captain]]",
+      "links": [
+        {
+          "name": "issues",
+          "link": "issues",
+          "pid": "4"
+        },
+        {
+          "name": "hello_captain",
+          "link": "hello_captain",
+          "pid": "3"
+        }
+      ],
+      "name": "issues_test",
+      "pid": "1",
+      "position": {
+        "x": "1108",
+        "y": "14"
+      },
+      "tags": [
+        "brain:issues_outstanding"
+      ]
+    },
+    {
+      "text": "skills[[about]][[how_are_you]][[carry_on]]",
+      "links": [
+        {
+          "name": "about",
+          "link": "about",
+          "pid": "8"
+        },
+        {
+          "name": "how_are_you",
+          "link": "how_are_you",
+          "pid": "9"
+        },
+        {
+          "name": "carry_on",
+          "link": "carry_on",
+          "pid": "10"
+        }
+      ],
+      "name": "skills",
+      "pid": "2",
+      "position": {
+        "x": "529",
+        "y": "1347"
+      },
+      "tags": [
+        "choice"
+      ]
+    },
+    {
+      "text": "hello_captain[[about]][[skills]][[how_are_you]][[carry_on]]",
+      "links": [
+        {
+          "name": "about",
+          "link": "about",
+          "pid": "8"
+        },
+        {
+          "name": "skills",
+          "link": "skills",
+          "pid": "2"
+        },
+        {
+          "name": "how_are_you",
+          "link": "how_are_you",
+          "pid": "9"
+        },
+        {
+          "name": "carry_on",
+          "link": "carry_on",
+          "pid": "10"
+        }
+      ],
+      "name": "hello_captain",
+      "pid": "3",
+      "position": {
+        "x": "532",
+        "y": "621"
+      },
+      "tags": [
+        "choice"
+      ]
+    },
+    {
+      "text": "we_need_to_talk[[what_is_it]][[can_it_wait]][[not_now]]",
+      "links": [
+        {
+          "name": "what_is_it",
+          "link": "what_is_it",
+          "pid": "5"
+        },
+        {
+          "name": "can_it_wait",
+          "link": "can_it_wait",
+          "pid": "6"
+        },
+        {
+          "name": "not_now",
+          "link": "not_now",
+          "pid": "7"
+        }
+      ],
+      "name": "issues",
+      "pid": "4",
+      "position": {
+        "x": "1574",
+        "y": "146"
+      },
+      "tags": [
+        "choice"
+      ]
+    },
+    {
+      "text": "issue_solving_not_implemented",
+      "name": "what_is_it",
+      "pid": "5",
+      "position": {
+        "x": "2406",
+        "y": "361"
+      },
+      "tags": [
+        "end"
+      ]
+    },
+    {
+      "text": "[[issue_cannot_wait]][[talk_later]]",
+      "links": [
+        {
+          "name": "issue_cannot_wait",
+          "link": "issue_cannot_wait",
+          "pid": "12"
+        },
+        {
+          "name": "talk_later",
+          "link": "talk_later",
+          "pid": "11"
+        }
+      ],
+      "name": "can_it_wait",
+      "pid": "6",
+      "position": {
+        "x": "1844",
+        "y": "354"
+      },
+      "tags": [
+        "brain:issue_urgency"
+      ]
+    },
+    {
+      "text": "[[issue_cannot_wait]][[talk_later]]",
+      "links": [
+        {
+          "name": "issue_cannot_wait",
+          "link": "issue_cannot_wait",
+          "pid": "12"
+        },
+        {
+          "name": "talk_later",
+          "link": "talk_later",
+          "pid": "11"
+        }
+      ],
+      "name": "not_now",
+      "pid": "7",
+      "position": {
+        "x": "1304",
+        "y": "451"
+      },
+      "tags": [
+        "brain:issue_urgency"
+      ]
+    },
+    {
+      "text": "about[[skills]][[how_are_you]][[carry_on]]",
+      "links": [
+        {
+          "name": "skills",
+          "link": "skills",
+          "pid": "2"
+        },
+        {
+          "name": "how_are_you",
+          "link": "how_are_you",
+          "pid": "9"
+        },
+        {
+          "name": "carry_on",
+          "link": "carry_on",
+          "pid": "10"
+        }
+      ],
+      "name": "about",
+      "pid": "8",
+      "position": {
+        "x": "291",
+        "y": "1031"
+      },
+      "tags": [
+        "choice"
+      ]
+    },
+    {
+      "text": "how_are_you[[about]][[skills]][[carry_on]]",
+      "links": [
+        {
+          "name": "about",
+          "link": "about",
+          "pid": "8"
+        },
+        {
+          "name": "skills",
+          "link": "skills",
+          "pid": "2"
+        },
+        {
+          "name": "carry_on",
+          "link": "carry_on",
+          "pid": "10"
+        }
+      ],
+      "name": "how_are_you",
+      "pid": "9",
+      "position": {
+        "x": "651",
+        "y": "914"
+      },
+      "tags": [
+        "choice"
+      ]
+    },
+    {
+      "text": "yes_captain",
+      "name": "carry_on",
+      "pid": "10",
+      "position": {
+        "x": "1038",
+        "y": "1243"
+      },
+      "tags": [
+        "end"
+      ]
+    },
+    {
+      "text": "talk_about_issue_later[[let_us_talk]]",
+      "links": [
+        {
+          "name": "let_us_talk",
+          "link": "let_us_talk",
+          "pid": "13"
+        }
+      ],
+      "name": "talk_later",
+      "pid": "11",
+      "position": {
+        "x": "1459",
+        "y": "754"
+      },
+      "tags": [
+        "decision"
+      ]
+    },
+    {
+      "text": "issue_cannot_wait[[what_is_it]]",
+      "links": [
+        {
+          "name": "what_is_it",
+          "link": "what_is_it",
+          "pid": "5"
+        }
+      ],
+      "name": "issue_cannot_wait",
+      "pid": "12",
+      "position": {
+        "x": "1888",
+        "y": "694"
+      },
+      "tags": [
+        "decision"
+      ]
+    },
+    {
+      "text": "what_do_you_need_captain[[about]][[skills]][[how_are_you]][[carry_on]]",
+      "links": [
+        {
+          "name": "about",
+          "link": "about",
+          "pid": "8"
+        },
+        {
+          "name": "skills",
+          "link": "skills",
+          "pid": "2"
+        },
+        {
+          "name": "how_are_you",
+          "link": "how_are_you",
+          "pid": "9"
+        },
+        {
+          "name": "carry_on",
+          "link": "carry_on",
+          "pid": "10"
+        }
+      ],
+      "name": "let_us_talk",
+      "pid": "13",
+      "position": {
+        "x": "999",
+        "y": "737"
+      },
+      "tags": [
+        "decision"
+      ]
+    }
+  ],
+  "name": "crew_talk",
+  "startnode": "1",
+  "creator": "Twine",
+  "creator-version": "2.3.4",
+  "ifid": "7638D93C-6206-43B5-87C3-5EB5790FA451"
+}

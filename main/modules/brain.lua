@@ -49,4 +49,14 @@ function BRAIN.get_wage(crew)
 	return math.floor(wage * 20 + 0.5) / 0.2, math.floor(wage * crew.desperation * 20 + 0.5) / 0.2
 end
 
+function BRAIN.talk_test(crew, test)
+	local result
+	if test == "issues_outstanding" then
+		if crew.issues.low_wage then result = 1	end
+	elseif test == "issue_urgency" then
+		if math.random() > 0.2 then result = 1 end
+	end
+	return result or 2
+end
+
 return BRAIN

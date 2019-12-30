@@ -170,7 +170,7 @@ function on_message(self, message_id, message, sender)
 				id = key; break
 			end
 		end
-		local props = {label = hash("btn_crew_talk"),	callback = hash("crew_skills"),	enabled = true, id = id}
+		local props = {label = hash("btn_crew_talk"), callback = hash("crew_talk"),	enabled = true, id = id}
 		self.button_talk = factory.create("#factory_button", vmath.vector3(-25, 10, 0), nil, props, vmath.vector3(0.5, 0.5, 0.5))
 		go.set_parent(self.button_talk, go.get_id())
 		local props = {label = hash("btn_crew_role"), callback = hash("crew_role"),	enabled = true, id = id}
@@ -198,10 +198,8 @@ function on_message(self, message_id, message, sender)
 		msg.post("/cursor", "deleted", {id = go.get_id()})
 		go.delete(true)
 	elseif message_id == hash("issue_raised") then
-		print("This sucks!")
 		msg.post("#speech_bubble", hash("enable"))
 	elseif message_id == hash("issue_solved") then
-		print("OK, fine!")
 		msg.post("#speech_bubble", hash("disable"))
 	end
 end
