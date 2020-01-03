@@ -1,6 +1,6 @@
 [project]
 title = StarFly
-version = 0.3
+version = 0.5
 custom_resources = assets/json
 
 [bootstrap]

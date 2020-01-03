@@ -41,7 +41,7 @@ function spawn_crew(crewID, x, y, z)
 		x = x, y = y, z = z
 	}
 	CREW.list[crewID].go = factory.create("/ship#spawn_crew", nil, nil, props)
-	CREW.check_wages(CREW.list[crewID])
+	CREW.check_issue(hash("low_wage"), CREW.list[crewID])
 end
 
 function init(self)

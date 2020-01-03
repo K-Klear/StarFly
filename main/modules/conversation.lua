@@ -180,7 +180,6 @@ function TALK.text(text)
 		text_table = hash("talk_hired")
 	elseif text == hash("talk/recruitment/not_hired") then
 		text_table = hash("talk_not_hired")
-
 		
 	elseif text == hash("talk/crew_talk_general/we_need_to_talk") then
 		text_table = {hash("talk_captain"), ", ", hash("talk_we_need_to_talk")}
@@ -198,6 +197,24 @@ function TALK.text(text)
 		elseif BRAIN.recruitment_admit_no_skill(TALK.speaker) then
 			table.insert(text_table, hash("talk_no_skill"))
 		end
+	elseif text == hash("talk/crew_talk_general/skills") then
+		return TALK.crew_skills(TALK.speaker)
+	elseif text == hash("talk/crew_talk_general/how_are_you") then
+		text_table = {BRAIN.how_are_you(TALK.speaker)}
+
+	elseif text == hash("talk/crew_talk_general/talk_about_issue_later") then
+		text_table = {hash("talk_yes"), ". ", hash("talk_issue_can_wait")}
+	elseif text == hash("talk/crew_talk_general/issue_cannot_wait") then
+		text_table = {hash("talk_issue_cannot_wait")}
+	elseif text == hash("talk/crew_talk_general/what_do_you_need_captain") then
+		text_table = {hash("talk_captain"), "?"}
+
+		
+
+	elseif text == hash("talk/crew_talk_general/yes_captain") then
+		text_table = {hash("talk_yes_captain")}
+	elseif text == hash("talk/crew_talk_general/issue_solving_not_implemented") then
+		text_table = hash("talk_not_implemented")
 	else
 		pprint(TALK.current[TALK.stage])
 		error("Unknown parametre in TALK.text: "..tostring(text))

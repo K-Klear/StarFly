@@ -4,6 +4,10 @@ function BRAIN.recruitment_admit_no_skill(crew)
 	if math.random() > 0.5 then return true end
 end
 
+function BRAIN.how_are_you(crew)
+	return hash("talk_im_fine")
+end
+
 local function get_skill_level(skill)
 	if skill < 0 then skill = 0 end
 	if skill < 0.1 then return 1
@@ -49,12 +53,24 @@ function BRAIN.get_wage(crew)
 	return math.floor(wage * 20 + 0.5) / 0.2, math.floor(wage * crew.desperation * 20 + 0.5) / 0.2
 end
 
+function BRAIN.get_issue_urgency(crew, issue)
+	local issue_base_urgency = {
+		[hash("low_wage")] = 0.7
+	}
+	if issue == hash("low_wage") then
+		local difference = (crew.wage_promised - crew.wage) / 100
+		return (crew.attributes.boldness + difference + 1) * issue_base_urgency[issue] 
+	else
+		error("Cannot get urgency of unknown issue: "..issue)
+	end
+end
+
 function BRAIN.talk_test(crew, test)
 	local result
 	if test == "issues_outstanding" then
-		if crew.issues.low_wage then result = 1	end
+		if #crew.issues > 0 then result = 1	end
 	elseif test == "issue_urgency" then
-		if math.random() > 0.2 then result = 1 end
+		if math.random() > 0.5 then result = 1 end
 	end
 	return result or 2
 end

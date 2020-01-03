@@ -168,6 +168,7 @@ function CREW.new()
 		charisma = normal_dist(2),
 		smarts = normal_dist(2),
 		duty = normal_dist(2),
+		boldness = normal_dist(2),
 	}
 
 	local knowledge = {
@@ -208,7 +209,7 @@ function CREW.new()
 	return {
 		gender = gender, name = name, skills = skills, stats = stats, attributes = attributes,
 		knowledge = knowledge, face = face, goal = goal, role = hash("role_none"), wage = 0, money = 0,
-		issues = {low_wage = false}
+		issues = {}
 	}
 end
 
@@ -267,22 +268,53 @@ function CREW.getRole(role)				-- WIP (possibly free to delete?)
 	return 0
 end
 
-function CREW.check_wages(crew)
+local function add_issue(issue, crew)
+	local urgency = BRAIN.get_issue_urgency(crew, issue)
+	local issue_exists = false
+	for key, val in ipairs(crew.issues) do
+		if val.type == issue then
+			urgency = BRAIN.get_issue_urgency(crew, issue)
+			val.urgency = math.max(val.urgency, BRAIN.get_issue_urgency(crew, issue))
+			issue_exists = true; urgency = val.urgency
+			break
+		end
+	end
+	if not issue_exists then
+		table.insert(crew.issues, {type = issue, urgency = urgency})
+	end
+	table.sort(crew.issues, function(a, b) return a.urgency > b.urgency end)
+	print(urgency, "There is an issue that once he wants to voice the issue the urgency sticks or something.")
+	if urgency > 1 then msg.post(crew.go, hash("issue_raised"), {issue = issue}) end
+end
+
+local function remove_issue(issue, crew)
+	for key, val in ipairs(crew.issues) do
+		if val.type == issue then
+			table.remove(crew.issues, key)
+			if not crew.issues[1] or crew.issues[1].urgency <= 1 then
+				msg.post(crew.go, hash("issue_solved"), {issue = issue})
+			end
+		end
+	end
+end
+
+function CREW.check_issue(issue, crew)
 	if not crew then
 		for key, val in ipairs(CREW.list) do
-			CREW.check_wages(val)
+			CREW.check_issue(issue, val)
 		end
+		return
 	else
-		if crew.wage < crew.wage_promised then
-			if not crew.issues.low_wage then
-				crew.issues.low_wage = true
-				msg.post(crew.go, hash("issue_raised"), {issue = hash("low_wage")})
-			end
+		local issue_present = false
+		if issue == hash("low_wage") then
+			if crew.wage < crew.wage_promised then issue_present = true	end
 		else
-			if crew.issues.low_wage then
-				crew.issues.low_wage = false
-				msg.post(crew.go, hash("issue_solved"), {issue = hash("low_wage")})
-			end
+			error("Unknown issue "..issue)
+		end
+		if issue_present then
+			add_issue(issue, crew)
+		else
+			remove_issue(issue, crew)
 		end
 	end
 end

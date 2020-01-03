@@ -168,7 +168,7 @@ function on_message(self, message_id, message, sender)
 		CREW.dismiss(message.id)
 		refresh_dialog(false)
 	elseif message_id == hash("crew_confirm") then
-		CREW.check_wages()
+		CREW.check_issue(hash("low_wage"))
 		refresh_dialog(true)
 	elseif message_id == hash("jobs_pressed") then
 		if #PLANET.current.jobs == 0 then

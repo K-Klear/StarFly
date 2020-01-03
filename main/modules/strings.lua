@@ -109,12 +109,18 @@ local STR = {
 			[hash("talk_I")] = "I",
 			[hash("talk_and")] = " and",
 
+			[hash("talk_yes")] = {"OK", "Yes", "Fine", "Acknowledged"},
+
 			[hash("talk_greeting")] = {"Hello!", "Greetings.", "Nice to meet you.", "Hello there!", "Good day, Captain."},
 			[hash("talk_my_name_is")] = {"I'm", "You can call me", "My name is", "They call me"},
 			[hash("talk_no_skill")] = {"I'm not really skilled in anything in particular, but I can learn! ", "I'm afraid I'm not very skilled in anything. "},
 			[hash("talk_captain")] = {"Captain", "Sir"},
 			[hash("talk_we_need_to_talk")] = {"can we speak for a minute?", "there's something on my mind.", "I need to speak with you.", "can I talk to you about something?"},
 			[hash("talk_we_can_talk")] = {"Do you need anything?", "What can I do for you?", "You wanted to talk?", "Something on your mind?"},
+			[hash("talk_im_fine")] = {"I'm fine."},
+			[hash("talk_yes_captain")] = {"Captain.", "See you.", "I'll get back to work, then."},
+			[hash("talk_issue_can_wait")] = {"We'll talk about it some other time.", "I'll bring it up later.", "It's not that pressing."},
+			[hash("talk_issue_cannot_wait")] = {"It's very important to me.", "No, we need to talk. Now.", "I want to clear it up now."},
 			
 			[hash("talk_goal_fun")] = {"This place is boring. I want to have some fun. ", "I'm looking for some excitement. You wouldn't believe how boring colony life can be. "},
 			[hash("talk_goal_travel")] = {"I want to see all the universe has to offer. ", "I just want to see the stars. "},
@@ -159,9 +165,13 @@ local STR = {
 			[hash("talk/crew_talk_general/link/what_is_it")] = "What's the problem?",
 			[hash("talk/crew_talk_general/link/can_it_wait")] = "Can it wait?",
 			[hash("talk/crew_talk_general/link/not_now")] = "Not right now.",
+			[hash("talk/crew_talk_general/link/let_us_talk")] = "There's something I wanted to ask.",
+			
 
 			[hash("talk_hired")] = {"Thank you, Captain!", "I'm looking forward to working with you.", "Great. Thanks for having me."},
 			[hash("talk_not_hired")] = {"I'll be here if you change your mind."},
+
+			[hash("talk_not_implemented")] = {"This part of the conversation tree is not yet implemented, captain."},
 			
 			-- events
 			[hash("distress_signal_true/signal_detected")] = "You have detected an emergency signal from a nearby vessel. Someone may be in trouble. Or they are setting an ambush...",

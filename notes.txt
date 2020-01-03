@@ -2,6 +2,12 @@ Bugs:
 - math.randomseed() called in crew.lua for now. Move it into bootstrapper when that's a thing that exists.
 - pathfinding for crew is a mess. It works, but oh god so ugly. I should go back to that at some point.
 
+Version 0.5
+- Reworked GUI system from scratch. Now it's all GO's with collision objects.
+- Conversation system in place. Very similar to the one used for events.
+	- A new "brain.lua" module takes care of decisions, counterpart of "dice.lua" for events
+- Crewmembers have a table that stores whatver issues they have, like not being paid or not liking another crewmember.
+
 Version 0.4:
 - New crew dialog added. Crewmembers can now be dismissed and their wages set.
 - Finishing a mission divides the spoils between according to the set wages and the rest goes to you.
@@ -10,10 +16,14 @@ Version 0.4:
 	- They will also ask for a certain share based on their personality.
 
 Z levels:
-
 -1....0: ship and space
 0.1...0.5: crew (if max_crew ever becomes higher than 9, this may need to be changed)
 0.8...1: dialogs
+
+Issue urgency levels (checked in the local crew.lua function "add_issue()":
+0 - 1: no action
+1 - 2: will bring it up in conversation
+2+   : might quit if not solved
 
 
 Characters traits currently in use:
@@ -22,6 +32,7 @@ confidence - affects skill self-assessment
 skillfulness - how confident they think they can get a job if they try
 dishonesty - how likely they are to lie
 greed - how big of a share they want
+boldness - how urgent their issues initially are
 
 
 EVENT JSON formatting:
