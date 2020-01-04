@@ -2,18 +2,14 @@ Bugs:
 - math.randomseed() called in crew.lua for now. Move it into bootstrapper when that's a thing that exists.
 - pathfinding for crew is a mess. It works, but oh god so ugly. I should go back to that at some point.
 
-Version 0.5
-- Reworked GUI system from scratch. Now it's all GO's with collision objects.
+Version 0.4:
+- Added a CREW dialog. Wages can be set, negotiated and crewmembers dismissed.
+- Reworked the whole GUI. Now it's all GO's with collision objects.
 - Conversation system in place. Very similar to the one used for events.
 	- A new "brain.lua" module takes care of decisions, counterpart of "dice.lua" for events
-- Crewmembers have a table that stores whatver issues they have, like not being paid or not liking another crewmember.
+- Crewmembers have a table that stores whatver issues they have, such as not being paid.
+	- Depending on various factory they may bring these issues up when talked to, refuse to work unless satisfied or threaten to leave.
 
-Version 0.4:
-- New crew dialog added. Crewmembers can now be dismissed and their wages set.
-- Finishing a mission divides the spoils between according to the set wages and the rest goes to you.
-- Reworked recruiting. You can either talk to potential crew or ask around for someone to fulfill a particular role.
-	- The recruits may lie about their abilities, depending on their honesty stat, motivation and level of desperation.
-	- They will also ask for a certain share based on their personality.
 
 Z levels:
 -1....0: ship and space
@@ -23,17 +19,16 @@ Z levels:
 Issue urgency levels (checked in the local crew.lua function "add_issue()":
 0 - 1: no action
 1 - 2: will bring it up in conversation
-2 - 3: will demand talking about it
+2 - 3: will demand you talk to them about it
 4 +  : will give ultimatum (quit, stop working etc)
 
 Characters traits currently in use:
-
 confidence - affects skill self-assessment
 skillfulness - how confident they think they can get a job if they try
 dishonesty - how likely they are to lie
 greed - how big of a share they want
-boldness - how urgent their issues initially are
-responsibility - how likely they complain they have no role
+boldness - affect issue urgency levels
+responsibility - how likely they complain they have no work
 
 EVENT JSON formatting:
 
@@ -52,7 +47,7 @@ dice
 		test:XXX sets what is being rolled (luck, flee, detect etc. - needs to be set up in dice.lua)
 	Success goes to the first branch, failure to the second one. To get more branches, make more consecutive dice rooms.
 
-tag effect:XXX (recruit_random for example) has an in game effect set up in event loop in interface script.
+tag effect:XXX (recruit_random for example) has an in game effect.
 
 DIALOGUE JSON formatting:
 
@@ -60,10 +55,10 @@ Room name is ignored (instead there's "XXX says" and a face icon)
 Text in the body consists of snips aimed at conversation.lua
 
 New tag:
-
 brain
-	Basically same as dice, but points to brain.lua. Used for decisions and circumstances concerning the speaker.
-	Doesn't use difficulty tag, so there's only brain:XXX.
+	Similar to dice, but points to brain.lua. Used for decisions and circumstances concerning the speaker.
+	Doesn't use the difficulty tag, so there's only brain:XXX.
+	Returns integer pointing to the chosen link. Defaults to 1: yes / 2: no.
 
 
 Credits:
