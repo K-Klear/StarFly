@@ -155,6 +155,7 @@ function on_message(self, message_id, message, sender)
 	elseif message_id == hash("crew_background") then
 		open_dialog(hash("crew_background"), nil, message.id)
 	elseif message_id == hash("crew_talk") then
+		CREW.check_issue(nil, CREW.list[message.id])
 		msg.post(stack[#stack].dialog, "disable_all")
 		TALK.start("crew_talk_general", CREW.list[message.id])
 
@@ -295,6 +296,9 @@ function on_message(self, message_id, message, sender)
 					table.remove(PLANET.current.recruits, key); break
 				end
 			end
+		elseif stage.effect == hash("pick_role") then
+			open_dialog(hash("crew_role"), hash("title_role_selection"), CREW.get_id(TALK.speaker), hash("crew_role"))
+			THIS DOESN''T WORK BECAUSE ANOTHER DIALOG GETS OPENED RIGHT AFTERWARDS. NEED TO RETHINK THIS.
 		elseif stage.effect then
 			error("Unknown conversation effect!")
 		end

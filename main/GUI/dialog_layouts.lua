@@ -883,7 +883,7 @@ local LAY = {
 	[hash("talk")] = {
 		background = true,
 		size_x = 6,
-		size_y = function() return #TALK.links + 8 end,
+		size_y = function() return #TALK.links + 5 end,
 		elements = {
 			{
 				type = hash("textbox"),
@@ -909,7 +909,7 @@ local LAY = {
 				repeating = function() return #TALK.links end,
 				type = hash("button_option"),
 				position_x = 0,
-				position_y = 9,
+				position_y = 6,
 				props = {
 					label = function(id) return TALK.links[id].text end,
 					callback = hash("talk_option"),
@@ -921,7 +921,7 @@ local LAY = {
 	[hash("talk_end")] = {
 		background = true,
 		size_x = 6,
-		size_y = 9,
+		size_y = 6,
 		elements = {
 			{
 				type = hash("textbox"),
@@ -945,7 +945,7 @@ local LAY = {
 			{
 				type = hash("button_main"),
 				position_x = 0,
-				position_y = 9,
+				position_y = 6,
 				props = {
 					label = hash("btn_event_done"),
 					callback = hash("talk_end"),

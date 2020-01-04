@@ -54,23 +54,43 @@ function BRAIN.get_wage(crew)
 end
 
 function BRAIN.get_issue_urgency(crew, issue)
-	local issue_base_urgency = {
-		[hash("low_wage")] = 0.7
+	local base_urgency = {
+		[hash("low_wage")] = 1.5, [hash("no_role")] = 0.7
 	}
 	if issue == hash("low_wage") then
-		local difference = (crew.wage_promised - crew.wage) / 100
-		return (crew.attributes.boldness + difference + 1) * issue_base_urgency[issue] 
+		local difference = (crew.wage_promised - crew.wage) / 50
+		return base_urgency[issue] + difference
+	elseif issue == hash("no_role") then
+		return base_urgency[issue] + crew.attributes.responsibility
 	else
 		error("Cannot get urgency of unknown issue: "..issue)
 	end
 end
 
+function BRAIN.get_urgency_level(crew, urgency)
+	if #crew.issues == 0 then return 0 end
+	urgency = urgency or crew.issues[1].urgency
+	return math.floor(urgency * (crew.attributes.boldness + 0.5))
+end
+
+function BRAIN.get_number_of_issues(crew)
+	local count = 0
+	for key, val in ipairs(crew.issues) do
+		if BRAIN.get_urgency_level(crew, val.urgency) > 0 then
+			count = count + 1
+		else
+			break
+		end
+	end
+	return count
+end
+
 function BRAIN.talk_test(crew, test)
 	local result
 	if test == "issues_outstanding" then
-		if #crew.issues > 0 then result = 1	end
+		if #crew.issues > 0 and BRAIN.get_urgency_level(crew) > 0 then result = 1 end
 	elseif test == "issue_urgency" then
-		if math.random() > 0.5 then result = 1 end
+		if BRAIN.get_urgency_level(crew) > 1 then result = 1 end
 	end
 	return result or 2
 end

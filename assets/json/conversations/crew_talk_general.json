@@ -231,7 +231,8 @@
         "y": "914"
       },
       "tags": [
-        "choice"
+        "choice",
+        "effect:pick_role"
       ]
     },
     {

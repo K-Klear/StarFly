@@ -109,13 +109,19 @@ local STR = {
 			[hash("talk_I")] = "I",
 			[hash("talk_and")] = " and",
 
-			[hash("talk_yes")] = {"OK", "Yes", "Fine", "Acknowledged"},
+			[hash("talk_yes")] = {"OK", "Yes", "Fine", "Acknowledged", "Very well"},
 
 			[hash("talk_greeting")] = {"Hello!", "Greetings.", "Nice to meet you.", "Hello there!", "Good day, Captain."},
 			[hash("talk_my_name_is")] = {"I'm", "You can call me", "My name is", "They call me"},
 			[hash("talk_no_skill")] = {"I'm not really skilled in anything in particular, but I can learn! ", "I'm afraid I'm not very skilled in anything. "},
 			[hash("talk_captain")] = {"Captain", "Sir"},
-			[hash("talk_we_need_to_talk")] = {"can we speak for a minute?", "there's something on my mind.", "I need to speak with you.", "can I talk to you about something?"},
+			[hash("talk_we_need_to_talk")] = {"can we speak for a minute?", "there's something on my mind.", "I need to speak with you.", "can I talk to you?"},
+			[hash("talk_its_about")] = {"It's about ", "I have a problem with ", "Something needs to be done about "},
+			[hash("talk_among_other_things")] = {", among other things.", ". There are other issues too.", ", for starters."},
+			
+			[hash("talk_issue_wages")] = {"my wages", "what you promised to pay me", "my payment", "my share"},
+			[hash("talk_issue_role")] = {"my role on the ship", "my function", "my assignment", "the work I do"},
+			
 			[hash("talk_we_can_talk")] = {"Do you need anything?", "What can I do for you?", "You wanted to talk?", "Something on your mind?"},
 			[hash("talk_im_fine")] = {"I'm fine."},
 			[hash("talk_yes_captain")] = {"Captain.", "See you.", "I'll get back to work, then."},

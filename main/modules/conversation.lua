@@ -14,6 +14,11 @@ local goal_strings = {
 	[hash("running")] = hash("talk_goal_running")
 }
 
+local issues = {
+	[hash("low_wage")] = hash("talk_issue_wages"),
+	[hash("no_role")] = hash("talk_issue_role")
+}
+
 local qualifier = {hash("talk_qualifier_none"), hash("talk_qualifier_terrible"), hash("talk_qualifier_poor"),
 hash("talk_qualifier_average"), hash("talk_qualifier_good"), hash("talk_qualifier_great"), hash("talk_qualifier_top")}
 
@@ -182,7 +187,13 @@ function TALK.text(text)
 		text_table = hash("talk_not_hired")
 		
 	elseif text == hash("talk/crew_talk_general/we_need_to_talk") then
-		text_table = {hash("talk_captain"), ", ", hash("talk_we_need_to_talk")}
+		text_table = {hash("talk_captain"), ", ", hash("talk_we_need_to_talk"), " ", hash("talk_its_about"), issues[TALK.speaker.issues[1].type]}
+		local issue_count = BRAIN.get_number_of_issues(TALK.speaker)
+		if issue_count == 1 then
+			table.insert(text_table, ".")
+		else
+			table.insert(text_table, hash("talk_among_other_things"))
+		end
 	elseif text == hash("talk/crew_talk_general/hello_captain") then
 		text_table = {hash("talk_captain"), ". ", hash("talk_we_can_talk")}
 	elseif text == hash("talk/crew_talk_general/about") then

@@ -23,8 +23,8 @@ Z levels:
 Issue urgency levels (checked in the local crew.lua function "add_issue()":
 0 - 1: no action
 1 - 2: will bring it up in conversation
-2+   : might quit if not solved
-
+2 - 3: will demand talking about it
+4 +  : will give ultimatum (quit, stop working etc)
 
 Characters traits currently in use:
 
@@ -33,7 +33,7 @@ skillfulness - how confident they think they can get a job if they try
 dishonesty - how likely they are to lie
 greed - how big of a share they want
 boldness - how urgent their issues initially are
-
+responsibility - how likely they complain they have no role
 
 EVENT JSON formatting:
 

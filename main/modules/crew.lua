@@ -89,6 +89,7 @@ function CREW.set_role(crewID, role, replace)
 		end
 	end
 	CREW.list[crewID].role = role
+	CREW.check_issue(hash("no_role"), CREW.list[crewID])
 	msg.post(CREW.list[crewID].go, hash("set_role"), {role = role})
 end
 
@@ -169,6 +170,7 @@ function CREW.new()
 		smarts = normal_dist(2),
 		duty = normal_dist(2),
 		boldness = normal_dist(2),
+		responsibility = normal_dist(2)
 	}
 
 	local knowledge = {
@@ -273,9 +275,7 @@ local function add_issue(issue, crew)
 	local issue_exists = false
 	for key, val in ipairs(crew.issues) do
 		if val.type == issue then
-			urgency = BRAIN.get_issue_urgency(crew, issue)
-			val.urgency = math.max(val.urgency, BRAIN.get_issue_urgency(crew, issue))
-			issue_exists = true; urgency = val.urgency
+			val.urgency = urgency; issue_exists = true
 			break
 		end
 	end
@@ -283,16 +283,19 @@ local function add_issue(issue, crew)
 		table.insert(crew.issues, {type = issue, urgency = urgency})
 	end
 	table.sort(crew.issues, function(a, b) return a.urgency > b.urgency end)
-	print(urgency, "There is an issue that once he wants to voice the issue the urgency sticks or something.")
-	if urgency > 1 then msg.post(crew.go, hash("issue_raised"), {issue = issue}) end
+	if BRAIN.get_urgency_level(crew) > 0 then
+		msg.post(crew.go, hash("issue_raised"))
+	else
+		msg.post(crew.go, hash("issue_solved"))
+	end
 end
 
 local function remove_issue(issue, crew)
 	for key, val in ipairs(crew.issues) do
 		if val.type == issue then
 			table.remove(crew.issues, key)
-			if not crew.issues[1] or crew.issues[1].urgency <= 1 then
-				msg.post(crew.go, hash("issue_solved"), {issue = issue})
+			if BRAIN.get_urgency_level(crew) == 0 then
+				msg.post(crew.go, hash("issue_solved"))
 			end
 		end
 	end
@@ -304,10 +307,19 @@ function CREW.check_issue(issue, crew)
 			CREW.check_issue(issue, val)
 		end
 		return
+	elseif not issue then
+		local issue_list = {hash("low_wage"), hash("no_role")}
+		for key, val in ipairs(issue_list) do
+			CREW.check_issue(val, crew)
+		end
 	else
 		local issue_present = false
 		if issue == hash("low_wage") then
 			if crew.wage < crew.wage_promised then issue_present = true	end
+		elseif issue == hash("no_role") then
+			if crew.role == hash("role_none") then
+				issue_present = true
+			end
 		else
 			error("Unknown issue "..issue)
 		end
