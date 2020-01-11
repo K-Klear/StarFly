@@ -112,6 +112,9 @@ images {
 images {
   image: "/assets/images/ui/buttons/button_crew_pressed.png"
 }
+images {
+  image: "/assets/images/ui/clock.png"
+}
 margin: 1
 extrude_borders: 1
 inner_padding: 1

@@ -1,6 +1,7 @@
 local STATS = require("main/modules/stats")
 local CREW = require("main/modules/crew")
 local PLANET = require("main/modules/planets")
+local TIME = require("main/modules/time")
 
 local function travel(target, job_id)
 	if target == hash("orbit") then
@@ -45,6 +46,7 @@ function spawn_crew(crewID, x, y, z)
 end
 
 function init(self)
+	TIME.start()
 	--[[
 	CREW.add(); CREW.add(); CREW.add()
 	CREW.list[1].role = hash("role_pilot")

@@ -7,6 +7,7 @@ local STR = require("main/modules/strings")
 local DICE = require("main/modules/dice")
 local BRAIN = require("main/modules/brain")
 local LAY = require("main/GUI/dialog_layouts")
+local TIME = require("main/modules/time")
 
 
 local centre = vmath.vector3(1280 / 2, 900 / 2, 0.8)
@@ -298,7 +299,7 @@ function on_message(self, message_id, message, sender)
 			end
 		elseif stage.effect == hash("pick_role") then
 			open_dialog(hash("crew_role"), hash("title_role_selection"), CREW.get_id(TALK.speaker), hash("crew_role"))
-			THIS DOESN''T WORK BECAUSE ANOTHER DIALOG GETS OPENED RIGHT AFTERWARDS. NEED TO RETHINK THIS.
+			error("I need to fix this")
 		elseif stage.effect then
 			error("Unknown conversation effect!")
 		end
@@ -329,5 +330,13 @@ function on_message(self, message_id, message, sender)
 		infobox = factory.create("#dialog", vmath.vector3(1110, 780, centre.z), nil, props)
 	elseif message_id == hash("close") then
 		refresh_dialog(true)
+	elseif message_id == hash("clock_scale_1") then
+		TIME.set_scale(1)
+	elseif message_id == hash("clock_scale_10") then
+		TIME.set_scale(10)
+	elseif message_id == hash("clock_scale_100") then
+		TIME.set_scale(100)
+	elseif message_id == hash("clock_scale_1000") then
+		TIME.set_scale(5000)
 	end
 end

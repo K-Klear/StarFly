@@ -62,6 +62,11 @@ local STR = {
 			[hash("btn_error_ok")] = "OK",
 			[hash("btn_event_done")] = "DONE",
 
+			[hash("btn_clock_1")] = "1x",
+			[hash("btn_clock_10")] = "10x",
+			[hash("btn_clock_100")] = "100x",
+			[hash("btn_clock_1000")] = "5000x",
+
 			-- dialog titles
 			[hash("title_buy")] = "BUY",
 			[hash("title_repair")] = "REPAIR",

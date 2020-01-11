@@ -66,8 +66,8 @@ embedded_components {
   "pivot: PIVOT_CENTER\n"
   "blend_mode: BLEND_MODE_ALPHA\n"
   "line_break: false\n"
-  "text: \"X\"\n"
-  "font: \"/assets/fonts/main.font\"\n"
+  "text: \"100x\"\n"
+  "font: \"/assets/fonts/crew_button.font\"\n"
   "material: \"/builtins/fonts/label.material\"\n"
   ""
   position {

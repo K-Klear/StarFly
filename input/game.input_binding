@@ -2,6 +2,18 @@ key_trigger {
   input: KEY_SPACE
   action: "enter"
 }
+key_trigger {
+  input: KEY_F1
+  action: "debug1"
+}
+key_trigger {
+  input: KEY_F2
+  action: "debug2"
+}
+key_trigger {
+  input: KEY_F3
+  action: "debug3"
+}
 mouse_trigger {
   input: MOUSE_BUTTON_LEFT
   action: "click"
