@@ -1,9 +1,15 @@
 local TIME = require("main/modules/time")
+local DEBUG = require("main/modules/debug")
 
 function init(self)
 	msg.post(".", "acquire_input_focus")
+	TIME.add_alarm(100000, hash("first"), false)
+	TIME.add_alarm(101500, hash("second"), true)
+	TIME.add_alarm(101500, hash("third"), false)
+	TIME.add_alarm(109000, hash("fourth"), true)
+	TIME.add_alarm(109000, hash("fifth"), true)
+	TIME.add_alarm(109100, hash("sixth"), true)
 end
-
 
 function update(self, dt)
 	
@@ -15,7 +21,7 @@ end
 
 function on_input(self, action_id, action)
 	if action.pressed and action_id == hash("debug1") then
-		TIME.stop()
+		DEBUG.show_controller_messages = not DEBUG.show_controller_messages
 	elseif action.pressed and action_id == hash("debug2") then
 		TIME.start()
 	elseif action.pressed and action_id == hash("debug3") then

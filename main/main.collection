@@ -40,7 +40,7 @@ instances {
   }
 }
 instances {
-  id: "button_scale_10"
+  id: "button_scale_fast"
   prototype: "/main/GUI/button_tiny.go"
   position {
     x: -16.5
@@ -57,12 +57,12 @@ instances {
     id: "button"
     properties {
       id: "label"
-      value: "btn_clock_10"
+      value: "btn_clock_fast"
       type: PROPERTY_TYPE_HASH
     }
     properties {
       id: "callback"
-      value: "clock_scale_10"
+      value: "clock_scale_fast"
       type: PROPERTY_TYPE_HASH
     }
     properties {
@@ -78,7 +78,7 @@ instances {
   }
 }
 instances {
-  id: "button_scale_1"
+  id: "button_scale_normal"
   prototype: "/main/GUI/button_tiny.go"
   position {
     x: -50.0
@@ -95,12 +95,12 @@ instances {
     id: "button"
     properties {
       id: "label"
-      value: "btn_clock_1"
+      value: "btn_clock_normal"
       type: PROPERTY_TYPE_HASH
     }
     properties {
       id: "callback"
-      value: "clock_scale_1"
+      value: "clock_scale_normal"
       type: PROPERTY_TYPE_HASH
     }
     properties {
@@ -116,7 +116,7 @@ instances {
   }
 }
 instances {
-  id: "button_scale_1000"
+  id: "button_scale_fastest"
   prototype: "/main/GUI/button_tiny.go"
   position {
     x: 50.0
@@ -133,12 +133,12 @@ instances {
     id: "button"
     properties {
       id: "label"
-      value: "btn_clock_1000"
+      value: "btn_clock_fastest"
       type: PROPERTY_TYPE_HASH
     }
     properties {
       id: "callback"
-      value: "clock_scale_1000"
+      value: "clock_scale_fastest"
       type: PROPERTY_TYPE_HASH
     }
     properties {
@@ -154,7 +154,7 @@ instances {
   }
 }
 instances {
-  id: "button_scale_100"
+  id: "button_scale_faster"
   prototype: "/main/GUI/button_tiny.go"
   position {
     x: 16.5
@@ -171,12 +171,12 @@ instances {
     id: "button"
     properties {
       id: "label"
-      value: "btn_clock_100"
+      value: "btn_clock_faster"
       type: PROPERTY_TYPE_HASH
     }
     properties {
       id: "callback"
-      value: "clock_scale_100"
+      value: "clock_scale_faster"
       type: PROPERTY_TYPE_HASH
     }
     properties {
@@ -561,10 +561,10 @@ embedded_instances {
 }
 embedded_instances {
   id: "clock"
-  children: "button_scale_1"
-  children: "button_scale_10"
-  children: "button_scale_100"
-  children: "button_scale_1000"
+  children: "button_scale_fast"
+  children: "button_scale_faster"
+  children: "button_scale_fastest"
+  children: "button_scale_normal"
   data: "embedded_components {\n"
   "  id: \"label\"\n"
   "  type: \"label\"\n"

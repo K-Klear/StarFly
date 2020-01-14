@@ -8,6 +8,7 @@ local DICE = require("main/modules/dice")
 local BRAIN = require("main/modules/brain")
 local LAY = require("main/GUI/dialog_layouts")
 local TIME = require("main/modules/time")
+local DEBUG = require("main/modules/debug")
 
 
 local centre = vmath.vector3(1280 / 2, 900 / 2, 0.8)
@@ -79,6 +80,7 @@ local function refresh_dialog(close_first)
 end
 
 function on_message(self, message_id, message, sender)
+	if DEBUG.show_controller_messages then print(message_id.." id: "..(message.id or "none")) end
 	if message_id == hash("buy_pressed") then
 
 	elseif message_id == hash("buy_pressed") then
@@ -330,13 +332,13 @@ function on_message(self, message_id, message, sender)
 		infobox = factory.create("#dialog", vmath.vector3(1110, 780, centre.z), nil, props)
 	elseif message_id == hash("close") then
 		refresh_dialog(true)
-	elseif message_id == hash("clock_scale_1") then
-		TIME.set_scale(1)
-	elseif message_id == hash("clock_scale_10") then
-		TIME.set_scale(10)
-	elseif message_id == hash("clock_scale_100") then
-		TIME.set_scale(100)
-	elseif message_id == hash("clock_scale_1000") then
-		TIME.set_scale(5000)
+	elseif message_id == hash("clock_scale_normal") then
+		TIME.set_scale({freq = 0.864, jump = 1})
+	elseif message_id == hash("clock_scale_fast") then
+		TIME.set_scale({freq = 0.864, jump = 100})
+	elseif message_id == hash("clock_scale_faster") then
+		TIME.set_scale({freq = 0.0864, jump = 100})
+	elseif message_id == hash("clock_scale_fastest") then
+		TIME.set_scale({freq = 0.0864, jump = 1000})
 	end
 end
