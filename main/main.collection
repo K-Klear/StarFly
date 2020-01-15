@@ -191,6 +191,206 @@ instances {
     z: 1.0
   }
 }
+collection_instances {
+  id: "time_choice"
+  collection: "/main/GUI/time_choice.collection"
+  position {
+    x: 94.0
+    y: 756.0
+    z: 0.0
+  }
+  rotation {
+    x: 0.0
+    y: 0.0
+    z: 0.0
+    w: 1.0
+  }
+  scale3 {
+    x: 1.0
+    y: 1.0
+    z: 1.0
+  }
+}
+collection_instances {
+  id: "time_choice1"
+  collection: "/main/GUI/time_choice.collection"
+  position {
+    x: 194.0
+    y: 756.0
+    z: 0.0
+  }
+  rotation {
+    x: 0.0
+    y: 0.0
+    z: 0.0
+    w: 1.0
+  }
+  scale3 {
+    x: 1.0
+    y: 1.0
+    z: 1.0
+  }
+}
+collection_instances {
+  id: "time_choice2"
+  collection: "/main/GUI/time_choice.collection"
+  position {
+    x: 294.0
+    y: 756.0
+    z: 0.0
+  }
+  rotation {
+    x: 0.0
+    y: 0.0
+    z: 0.0
+    w: 1.0
+  }
+  scale3 {
+    x: 1.0
+    y: 1.0
+    z: 1.0
+  }
+}
+collection_instances {
+  id: "time_choice3"
+  collection: "/main/GUI/time_choice.collection"
+  position {
+    x: 394.0
+    y: 756.0
+    z: 0.0
+  }
+  rotation {
+    x: 0.0
+    y: 0.0
+    z: 0.0
+    w: 1.0
+  }
+  scale3 {
+    x: 1.0
+    y: 1.0
+    z: 1.0
+  }
+}
+collection_instances {
+  id: "time_choice4"
+  collection: "/main/GUI/time_choice.collection"
+  position {
+    x: 494.0
+    y: 756.0
+    z: 0.0
+  }
+  rotation {
+    x: 0.0
+    y: 0.0
+    z: 0.0
+    w: 1.0
+  }
+  scale3 {
+    x: 1.0
+    y: 1.0
+    z: 1.0
+  }
+}
+collection_instances {
+  id: "time_choice5"
+  collection: "/main/GUI/time_choice.collection"
+  position {
+    x: 594.0
+    y: 756.0
+    z: 0.0
+  }
+  rotation {
+    x: 0.0
+    y: 0.0
+    z: 0.0
+    w: 1.0
+  }
+  scale3 {
+    x: 1.0
+    y: 1.0
+    z: 1.0
+  }
+}
+collection_instances {
+  id: "time_choice6"
+  collection: "/main/GUI/time_choice.collection"
+  position {
+    x: 694.0
+    y: 756.0
+    z: 0.0
+  }
+  rotation {
+    x: 0.0
+    y: 0.0
+    z: 0.0
+    w: 1.0
+  }
+  scale3 {
+    x: 1.0
+    y: 1.0
+    z: 1.0
+  }
+}
+collection_instances {
+  id: "time_choice7"
+  collection: "/main/GUI/time_choice.collection"
+  position {
+    x: 794.0
+    y: 756.0
+    z: 0.0
+  }
+  rotation {
+    x: 0.0
+    y: 0.0
+    z: 0.0
+    w: 1.0
+  }
+  scale3 {
+    x: 1.0
+    y: 1.0
+    z: 1.0
+  }
+}
+collection_instances {
+  id: "time_choice8"
+  collection: "/main/GUI/time_choice.collection"
+  position {
+    x: 894.0
+    y: 756.0
+    z: 0.0
+  }
+  rotation {
+    x: 0.0
+    y: 0.0
+    z: 0.0
+    w: 1.0
+  }
+  scale3 {
+    x: 1.0
+    y: 1.0
+    z: 1.0
+  }
+}
+collection_instances {
+  id: "time_choice9"
+  collection: "/main/GUI/time_choice.collection"
+  position {
+    x: 994.0
+    y: 756.0
+    z: 0.0
+  }
+  rotation {
+    x: 0.0
+    y: 0.0
+    z: 0.0
+    w: 1.0
+  }
+  scale3 {
+    x: 1.0
+    y: 1.0
+    z: 1.0
+  }
+}
 scale_along_z: 0
 embedded_instances {
   id: "main"

@@ -337,8 +337,8 @@ function on_message(self, message_id, message, sender)
 	elseif message_id == hash("clock_scale_fast") then
 		TIME.set_scale({freq = 0.864, jump = 100})
 	elseif message_id == hash("clock_scale_faster") then
-		TIME.set_scale({freq = 0.0864, jump = 100})
+		TIME.set_scale({freq = 0.864 / 10, jump = 100})
 	elseif message_id == hash("clock_scale_fastest") then
-		TIME.set_scale({freq = 0.0864, jump = 1000})
+		TIME.set_scale({freq = 0.864 / 10, jump = 1000})
 	end
 end

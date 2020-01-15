@@ -3,12 +3,9 @@ local DEBUG = require("main/modules/debug")
 
 function init(self)
 	msg.post(".", "acquire_input_focus")
-	TIME.add_alarm(100000, hash("first"), false)
-	TIME.add_alarm(101500, hash("second"), true)
-	TIME.add_alarm(101500, hash("third"), false)
-	TIME.add_alarm(109000, hash("fourth"), true)
-	TIME.add_alarm(109000, hash("fifth"), true)
-	TIME.add_alarm(109100, hash("sixth"), true)
+	-- dimensions of time choice dialog: 8 x 4
+	TIME.add_alarm(108100, hash("hello there!"), true)
+	TIME.add_alarm(104100, hash("hello there!"), true)
 end
 
 function update(self, dt)

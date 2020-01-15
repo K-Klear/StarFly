@@ -115,6 +115,15 @@ images {
 images {
   image: "/assets/images/ui/clock.png"
 }
+images {
+  image: "/assets/images/ui/timeline/timeline.png"
+}
+images {
+  image: "/assets/images/ui/timeline/timeline_marker_big.png"
+}
+images {
+  image: "/assets/images/ui/timeline/timeline_marker_small.png"
+}
 margin: 1
 extrude_borders: 1
 inner_padding: 1

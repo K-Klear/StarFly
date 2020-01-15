@@ -4,7 +4,7 @@ local TIME = {
 	scale = {freq = 0.864, jump = 1},
 	alarm = {}
 }
-local ticker
+local ticker, ticker_once
 
 local function get_time_parts(time)
 	if num then
@@ -14,27 +14,29 @@ local function get_time_parts(time)
 	end
 end
 
+local function round_time(time)
+	return math.ceil(time / 100) * 100
+end
+
 local update_clock
 local function check_alarms()
 	local time_skippable = true
-	for time = TIME.time, TIME.time + TIME.scale.jump - 1 do
+	local rounded_time = math.ceil(TIME.time / 100) * 100
+	for time = rounded_time, rounded_time + math.ceil(TIME.scale.jump / 100) * 100 - 1, 100 do
 		for key, val in ipairs(TIME.alarm[time] or {}) do
 			local time_left = time - TIME.time
 			if val.stop then
-				TIME.stop()
 				if time_left > 0 then
 					if time_skippable then
 						time_skippable = false
-						TIME.running = true
-						timer.delay(0.01, false, function() ticker = timer.delay(TIME.scale.freq, false, function() update_clock(time_left) end) end)
+						timer.cancel(ticker)
+						ticker_once = timer.delay(TIME.scale.freq, false, function() update_clock(time_left) end)
 					end
 				else
+					time_skippable = false
 					print("ALARM!", val.type)
 					val.stop = false
-					--print("Time: "..TIME.time)
-					--print("Alarm time: "..time)
-					--print("Scale jump: "..TIME.scale.jump)
-					time_skippable = false
+					TIME.set_scale({freq = 0.864, jump = 1})
 				end
 			end
 		end
@@ -45,8 +47,7 @@ function update_clock(jump)
 	TIME.time = TIME.time + (jump or TIME.scale.jump)
 	check_alarms()
 	local day, hour, min, sec = get_time_parts(TIME.time)
-	label.set_text("/clock#label", "Day "..day.." "..hour..":"..min..":"..sec.."\nShipboard time")
-	--label.set_text("/clock#label", "Day "..day.." "..hour..":"..min.."\nShipboard time")
+	label.set_text("/clock#label", "Stardate\n"..day.."."..hour.."."..min.."."..sec)
 end
 
 function TIME.start(reset)
@@ -57,17 +58,11 @@ function TIME.start(reset)
 	end
 end
 
-function TIME.stop()
-	timer.cancel(ticker)
-	TIME.running = false
-end
-
 function TIME.set_scale(scale)
 	TIME.scale = scale
 	if TIME.running then
 		timer.cancel(ticker)
 		TIME.start(true)
-		check_alarms()
 	end
 end
 
