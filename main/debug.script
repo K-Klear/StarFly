@@ -3,7 +3,6 @@ local DEBUG = require("main/modules/debug")
 
 function init(self)
 	msg.post(".", "acquire_input_focus")
-	-- dimensions of time choice dialog: 8 x 4
 	TIME.add_alarm(108100, hash("hello there!"), true)
 	TIME.add_alarm(104100, hash("hello there!"), true)
 end
@@ -19,9 +18,10 @@ end
 function on_input(self, action_id, action)
 	if action.pressed and action_id == hash("debug1") then
 		DEBUG.show_controller_messages = not DEBUG.show_controller_messages
+		print("Displaying messages to #controller: "..tostring(DEBUG.show_controller_messages))
 	elseif action.pressed and action_id == hash("debug2") then
 		TIME.start()
 	elseif action.pressed and action_id == hash("debug3") then
-		
+		msg.post("#controller", hash("time_choice"))
 	end
 end

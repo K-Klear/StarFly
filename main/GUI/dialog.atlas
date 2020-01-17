@@ -124,6 +124,9 @@ images {
 images {
   image: "/assets/images/ui/timeline/timeline_marker_small.png"
 }
+images {
+  image: "/assets/images/ui/timeline/timeline_selector.png"
+}
 margin: 1
 extrude_borders: 1
 inner_padding: 1

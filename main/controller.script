@@ -83,6 +83,13 @@ function on_message(self, message_id, message, sender)
 	if DEBUG.show_controller_messages then print(message_id.." id: "..(message.id or "none")) end
 	if message_id == hash("buy_pressed") then
 
+
+	elseif message_id == hash("time_choice") then
+		open_dialog(hash("time_choice"), hash("title_error_no_recruits"))
+
+
+		
+
 	elseif message_id == hash("buy_pressed") then
 
 	elseif message_id == hash("recruit_pressed") then

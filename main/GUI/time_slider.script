@@ -1,0 +1,22 @@
+local STR = require("main/modules/strings")
+
+local default_colour = vmath.vector4(1, 1, 1, 1)
+local pressed_colour = vmath.vector4(1, 1, 1, 1)
+local disabled_colour = vmath.vector4(0.5, 0.5, 0.5, 1)
+
+
+function init(self)
+	self.collection = collectionfactory.create("#collectionfactory")
+	for key, val in pairs(self.collection) do
+		msg.post(val, "set_parent", {parent_id = go.get_id()})
+		--msg.post(val, "ullo")
+	end
+end
+
+function on_message(self, message_id, message, sender)
+
+end
+
+function final(self)
+	--msg.post("/cursor", hash("deleted"), {id = go.get_id()})
+end

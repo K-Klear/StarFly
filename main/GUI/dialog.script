@@ -62,6 +62,7 @@ function init(self)
 			[hash("button_tiny")] = "#button_tiny",
 			[hash("button_option")] = "#button_option",
 			[hash("textbox")] = "#textbox",
+			[hash("time_slider")] = "#time_slider",
 		}
 		for key, val in ipairs(LAY[self.layout].elements) do
 			local repeat_count = 1

@@ -971,7 +971,30 @@ local LAY = {
 				},
 			},
 		}
-	}
+	},
+	[hash("time_choice")] = {
+		close_button = true,
+		background = true,
+		size_x = 9,
+		size_y = 5,
+		elements = {
+			{
+				type = hash("time_slider"),
+				position_x = 0,
+				position_y = 3
+			},
+			{
+				type = hash("button_main"),
+				position_x = 0,
+				position_y = 4.5,
+				props = {
+					label = hash("btn_error_ok"),
+					callback = hash("close"),
+					enabled = true
+				},
+			},
+		}
+	},
 }
 
 return LAY
