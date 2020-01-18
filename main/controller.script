@@ -87,7 +87,7 @@ function on_message(self, message_id, message, sender)
 
 
 	elseif message_id == hash("time_choice") then
-		open_dialog(hash("time_choice"), hash("choose_time"))
+		open_dialog(hash("travel_confirm"), hash("choose_time"))
 
 
 		

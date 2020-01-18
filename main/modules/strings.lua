@@ -71,6 +71,7 @@ local STR = {
 
 			[hash("btn_travel_explore")] = "EXPLORE",
 			[hash("btn_travel_mission")] = "MISSION",
+			[hash("btn_travel_set_time")] = "Change time",
 
 			[hash("btn_error_ok")] = "OK",
 			[hash("btn_event_done")] = "DONE",
@@ -122,6 +123,8 @@ local STR = {
 			[hash("lbl_travel_core")] = "CORE WORLDS",
 			[hash("lbl_travel_frontier")] = "FRONTIER",
 			[hash("lbl_travel_rim")] = "OUTER RIM",
+
+			[hash("lbl_travel_destiantion")] = "Destination: ",
 
 			-- conversation
 			[hash("talk_says")] = " says:",
@@ -421,24 +424,27 @@ local STR = {
 }
 
 function STR.STRING(input)
-	if type(input) ~= "table" then input = {input} end
 	local str = ""
-	for k, v in ipairs(input) do
-		if type(v) == "number" or type(v) == "string" then
-			str = str..v
-		else
-			local val = STR.en.ui[v] or STR.en.planets[v]
-			if type(val) == "string" then
-				str = str..val
-			elseif type(val) == "table" then
-				str = str..val[math.random(1, #val)]
-			else
-				error("Unexpected type in the lookup table! "..type(val))
-			end
+	if type(input) == "table" then
+		for key, val in ipairs(input) do
+			str = str..STR.STRING(val)
+		end
+	elseif type(input) == "function" then
+		str = str..STR.STRING({input()})
+	elseif type(input) == "number" or type(input) == "string" then
+		str = str..input
+	else
+		local val = STR.en.ui[input] or STR.en.planets[input]
+		if type(val) == "string" or type(val) == "number" then
+			str = str..val
+		elseif type(val) == "table" then
+			str = str..val[math.random(1, #val)]
+		elseif input then
+			pprint(input)
+			error("Unexpected type in the lookup table! "..type(val))
 		end
 	end
 	return str
 end
-
 
 return STR

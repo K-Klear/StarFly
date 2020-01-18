@@ -664,8 +664,24 @@ local LAY = {
 		size_x = 3,
 		size_y = 3,
 		elements = {
-			
-		
+			{
+				type = hash("label"),
+				position_x = 0,
+				position_y = 1,
+				text = {hash("lbl_travel_destiantion"), function() return STATS.destination.type, " ", STATS.destination.target end}
+			},
+			{
+				type = hash("button_main"),
+				position_x = 0,
+				position_y = 2,
+				props = {
+					label = hash("btn_travel_set_time"),
+					callback = hash("travel_set_time"),
+					enabled = false
+				},
+			},
+		}
+	},
 	[hash("job_selection_core")] = {
 		background = true,
 		close_button = true,
