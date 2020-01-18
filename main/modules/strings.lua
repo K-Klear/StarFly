@@ -29,6 +29,19 @@ local STR = {
 			[hash("passage")] = "Passage",
 			[hash("assasination")] = "Assasination",
 			[hash("espionage")] = "Espionage",
+
+			[hash("and")] = "and",
+
+			-- time
+
+			[hash("choose_time")] = "Choose a time",
+			[hash("stardate")] = "Stardate",
+			[hash("hour")] = "hour",
+			[hash("hours")] = "hours",
+			[hash("minute")] = "minute",
+			[hash("minutes")] = "minutes",
+			[hash("immediately")] = "Immediately",
+
 			
 			-- buttons
 			[hash("btn_buy")] = "BUY",
@@ -61,6 +74,7 @@ local STR = {
 
 			[hash("btn_error_ok")] = "OK",
 			[hash("btn_event_done")] = "DONE",
+			[hash("btn_accept")] = "ACCEPT",
 
 			[hash("btn_clock_normal")] = "1x",
 			[hash("btn_clock_fast")] = "10x",

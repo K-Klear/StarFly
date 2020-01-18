@@ -1,3 +1,5 @@
+local STR = require("main/modules/strings")
+
 local TIME = {
 	time = 100000,
 	runnning = false,
@@ -6,7 +8,7 @@ local TIME = {
 }
 local ticker, ticker_once
 
-local function get_time_parts(time)
+function TIME.get_time_parts(time)
 	if num then
 		return tonumber(string.sub(time, 1, -6)), tonumber(string.sub(time, -5, -5)), tonumber(string.sub(time, -4, -3)), tonumber(string.sub(time, -2, -1))
 	else
@@ -46,8 +48,8 @@ end
 function update_clock(jump)
 	TIME.time = TIME.time + (jump or TIME.scale.jump)
 	check_alarms()
-	local day, hour, min, sec = get_time_parts(TIME.time)
-	label.set_text("/clock#label", "Stardate\n"..day.."."..hour.."."..min.."."..sec)
+	local day, hour, min, sec = TIME.get_time_parts(TIME.time)
+	label.set_text("/clock#label", STR.en.ui[hash("stardate")].."\n"..day.."."..hour.."."..min)
 end
 
 function TIME.start(reset)
@@ -56,6 +58,11 @@ function TIME.start(reset)
 		ticker = timer.delay(TIME.scale.freq, true, function() update_clock() end)
 		update_clock(0)
 	end
+end
+
+function TIME.stop()
+	timer.cancel(ticker)
+	TIME.running = false
 end
 
 function TIME.set_scale(scale)

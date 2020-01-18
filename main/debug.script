@@ -3,8 +3,6 @@ local DEBUG = require("main/modules/debug")
 
 function init(self)
 	msg.post(".", "acquire_input_focus")
-	TIME.add_alarm(108100, hash("hello there!"), true)
-	TIME.add_alarm(104100, hash("hello there!"), true)
 end
 
 function update(self, dt)

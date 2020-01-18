@@ -61,6 +61,7 @@ local function open_dialog(layout, title, id, refresh_message)
 		msg.post(stack[#stack - 1].dialog, "disable_all")
 	end
 	msg.post("/cursor", hash("crew_selection"), {enabled = false})
+	TIME.stop()
 end
 
 local function refresh_dialog(close_first)
@@ -74,6 +75,7 @@ local function refresh_dialog(close_first)
 	else
 		msg.post(stack[#stack].dialog, "enable_all")
 		if #stack == 1 then
+			TIME.start()
 			msg.post("/cursor", hash("crew_selection"), {enabled = true})
 		end
 	end
@@ -85,7 +87,7 @@ function on_message(self, message_id, message, sender)
 
 
 	elseif message_id == hash("time_choice") then
-		open_dialog(hash("time_choice"), hash("title_error_no_recruits"))
+		open_dialog(hash("time_choice"), hash("choose_time"))
 
 
 		

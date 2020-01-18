@@ -658,6 +658,14 @@ local LAY = {
 			},
 		}
 	},
+	[hash("travel_confirm")] = {
+		background = true,
+		close_button = true,
+		size_x = 3,
+		size_y = 3,
+		elements = {
+			
+		
 	[hash("job_selection_core")] = {
 		background = true,
 		close_button = true,
@@ -976,19 +984,19 @@ local LAY = {
 		close_button = true,
 		background = true,
 		size_x = 9,
-		size_y = 5,
+		size_y = 3,
 		elements = {
 			{
 				type = hash("time_slider"),
 				position_x = 0,
-				position_y = 3
+				position_y = 2
 			},
 			{
 				type = hash("button_main"),
 				position_x = 0,
-				position_y = 4.5,
+				position_y = 3,
 				props = {
-					label = hash("btn_error_ok"),
+					label = hash("btn_accept"),
 					callback = hash("close"),
 					enabled = true
 				},
