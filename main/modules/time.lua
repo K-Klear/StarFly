@@ -8,11 +8,49 @@ local TIME = {
 }
 local ticker, ticker_once
 
-function TIME.get_time_parts(time)
-	if num then
-		return tonumber(string.sub(time, 1, -6)), tonumber(string.sub(time, -5, -5)), tonumber(string.sub(time, -4, -3)), tonumber(string.sub(time, -2, -1))
+
+function TIME.get_time_string(time, absolute)
+	local day, hour, min, str = tonumber(string.sub(time, 1, -6)), tonumber(string.sub(time, -5, -5)), tonumber(string.sub(time, -4, -3)), ""
+	day = day or 0; hour = hour or 0; min = min or 0
+	if absolute then
+		return day.."."..hour.."."..min
 	else
-		return string.sub(time, 1, -6), string.sub(time, -5, -5), string.sub(time, -4, -3), string.sub(time, -2, -1)
+		if day > 0 then
+			if day > 1 then
+				str = day.." "..STR.en.ui[hash("days")]
+			else
+				str = day.." "..STR.en.ui[hash("day")]
+			end
+			if hour > 0 and min > 0 then
+				str = str..", "
+			elseif hour > 0 or min > 0 then
+				str = str.." "..STR.en.ui[hash("and")].." "
+			else
+				return str
+			end
+		end
+
+		if hour > 0 then
+			if hour > 1 then
+				str = str..hour.." "..STR.en.ui[hash("hours")]
+			else
+				str = str..hour.." "..STR.en.ui[hash("hour")]
+			end
+			if min > 0 then
+				str = str.." "..STR.en.ui[hash("and")].." "
+			else
+				return str
+			end
+		end
+
+		if min > 1 then
+			str = str..min.." "..STR.en.ui[hash("minutes")]
+		elseif min > 0 then
+			str = str..min.." "..STR.en.ui[hash("minute")]
+		else
+			return STR.en.ui[hash("immediately")]
+		end
+		return str
 	end
 end
 
@@ -48,8 +86,7 @@ end
 function update_clock(jump)
 	TIME.time = TIME.time + (jump or TIME.scale.jump)
 	check_alarms()
-	local day, hour, min, sec = TIME.get_time_parts(TIME.time)
-	label.set_text("/clock#label", STR.en.ui[hash("stardate")].."\n"..day.."."..hour.."."..min)
+	label.set_text("/clock#label", STR.en.ui[hash("stardate")].."\n"..TIME.get_time_string(TIME.time, true))
 end
 
 function TIME.start(reset)

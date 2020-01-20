@@ -7,7 +7,7 @@ local STATS = {
 	max_fuel = 5,
 	jobs = {[hash("core")] = {}, [hash("frontier")] = {}, [hash("rim")] = {}},
 	wage = 100,
-	destination = {type = hash("core"), target = hash("rim"), time = 150}
+	destination = {}
 }
 
 return STATS

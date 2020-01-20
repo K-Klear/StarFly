@@ -4,6 +4,7 @@ local STATS = require("main/modules/stats")
 local STR = require("main/modules/strings")
 local CREW = require("main/modules/crew")
 local TALK = require("main/modules/conversation")
+local TIME = require("main/modules/time")
 
 local LAY = {
 	[hash("infobox")] = {
@@ -579,8 +580,9 @@ local LAY = {
 				position_y = 1,
 				props = {
 					label = hash("btn_travel_explore"),
-					callback = hash("travel_explore_core"),
-					enabled = true
+					callback = hash("travel_explore"),
+					enabled = true,
+					id = 1
 				},
 			},
 			{
@@ -590,8 +592,9 @@ local LAY = {
 				position_y = 2,
 				props = {
 					label = hash("btn_travel_explore"),
-					callback = hash("travel_explore_frontier"),
-					enabled = true
+					callback = hash("travel_explore"),
+					enabled = true,
+					id = 2
 				},
 			},
 			{
@@ -601,8 +604,9 @@ local LAY = {
 				position_y = 3,
 				props = {
 					label = hash("btn_travel_explore"),
-					callback = hash("travel_explore_rim"),
-					enabled = true
+					callback = hash("travel_explore"),
+					enabled = true,
+					id = 3
 				},
 			},
 			{
@@ -612,8 +616,9 @@ local LAY = {
 				position_y = 1,
 				props = {
 					label = hash("btn_travel_mission"),
-					callback = hash("travel_mission_core"),
-					enabled = false
+					callback = hash("travel_mission"),
+					enabled = false,
+					id = 1
 				},
 			},
 			{
@@ -623,8 +628,9 @@ local LAY = {
 				position_y = 2,
 				props = {
 					label = hash("btn_travel_mission"),
-					callback = hash("travel_mission_frontier"),
-					enabled = false
+					callback = hash("travel_mission"),
+					enabled = false,
+					id = 2
 				},
 			},
 			{
@@ -634,8 +640,9 @@ local LAY = {
 				position_y = 3,
 				props = {
 					label = hash("btn_travel_mission"),
-					callback = hash("travel_mission_rim"),
-					enabled = false
+					callback = hash("travel_mission"),
+					enabled = false,
+					id = 3
 				},
 			},
 			{
@@ -661,23 +668,49 @@ local LAY = {
 	[hash("travel_confirm")] = {
 		background = true,
 		close_button = true,
-		size_x = 3,
+		size_x = 4,
 		size_y = 3,
 		elements = {
 			{
 				type = hash("label"),
 				position_x = 0,
 				position_y = 1,
-				text = {hash("lbl_travel_destiantion"), function() return STATS.destination.type, " ", STATS.destination.target end}
+				text = {hash("lbl_travel_destination"), function() return STATS.destination.type, hash("lbl_travel_in_the"), STATS.destination.region end}
+			},
+			{
+				type = hash("label"),
+				position_x = 0,
+				position_y = 2,
+				text = {hash("lbl_travel_departure"), function() return TIME.get_time_string(STATS.destination.time, false) end}
+			},
+			{
+				type = hash("button_main"),
+				position_x = -1,
+				position_y = 3,
+				props = {
+					label = hash("btn_travel_set_time"),
+					callback = hash("travel_set_time"),
+					enabled = true
+				},
 			},
 			{
 				type = hash("button_main"),
 				position_x = 0,
-				position_y = 2,
+				position_y = 3,
 				props = {
-					label = hash("btn_travel_set_time"),
-					callback = hash("travel_set_time"),
-					enabled = false
+					label = hash("btn_cancel"),
+					callback = hash("travel_cancel"),
+					enabled = true
+				},
+			},
+			{
+				type = hash("button_main"),
+				position_x = 1,
+				position_y = 3,
+				props = {
+					label = hash("btn_accept"),
+					callback = hash("travel_accept"),
+					enabled = true
 				},
 			},
 		}

@@ -8,34 +8,8 @@ local TIME = require("main/modules/time")
 local STR = require("main/modules/strings")
 
 local function update_labels()
-	local day, hour, min = TIME.get_time_parts(TIME.time + time_relative * 100)
-	label.set_text("#time_absolute", STR.en.ui[hash("stardate")]..": "..day.."."..hour.."."..min)
-	local hour, min = math.floor(time_relative / 100), tonumber(string.sub(time_relative + 10000, 4, 5))
-	local str = ""
-	if hour > 1 then
-		str = hour.." "..STR.en.ui[hash("hours")]
-		if min > 1 then
-			str = str.." "..STR.en.ui[hash("and")].." "..min.." "..STR.en.ui[hash("minutes")]
-		elseif min > 0 then
-			str = str.." "..STR.en.ui[hash("and")].." "..min.." "..STR.en.ui[hash("minute")]
-		end
-	elseif hour > 0 then
-		str = hour.." "..STR.en.ui[hash("hour")]
-		if min > 1 then
-			str = str.." "..STR.en.ui[hash("and")].." "..min.." "..STR.en.ui[hash("minutes")]
-		elseif min > 0 then
-			str = str.." "..STR.en.ui[hash("and")].." "..min.." "..STR.en.ui[hash("minute")]
-		end
-	else
-		if min > 1 then
-			str = min.." "..STR.en.ui[hash("minutes")]
-		elseif min > 0 then
-			str = min.." "..STR.en.ui[hash("minute")]
-		else
-			str = STR.en.ui[hash("immediately")]
-		end
-	end
-	label.set_text("#time_relative", str)
+	label.set_text("#time_absolute", STR.en.ui[hash("stardate")]..": "..TIME.get_time_string(TIME.time + time_relative * 100, true))
+	label.set_text("#time_relative", TIME.get_time_string(time_relative * 100, false))
 end
 
 function init(self)

@@ -36,6 +36,8 @@ local STR = {
 
 			[hash("choose_time")] = "Choose a time",
 			[hash("stardate")] = "Stardate",
+			[hash("day")] = "day",
+			[hash("days")] = "days",
 			[hash("hour")] = "hour",
 			[hash("hours")] = "hours",
 			[hash("minute")] = "minute",
@@ -71,11 +73,12 @@ local STR = {
 
 			[hash("btn_travel_explore")] = "EXPLORE",
 			[hash("btn_travel_mission")] = "MISSION",
-			[hash("btn_travel_set_time")] = "Change time",
+			[hash("btn_travel_set_time")] = "SET TIME",
 
 			[hash("btn_error_ok")] = "OK",
 			[hash("btn_event_done")] = "DONE",
 			[hash("btn_accept")] = "ACCEPT",
+			[hash("btn_cancel")] = "CANCEL",
 
 			[hash("btn_clock_normal")] = "1x",
 			[hash("btn_clock_fast")] = "10x",
@@ -124,7 +127,13 @@ local STR = {
 			[hash("lbl_travel_frontier")] = "FRONTIER",
 			[hash("lbl_travel_rim")] = "OUTER RIM",
 
-			[hash("lbl_travel_destiantion")] = "Destination: ",
+			[hash("lbl_travel_destination")] = "Destination: ",
+			[hash("lbl_travel_departure")] = "Departure: ",
+			[hash("exploration")] = "EXPLORING",
+			[hash("mission")] = "MISSION",
+			[hash("lbl_travel_in_the")] = " IN THE ",
+			
+			
 
 			-- conversation
 			[hash("talk_says")] = " says:",
@@ -422,6 +431,7 @@ local STR = {
 		}
 	}
 }
+	
 
 function STR.STRING(input)
 	local str = ""
