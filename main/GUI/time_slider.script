@@ -9,7 +9,6 @@ function init(self)
 	self.collection = collectionfactory.create("#collectionfactory")
 	for key, val in pairs(self.collection) do
 		msg.post(val, "set_parent", {parent_id = go.get_id()})
-		--msg.post(val, "ullo")
 	end
 end
 

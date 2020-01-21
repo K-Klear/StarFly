@@ -85,14 +85,6 @@ function on_message(self, message_id, message, sender)
 	if DEBUG.show_controller_messages then print(message_id.." id: "..(message.id or "none")) end
 	if message_id == hash("buy_pressed") then
 
-
-	elseif message_id == hash("time_choice") then
-	--	open_dialog(hash("time_choice"), hash("choose_time"))
-		open_dialog(hash("travel_confirm"), hash("choose_time"))
-
-
-		
-
 	elseif message_id == hash("buy_pressed") then
 
 	elseif message_id == hash("recruit_pressed") then
@@ -216,8 +208,13 @@ function on_message(self, message_id, message, sender)
 		elseif message.id == 3 then
 			STATS.destination.region = hash("rim")
 		end
-		STATS.destination.type = hash("exploration")
-		STATS.destination.time = 0
+		if STATS.new_time then
+			STATS.destination.time = STATS.new_time
+			STATS.new_time = nil
+		else
+			STATS.destination.time = 0
+		end
+		open_dialog(hash("travel_confirm"), hash("title_travel_confirm"), nil, message_id)
 
 	elseif message_id == hash("travel_mission") then
 		if #STATS.jobs[hash("core")] > 1 then
@@ -230,11 +227,26 @@ function on_message(self, message_id, message, sender)
 			elseif message.id == 3 then
 				STATS.destination.region = hash("rim")
 			end
-			STATS.destination.type = hash("mission")
-			STATS.destination.time = 0
-			STATS.destination.mission = {job_id = 1, target = STATS.destination.region}
+			if STATS.new_time then
+				STATS.destination.time = STATS.new_time
+				STATS.new_time = nil
+			else
+				STATS.destination.time = 0
+			end
+			STATS.destination.job_id = 1
 
 		end
+		open_dialog(hash("travel_confirm"), hash("title_travel_confirm"), nil, message_id)
+
+	elseif message_id == hash("travel_cancel") then
+		STATS.destination = {}
+		refresh_dialog(true)
+
+	elseif message_id == hash("travel_set_time") then
+		STATS.new_time = STATS.destination.time
+		open_dialog(hash("time_choice"), hash("title_departure_time_selection"))
+
+		
 	elseif message_id == hash("jobs_selected_core") then
 		close_all_dialogs(false, true)
 		msg.post("#main", hash("travel"), {job_id = message.id, target = hash("core")})
@@ -332,6 +344,11 @@ function on_message(self, message_id, message, sender)
 		refresh_dialog(false)
 	elseif message_id == hash("talk_end") then
 		TALK.stage = 0; TALK.current = nil; TALK.speaker = nil
+		refresh_dialog(true)
+	elseif message_id == hash("time_choice_cancel") then
+		STATS.new_time = nil
+		refresh_dialog(true)
+	elseif message_id == hash("time_choice_accept") then
 		refresh_dialog(true)
 	elseif message_id == hash("refresh_infobox") then
 		go.delete(infobox, true)

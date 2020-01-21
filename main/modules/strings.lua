@@ -34,7 +34,6 @@ local STR = {
 
 			-- time
 
-			[hash("choose_time")] = "Choose a time",
 			[hash("stardate")] = "Stardate",
 			[hash("day")] = "day",
 			[hash("days")] = "days",
@@ -94,9 +93,13 @@ local STR = {
 			[hash("title_jobs")] = "AVAILABLE JOBS",
 			[hash("title_travel")] = "TRAVEL",
 
+			[hash("title_travel_confirm")] = "Confirm destination",
+
 			[hash("job_selection")] = "Select mission",
 
 			[hash("title_role_selection")] = "Assign a new role.",
+
+			[hash("title_departure_time_selection")] = "Chose time to depart",
 
 			[hash("title_error_no_crew")] = "You have no crew!",
 			[hash("title_error_crew_full")] = "You don't have room for more crew!",

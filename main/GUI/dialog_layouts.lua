@@ -667,7 +667,7 @@ local LAY = {
 	},
 	[hash("travel_confirm")] = {
 		background = true,
-		close_button = true,
+		close_button = false,
 		size_x = 4,
 		size_y = 3,
 		elements = {
@@ -675,7 +675,11 @@ local LAY = {
 				type = hash("label"),
 				position_x = 0,
 				position_y = 1,
-				text = {hash("lbl_travel_destination"), function() return STATS.destination.type, hash("lbl_travel_in_the"), STATS.destination.region end}
+				text = {hash("lbl_travel_destination"),
+				function()
+					local type
+					if STATS.destination.job_id then type = hash("mission") else type = hash("exploration") end
+					return type, hash("lbl_travel_in_the"), STATS.destination.region end}
 			},
 			{
 				type = hash("label"),
@@ -684,6 +688,7 @@ local LAY = {
 				text = {hash("lbl_travel_departure"), function() return TIME.get_time_string(STATS.destination.time, false) end}
 			},
 			{
+				id = hash("travel_set_time"),
 				type = hash("button_main"),
 				position_x = -1,
 				position_y = 3,
@@ -694,6 +699,7 @@ local LAY = {
 				},
 			},
 			{
+				id = hash("travel_cancel"),
 				type = hash("button_main"),
 				position_x = 0,
 				position_y = 3,
@@ -704,6 +710,7 @@ local LAY = {
 				},
 			},
 			{
+				id = hash("travel_accept"),
 				type = hash("button_main"),
 				position_x = 1,
 				position_y = 3,
@@ -1030,7 +1037,7 @@ local LAY = {
 		}
 	},
 	[hash("time_choice")] = {
-		close_button = true,
+		close_button = false,
 		background = true,
 		size_x = 9,
 		size_y = 3,
@@ -1042,14 +1049,25 @@ local LAY = {
 			},
 			{
 				type = hash("button_main"),
-				position_x = 0,
+				position_x = -0.5,
 				position_y = 3,
 				props = {
 					label = hash("btn_accept"),
-					callback = hash("close"),
+					callback = hash("time_choice_accept"),
 					enabled = true
 				},
 			},
+			{
+				type = hash("button_main"),
+				position_x = 0.5,
+				position_y = 3,
+				props = {
+					label = hash("btn_cancel"),
+					callback = hash("time_choice_cancel"),
+					enabled = true
+				},
+			},
+			
 		}
 	},
 }
