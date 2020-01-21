@@ -111,6 +111,7 @@ function TIME.set_scale(scale)
 end
 
 function TIME.add_alarm(time, type, stop)
+	time = math.floor(time / 100) * 100
 	TIME.alarm[time] = TIME.alarm[time] or {}
 	table.insert(TIME.alarm[time], {type = type, stop = stop})
 end

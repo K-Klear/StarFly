@@ -3,28 +3,31 @@ local CREW = require("main/modules/crew")
 local PLANET = require("main/modules/planets")
 local TIME = require("main/modules/time")
 
-local function travel(target, job_id)
+local function travel(target)
 	if target == hash("orbit") then
 		msg.post("/background", "orbit")
 	elseif target == hash("planet")	then
 		msg.post("/background", "land")
-	elseif target == hash("core") or target == hash("frontier") or target == hash("rim") then
+	else
 		STATS.fuel = STATS.fuel - 1
 		STATS.food = STATS.food - #CREW.list
-		if job_id then
-			PLANET.current = STATS.jobs[target][job_id].planet
-			STATS.current_job = {region = target, job_id = job_id}
+		if STATS.destination.job_id then
+			PLANET.current = STATS.jobs[STATS.destination.region][STATS.destination.job_id].planet
+			STATS.current_job = {region = STATS.destination.region, job_id = STATS.destination.job_id}
 		else
 			PLANET.current = PLANET.new(target)
 			STATS.current_job = nil
 		end
 		msg.post("/background", "space")
+	end
+		--[[
 	elseif type(target) == "number" then
 		STATS.fuel = STATS.fuel - 1
 		STATS.food = STATS.food - #CREW.list
 		PLANET.current = STATS.jobs[target].planet
 		msg.post("/background", "space")
 	end
+	--]]
 end
 
 function spawn_crew(crewID, x, y, z)
@@ -57,7 +60,7 @@ end
 
 function on_message(self, message_id, message, sender)
 	if message_id == hash("travel") then
-		travel(message.target, message.job_id)
+		travel(message.target)
 	elseif message_id == hash("spawn_crew") then
 		spawn_crew(message.crewID, message.x, message.y, message.z)
 	elseif message_id == hash("job_accepted") then

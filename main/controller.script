@@ -238,15 +238,18 @@ function on_message(self, message_id, message, sender)
 		end
 		open_dialog(hash("travel_confirm"), hash("title_travel_confirm"), nil, message_id)
 
-	elseif message_id == hash("travel_cancel") then
-		STATS.destination = {}
-		refresh_dialog(true)
-
 	elseif message_id == hash("travel_set_time") then
 		STATS.new_time = STATS.destination.time
 		open_dialog(hash("time_choice"), hash("title_departure_time_selection"))
-
-		
+	elseif message_id == hash("travel_cancel") then
+		STATS.destination = {}
+		refresh_dialog(true)
+	elseif message_id == hash("travel_accept") then
+		if STATS.destination.time < 1 then
+			msg.post("#main", hash("travel"))
+		else
+			TIME.add_alarm(TIME.time + STATS.destination.time, hash("travel"), true)
+		end
 	elseif message_id == hash("jobs_selected_core") then
 		close_all_dialogs(false, true)
 		msg.post("#main", hash("travel"), {job_id = message.id, target = hash("core")})
