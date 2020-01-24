@@ -39,6 +39,7 @@ local function close_all_dialogs(main_on, main_gone)
 	if main_on then
 		msg.post(stack[1].dialog, "enable_all")
 		msg.post("/cursor", hash("crew_selection"), {enabled = true})
+		TIME.start()
 	else
 		msg.post("/cursor", hash("crew_selection"), {enabled = false})
 	end
@@ -193,10 +194,18 @@ function on_message(self, message_id, message, sender)
 		elseif not CREW.get_role(hash("role_pilot")) then
 			open_dialog(hash("error"), hash("title_error_no_pilot"))
 		else
-			open_dialog(hash("travel"), hash("title_travel"), nil, message_id)
-			for key, val in pairs(STATS.jobs) do
-				if #val > 0 then
-					msg.post(stack[#stack].dialog, "turn_button_on", {button = key})
+			if STATS.destination.time then
+				if STATS.new_time then
+					STATS.destination.time = STATS.new_time
+					STATS.new_time = nil
+				end
+				open_dialog(hash("alarm_departure"), hash("title_alarm_departure"), nil, message_id)
+			else
+				open_dialog(hash("travel"), hash("title_travel"), nil, message_id)
+				for key, val in pairs(STATS.jobs) do
+					if #val > 0 then
+						msg.post(stack[#stack].dialog, "turn_button_on", {button = key})
+					end
 				end
 			end
 		end
@@ -247,9 +256,19 @@ function on_message(self, message_id, message, sender)
 	elseif message_id == hash("travel_accept") then
 		if STATS.destination.time < 1 then
 			msg.post("#main", hash("travel"))
+			close_all_dialogs(false, true)
 		else
-			TIME.add_alarm(TIME.time + STATS.destination.time, hash("travel"), true)
+			TIME.add_alarm(TIME.time + STATS.destination.time, hash("departure"), true)
+			close_all_dialogs(true)
 		end
+	elseif message_id == hash("alarm_departure") then
+		if STATS.new_time then
+			STATS.destination.time = STATS.new_time
+			STATS.new_time = nil
+		else
+			STATS.destination.time = 0
+		end
+		open_dialog(hash("alarm_departure"), hash("title_alarm_departure"), nil, message_id)
 	elseif message_id == hash("jobs_selected_core") then
 		close_all_dialogs(false, true)
 		msg.post("#main", hash("travel"), {job_id = message.id, target = hash("core")})

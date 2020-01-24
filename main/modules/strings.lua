@@ -84,6 +84,8 @@ local STR = {
 			[hash("btn_clock_faster")] = "100x",
 			[hash("btn_clock_fastest")] = "5000x",
 
+			[hash("btn_alarm_departure_set_time")] = "RESCHEDULE",
+
 			-- dialog titles
 			[hash("title_buy")] = "BUY",
 			[hash("title_repair")] = "REPAIR",
@@ -100,6 +102,8 @@ local STR = {
 			[hash("title_role_selection")] = "Assign a new role.",
 
 			[hash("title_departure_time_selection")] = "Chose time to depart",
+
+			[hash("title_alarm_departure")] = "Ready for take-off",
 
 			[hash("title_error_no_crew")] = "You have no crew!",
 			[hash("title_error_crew_full")] = "You don't have room for more crew!",
@@ -135,8 +139,6 @@ local STR = {
 			[hash("exploration")] = "EXPLORING",
 			[hash("mission")] = "MISSION",
 			[hash("lbl_travel_in_the")] = " IN THE ",
-			
-			
 
 			-- conversation
 			[hash("talk_says")] = " says:",

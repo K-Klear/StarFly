@@ -722,6 +722,63 @@ local LAY = {
 			},
 		}
 	},
+	[hash("alarm_departure")] = {
+		background = true,
+		close_button = false,
+		size_x = 4,
+		size_y = 3,
+		elements = {
+			{
+				type = hash("label"),
+				position_x = 0,
+				position_y = 1,
+				text = {hash("lbl_travel_destination"),
+				function()
+					local type
+					if STATS.destination.job_id then type = hash("mission") else type = hash("exploration") end
+					return type, hash("lbl_travel_in_the"), STATS.destination.region end}
+			},
+			{
+				type = hash("label"),
+				position_x = 0,
+				position_y = 2,
+				text = {hash("lbl_travel_departure"), function() return TIME.get_time_string(STATS.destination.time, false) end}
+			},
+			{
+				id = hash("alarm_departure_set_time"),
+				type = hash("button_main"),
+				position_x = -1,
+				position_y = 3,
+				props = {
+					label = hash("btn_alarm_departure_set_time"),
+					callback = hash("travel_set_time"),
+					enabled = true
+				},
+			},
+			{
+				id = hash("alarm_departure_cancel"),
+				type = hash("button_main"),
+				position_x = 0,
+				position_y = 3,
+				props = {
+					label = hash("btn_cancel"),
+					callback = hash("travel_cancel"),
+					enabled = true
+				},
+			},
+			{
+				id = hash("alarm_departure_accept"),
+				type = hash("button_main"),
+				position_x = 1,
+				position_y = 3,
+				props = {
+					label = hash("btn_accept"),
+					callback = hash("travel_accept"),
+					enabled = true
+				},
+			},
+		}
+	},
 	[hash("job_selection_core")] = {
 		background = true,
 		close_button = true,

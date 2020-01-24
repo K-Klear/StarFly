@@ -15,7 +15,7 @@ local function travel(target)
 			PLANET.current = STATS.jobs[STATS.destination.region][STATS.destination.job_id].planet
 			STATS.current_job = {region = STATS.destination.region, job_id = STATS.destination.job_id}
 		else
-			PLANET.current = PLANET.new(target)
+			PLANET.current = PLANET.new(STATS.destination.region)
 			STATS.current_job = nil
 		end
 		msg.post("/background", "space")
