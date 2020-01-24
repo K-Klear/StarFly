@@ -580,7 +580,7 @@ local LAY = {
 				position_y = 1,
 				props = {
 					label = hash("btn_travel_explore"),
-					callback = hash("travel_explore"),
+					callback = hash("travel_destination_pressed"),
 					enabled = true,
 					id = 1
 				},
@@ -592,7 +592,7 @@ local LAY = {
 				position_y = 2,
 				props = {
 					label = hash("btn_travel_explore"),
-					callback = hash("travel_explore"),
+					callback = hash("travel_destination_pressed"),
 					enabled = true,
 					id = 2
 				},
@@ -604,7 +604,7 @@ local LAY = {
 				position_y = 3,
 				props = {
 					label = hash("btn_travel_explore"),
-					callback = hash("travel_explore"),
+					callback = hash("travel_destination_pressed"),
 					enabled = true,
 					id = 3
 				},
@@ -616,9 +616,9 @@ local LAY = {
 				position_y = 1,
 				props = {
 					label = hash("btn_travel_mission"),
-					callback = hash("travel_mission"),
+					callback = hash("travel_destination_pressed"),
 					enabled = false,
-					id = 1
+					id = 4
 				},
 			},
 			{
@@ -628,9 +628,9 @@ local LAY = {
 				position_y = 2,
 				props = {
 					label = hash("btn_travel_mission"),
-					callback = hash("travel_mission"),
+					callback = hash("travel_destination_pressed"),
 					enabled = false,
-					id = 2
+					id = 5
 				},
 			},
 			{
@@ -640,9 +640,9 @@ local LAY = {
 				position_y = 3,
 				props = {
 					label = hash("btn_travel_mission"),
-					callback = hash("travel_mission"),
+					callback = hash("travel_destination_pressed"),
 					enabled = false,
-					id = 3
+					id = 6
 				},
 			},
 			{
@@ -685,7 +685,7 @@ local LAY = {
 				type = hash("label"),
 				position_x = 0,
 				position_y = 2,
-				text = {hash("lbl_travel_departure"), function() return TIME.get_time_string(STATS.destination.time, false) end}
+				text = {hash("lbl_travel_departure"), function() return TIME.get_time_string(STATS.destination.time - TIME.time, false) end}
 			},
 			{
 				id = hash("travel_set_time"),
@@ -722,68 +722,11 @@ local LAY = {
 			},
 		}
 	},
-	[hash("alarm_departure")] = {
-		background = true,
-		close_button = false,
-		size_x = 4,
-		size_y = 3,
-		elements = {
-			{
-				type = hash("label"),
-				position_x = 0,
-				position_y = 1,
-				text = {hash("lbl_travel_destination"),
-				function()
-					local type
-					if STATS.destination.job_id then type = hash("mission") else type = hash("exploration") end
-					return type, hash("lbl_travel_in_the"), STATS.destination.region end}
-			},
-			{
-				type = hash("label"),
-				position_x = 0,
-				position_y = 2,
-				text = {hash("lbl_travel_departure"), function() return TIME.get_time_string(STATS.destination.time, false) end}
-			},
-			{
-				id = hash("alarm_departure_set_time"),
-				type = hash("button_main"),
-				position_x = -1,
-				position_y = 3,
-				props = {
-					label = hash("btn_alarm_departure_set_time"),
-					callback = hash("travel_set_time"),
-					enabled = true
-				},
-			},
-			{
-				id = hash("alarm_departure_cancel"),
-				type = hash("button_main"),
-				position_x = 0,
-				position_y = 3,
-				props = {
-					label = hash("btn_cancel"),
-					callback = hash("travel_cancel"),
-					enabled = true
-				},
-			},
-			{
-				id = hash("alarm_departure_accept"),
-				type = hash("button_main"),
-				position_x = 1,
-				position_y = 3,
-				props = {
-					label = hash("btn_accept"),
-					callback = hash("travel_accept"),
-					enabled = true
-				},
-			},
-		}
-	},
-	[hash("job_selection_core")] = {
+	[hash("job_selection")] = {
 		background = true,
 		close_button = true,
 		size_x = 4,
-		size_y = function() return #STATS.jobs[hash("core")] + 1 end,
+		size_y = function() return #STATS.jobs[STATS.destination.region] + 1 end,
 		elements = {
 			{
 				type = hash("label"),
@@ -804,150 +747,34 @@ local LAY = {
 				text = hash("lbl_jobs_wage")
 			},
 			{
-				repeating = function() return #STATS.jobs[hash("core")] end,
+				repeating = function() return #STATS.jobs[STATS.destination.region] end,
 				type = hash("label"),
 				position_x = -1.5,
 				position_y = 2,
-				text = function(id) return STATS.jobs[hash("core")][id].type end
+				text = function(id) return STATS.jobs[STATS.destination.region][id].type end
 			},
 			{
-				repeating = function() return #STATS.jobs[hash("core")] end,
+				repeating = function() return #STATS.jobs[STATS.destination.region] end,
 				type = hash("label"),
 				position_x = -0.5,
 				position_y = 2,
-				text = function(id) return STATS.jobs[hash("core")][id].planet.name end
+				text = function(id) return STATS.jobs[STATS.destination.region][id].planet.name end
 			},
 			{
-				repeating = function() return #STATS.jobs[hash("core")] end,
+				repeating = function() return #STATS.jobs[STATS.destination.region] end,
 				type = hash("label"),
 				position_x = 0.5,
 				position_y = 2,
-				text = function(id) return STATS.jobs[hash("core")][id].wage end
+				text = function(id) return STATS.jobs[STATS.destination.region][id].wage end
 			},
 			{
-				repeating = function() return #STATS.jobs[hash("core")] end,
+				repeating = function() return #STATS.jobs[STATS.destination.region] end,
 				type = hash("button_main"),
 				position_x = 1.5,
 				position_y = 2,
 				props = {
 					label = hash("btn_jobs_accept"),
-					callback = hash("jobs_selected_core"),
-					enabled = true
-				},
-			},
-		}
-	},
-	[hash("job_selection_frontier")] = {
-		background = true,
-		close_button = true,
-		size_x = 4,
-		size_y = function() return #STATS.jobs[hash("frontier")] + 1 end,
-		elements = {
-			{
-				type = hash("label"),
-				position_x = -1.5,
-				position_y = 1,
-				text = hash("lbl_jobs_type")
-			},
-			{
-				type = hash("label"),
-				position_x = -0.5,
-				position_y = 1,
-				text = hash("lbl_jobs_planet")
-			},
-			{
-				type = hash("label"),
-				position_x = 0.5,
-				position_y = 1,
-				text = hash("lbl_jobs_wage")
-			},
-			{
-				repeating = function() return #STATS.jobs[hash("frontier")] end,
-				type = hash("label"),
-				position_x = -1.5,
-				position_y = 2,
-				text = function(id) return STATS.jobs[hash("frontier")][id].type end
-			},
-			{
-				repeating = function() return #STATS.jobs[hash("frontier")] end,
-				type = hash("label"),
-				position_x = -0.5,
-				position_y = 2,
-				text = function(id) return STATS.jobs[hash("frontier")][id].planet.name end
-			},
-			{
-				repeating = function() return #STATS.jobs[hash("frontier")] end,
-				type = hash("label"),
-				position_x = 0.5,
-				position_y = 2,
-				text = function(id) return STATS.jobs[hash("frontier")][id].wage end
-			},
-			{
-				repeating = function() return #STATS.jobs[hash("frontier")] end,
-				type = hash("button_main"),
-				position_x = 1.5,
-				position_y = 2,
-				props = {
-					label = hash("btn_jobs_accept"),
-					callback = hash("jobs_selected_frontier"),
-					enabled = true
-				},
-			},
-		}
-	},
-	[hash("job_selection_rim")] = {
-		background = true,
-		close_button = true,
-		size_x = 4,
-		size_y = function() return #STATS.jobs[hash("rim")] + 1 end,
-		elements = {
-			{
-				type = hash("label"),
-				position_x = -1.5,
-				position_y = 1,
-				text = hash("lbl_jobs_type")
-			},
-			{
-				type = hash("label"),
-				position_x = -0.5,
-				position_y = 1,
-				text = hash("lbl_jobs_planet")
-			},
-			{
-				type = hash("label"),
-				position_x = 0.5,
-				position_y = 1,
-				text = hash("lbl_jobs_wage")
-			},
-			{
-				repeating = function() return #STATS.jobs[hash("rim")] end,
-				type = hash("label"),
-				position_x = -1.5,
-				position_y = 2,
-				text = function(id) return STATS.jobs[hash("rim")][id].type end
-			},
-			{
-				repeating = function() return #STATS.jobs[hash("rim")] end,
-				type = hash("label"),
-				position_x = -0.5,
-				position_y = 2,
-				text = function(id) return STATS.jobs[hash("rim")][id].planet.name end
-			},
-			{
-				repeating = function() return #STATS.jobs[hash("rim")] end,
-				type = hash("label"),
-				position_x = 0.5,
-				position_y = 2,
-				text = function(id) return STATS.jobs[hash("rim")][id].wage end
-			},
-			{
-				repeating = function() return #STATS.jobs[hash("rim")] end,
-				type = hash("button_main"),
-				position_x = 1.5,
-				position_y = 2,
-				props = {
-					label = hash("btn_jobs_accept"),
-					callback = hash("jobs_selected_rim"),
+					callback = hash("job_selected"),
 					enabled = true
 				},
 			},

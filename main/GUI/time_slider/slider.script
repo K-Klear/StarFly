@@ -13,7 +13,8 @@ local function update_labels(self)
 end
 
 function init(self)
-	self.time = STATS.new_time or 0
+	self.time = 0
+	if STATS.new_time then self.time = STATS.new_time - TIME.time end
 	local pos = go.get_position(go.get_id("selector"))
 	go.set_position(vmath.vector3((self.time / 100) - 500, pos.y, pos.z), go.get_id("selector"))
 	update_labels(self)
@@ -39,7 +40,7 @@ function on_input(self, action_id, action)
 				final_x = math.floor((final_x + step / 2) / step) * step
 				go.set_position(vmath.vector3(final_x, pos.y, pos.z), go.get_id("selector"))
 				self.time = (final_x + 500) * 100
-				STATS.new_time = self.time
+				STATS.new_time = self.time + TIME.time
 				update_labels(self)
 			end
 		end

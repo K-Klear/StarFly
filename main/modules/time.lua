@@ -75,7 +75,7 @@ local function check_alarms()
 				else
 					time_skippable = false
 					if val.type == hash("departure") then
-						msg.post("#controller", hash("alarm_departure"))
+						msg.post("#controller", hash("travel_destination_pressed"))
 					else
 						print("UNKNOWN ALARM:", val.type)
 					end
