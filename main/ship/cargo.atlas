@@ -1,0 +1,6 @@
+images {
+  image: "/assets/images/Ship/cargo/box_1.png"
+}
+margin: 1
+extrude_borders: 1
+inner_padding: 1

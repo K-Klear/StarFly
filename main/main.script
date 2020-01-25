@@ -63,6 +63,9 @@ function on_message(self, message_id, message, sender)
 		travel(message.target)
 	elseif message_id == hash("spawn_crew") then
 		spawn_crew(message.crewID, message.x, message.y, message.z)
+	elseif message_id == hash("spawn_box") then
+		local box = factory.create("/ship#box_factory", message.pos, nil, {colour = message.colour})
+		go.set_parent(box, "/ship")
 	elseif message_id == hash("job_accepted") then
 		local region = PLANET.current.jobs[message.id].region
 		table.insert(STATS.jobs[region], PLANET.current.jobs[message.id])

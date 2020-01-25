@@ -9,6 +9,8 @@ local BRAIN = require("main/modules/brain")
 local LAY = require("main/GUI/dialog_layouts")
 local TIME = require("main/modules/time")
 local DEBUG = require("main/modules/debug")
+local CARGO = require("main/modules/cargo")
+
 
 
 local centre = vmath.vector3(1280 / 2, 900 / 2, 0.8)
