@@ -2,6 +2,7 @@ local STATS = require("main/modules/stats")
 local CREW = require("main/modules/crew")
 local PLANET = require("main/modules/planets")
 local TIME = require("main/modules/time")
+local CARGO = require("main/modules/cargo")
 
 local function travel(target)
 	if target == hash("orbit") then
@@ -64,8 +65,8 @@ function on_message(self, message_id, message, sender)
 	elseif message_id == hash("spawn_crew") then
 		spawn_crew(message.crewID, message.x, message.y, message.z)
 	elseif message_id == hash("spawn_box") then
-		local box = factory.create("/ship#box_factory", message.pos, nil, {colour = message.colour})
-		go.set_parent(box, "/ship")
+		CARGO.shelves[message.x][message.y] = factory.create("/ship#box_factory", message.pos, nil, {colour = message.colour})
+		go.set_parent(CARGO.shelves[message.x][message.y], "/ship")
 	elseif message_id == hash("job_accepted") then
 		local region = PLANET.current.jobs[message.id].region
 		table.insert(STATS.jobs[region], PLANET.current.jobs[message.id])

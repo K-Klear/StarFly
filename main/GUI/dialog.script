@@ -1,5 +1,5 @@
 local STR = require("main/modules/strings")
-local LAY = require("main/GUI/dialog_layouts")
+local LAY = require("main/modules/dialog_layouts")
 local STATS = require("main/modules/stats")
 local modules = {
 	CREW = require("main/modules/crew"),
