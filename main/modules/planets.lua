@@ -25,7 +25,7 @@ local region_stats = {
 
 local mission_stats = {
 	target = {hash("core"), hash("frontier"), hash("rim")},
-	type = {hash("delivery"), hash("smuggling"), hash("passage"), hash("assasination"), hash("espionage")}
+	type = {hash("delivery"), hash("passage")}--, hash("assasination"), hash("espionage"), hash("smuggling")}
 }
 
 local settlement_stats = {
@@ -43,8 +43,23 @@ local settlement_stats = {
 	}
 }
 
-
 function PLANET.add_jobs(planet)
+	local function get_job_wages(job)
+		local data = {
+			[hash("delivery")] = {
+				base = 500,
+				per_one = 100,
+				
+			},
+			[hash("passage")] = {
+				base = 750,
+				per_one = 200,
+			},
+		}
+		local wage = data[job.type].base + data[job.type].per_one * job.amount
+		return wage
+	end
+	
 	if planet.jobs > 0 then
 		local count = planet.jobs
 		planet.jobs = {}
@@ -52,10 +67,16 @@ function PLANET.add_jobs(planet)
 			local region = mission_stats.target[math.random(1, #mission_stats.target)]
 			table.insert(planet.jobs, {
 				region = region,
-				type = mission_stats.type[math.random(1, #mission_stats.target)],
-				wage = math.random(1, 20) * 100,
+				type = mission_stats.type[math.random(1, #mission_stats.type)],
 				planet = PLANET.new(region)
 			})
+			local job = planet.jobs[#planet.jobs]
+			if job.type == hash("delivery") then
+				job.amount = math.random(1, 5)
+			elseif job.type == hash("passage") then
+				job.amount = math.random(1, 3)
+			end
+			job.wage = get_job_wages(job)
 		end
 	end
 end

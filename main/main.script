@@ -68,13 +68,24 @@ function on_message(self, message_id, message, sender)
 		CARGO.shelves[message.x][message.y] = factory.create("/ship#box_factory", message.pos, nil, {colour = message.colour})
 		go.set_parent(CARGO.shelves[message.x][message.y], "/ship")
 	elseif message_id == hash("job_accepted") then
-		local region = PLANET.current.jobs[message.id].region
-		table.insert(STATS.jobs[region], PLANET.current.jobs[message.id])
-		table.remove(PLANET.current.jobs, message.id)
-		local new_job = STATS.jobs[region][#STATS.jobs[region]]
+		local job_accepted = true
+		local new_job = PLANET.current.jobs[message.id]
 		if new_job.type == hash("passage") then
 			CREW.add(nil, true)
 			new_job.passengers = {CREW.list[#CREW.list].id}
+		elseif new_job.type == hash("delivery") then
+			local id = CARGO.add(new_job.amount)
+			if id then
+				new_job.cargo = id
+			else
+				job_accepted = false
+				msg.post("#controller", hash("error"), {title = hash("error_cargo_hold_full")})
+			end
+		end
+		if job_accepted then
+			local region = PLANET.current.jobs[message.id].region
+			table.insert(STATS.jobs[region], new_job)
+			table.remove(PLANET.current.jobs, message.id)
 		end
 	elseif message_id == hash("job_completed") then
 		local job = STATS.jobs[STATS.current_job.region][STATS.current_job.job_id]
@@ -87,6 +98,8 @@ function on_message(self, message_id, message, sender)
 				local passenger = CREW.get_id(val)
 				CREW.dismiss(passenger)
 			end
+		elseif job.type == hash("delivery") then
+			CARGO.remove(job.cargo)
 		end
 		table.remove(STATS.jobs[STATS.current_job.region], STATS.current_job.job_id)
 		STATS.current_job = {}

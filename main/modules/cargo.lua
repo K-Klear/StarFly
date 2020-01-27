@@ -41,7 +41,7 @@ end
 
 function CARGO.add(size)
 	if size > CARGO.empty then
-		print("There is no room in the hold.")
+		return
 	else
 		CARGO.empty = CARGO.empty - size
 		local id = get_new_id()

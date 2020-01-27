@@ -109,6 +109,7 @@ local STR = {
 			[hash("title_error_no_fuel")] = "You don't have enough fuel!",
 			[hash("title_error_no_food")] = "You don't have enough rations!",
 			[hash("title_error_no_pilot")] = "You must assign a pilot!",
+			[hash("error_cargo_hold_full")] = "Cargo hold is full!",
 
 			-- dialog labels
 			[hash("lbl_info_fuel")] = "FUEL:",
