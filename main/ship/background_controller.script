@@ -1,23 +1,6 @@
 local timer_meteor
 local timer_warp
 
-local function spawn_meteor()
-	local size = math.random(2, 10) / 10
-	factory.create("/background#spawn_meteor", vmath.vector3(-40, math.random(10, 880), 1), nil, nil, vmath.vector3(size, size, size))
-	timer_meteor = timer.delay(math.random(4, 15) / 10, false, spawn_meteor)
-end
-
-local function turn()
-	msg.post("/ground", "disable")
-	particlefx.play("/ship#engine")
-	particlefx.play("/background#stars")
-	go.animate("/sky", "euler.z", go.PLAYBACK_ONCE_FORWARD, 90, go.EASING_INOUTCUBIC, 3, 0, spawn_meteor)
-	local function send_message()
-		msg.post("/main#controller", "transition_space")
-	end
-	go.animate("/sky", "position", go.PLAYBACK_ONCE_FORWARD, vmath.vector3(21280, 480, -0.5), go.EASING_INOUTCUBIC, 5, 0, send_message)
-end
-
 local function get_sky_colour()
 	local red = math.random() / 2
 	local green = math.random()
@@ -31,10 +14,33 @@ function init(self)
 end
 
 function on_message(self, message_id, message, sender)
-	if message_id == hash("space") then
+	local function spawn_meteor()
+		local size = math.random(2, 10) / 10
+		factory.create("/background#spawn_meteor", vmath.vector3(-40, math.random(10, 880), 1), nil, nil, vmath.vector3(size, size, size))
+		timer_meteor = timer.delay(math.random(4, 15) / 10, false, spawn_meteor)
+	end
+	local function turn()
+		msg.post("/ground", "disable")
+		particlefx.play("/ship#engine")
+		particlefx.play("/background#stars")
+		go.animate("/sky", "euler.z", go.PLAYBACK_ONCE_FORWARD, 90, go.EASING_INOUTCUBIC, 3, 0, spawn_meteor)
+		go.animate("/sky", "position", go.PLAYBACK_ONCE_FORWARD, vmath.vector3(21280, 480, -0.5), go.EASING_INOUTCUBIC, 5, 0, function() msg.post("/main#controller", "transition_space") end)
+	end
+	
+	if message_id == hash("takeoff") then
 		msg.post("/sky", "enable")
 		go.animate("/sky", "position.y", go.PLAYBACK_ONCE_FORWARD, -900, go.EASING_INOUTCUBIC, 4, 0, turn)
 		go.animate("/ground", "position.y", go.PLAYBACK_ONCE_FORWARD, -900, go.EASING_INOUTCUBIC, 4)
+	elseif message_id == hash("warp") then
+		particlefx.play("#warp")
+		particlefx.stop("#stars")
+		if timer_meteor then timer.cancel(timer_meteor) end
+		timer_warp = timer.delay(3, false, function()
+			particlefx.stop("#warp")
+			msg.post("/main#controller", "transition_orbit")
+			particlefx.play("#stars")
+			spawn_meteor()
+		end)
 	elseif message_id == hash("land") then
 		sprite.set_constant("/sky#sprite", "tint", get_sky_colour())
 		go.set_position(vmath.vector3(640, -21280, -0.5), "/sky")
@@ -46,19 +52,7 @@ function on_message(self, message_id, message, sender)
 		go.animate("/ground", "position.y", go.PLAYBACK_ONCE_FORWARD, 88, go.EASING_OUTCUBIC, 4)
 		if timer_meteor then timer.cancel(timer_meteor) end
 		timer.delay(1, false, function() particlefx.stop("#stars") end)
-		timer.delay(4, false, function()
-			msg.post("/main#controller", "transition_planet"); particlefx.stop("/ship#engine")
-		end)
-	elseif message_id == hash("orbit") then
-		particlefx.play("#warp")
-		particlefx.stop("#stars")
-		if timer_meteor then timer.cancel(timer_meteor) end
-		timer_warp = timer.delay(3, false, function()
-			particlefx.stop("#warp")
-			msg.post("/main#controller", "transition_orbit")
-			particlefx.play("#stars")
-			spawn_meteor()
-		end)
+		timer.delay(4, false, function() msg.post("/main#controller", "transition_planet"); particlefx.stop("/ship#engine") end)
 	end
 end
 

@@ -1,5 +1,5 @@
 local total_storage = 20
-local CARGO = {empty = total_storage}
+local CARGO = {empty = total_storage, fuel = 5}
 
 local pos_x, pos_y, pos_z = {131, 161.5, 195, 224}, {70, 90, 110, 130, 150}, 0.001
 local pos_x_max_offset = {2.5, 2.5, 1, 1}

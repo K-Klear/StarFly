@@ -4,33 +4,6 @@ local PLANET = require("main/modules/planets")
 local TIME = require("main/modules/time")
 local CARGO = require("main/modules/cargo")
 
-local function travel(target)
-	if target == hash("orbit") then
-		msg.post("/background", "orbit")
-	elseif target == hash("planet")	then
-		msg.post("/background", "land")
-	else
-		STATS.fuel = STATS.fuel - 1
-		STATS.food = STATS.food - #CREW.list
-		if STATS.destination.job_id then
-			PLANET.current = STATS.jobs[STATS.destination.region][STATS.destination.job_id].planet
-			STATS.current_job = {region = STATS.destination.region, job_id = STATS.destination.job_id}
-		else
-			PLANET.current = PLANET.new(STATS.destination.region)
-			STATS.current_job = nil
-		end
-		msg.post("/background", "space")
-	end
-		--[[
-	elseif type(target) == "number" then
-		STATS.fuel = STATS.fuel - 1
-		STATS.food = STATS.food - #CREW.list
-		PLANET.current = STATS.jobs[target].planet
-		msg.post("/background", "space")
-	end
-	--]]
-end
-
 function spawn_crew(crewID, x, y, z)
 	if not x then x = 10 + math.random(0, 3) end
 	if not y then y = 2 end
@@ -60,9 +33,7 @@ function init(self)
 end
 
 function on_message(self, message_id, message, sender)
-	if message_id == hash("travel") then
-		travel(message.target)
-	elseif message_id == hash("spawn_crew") then
+	if message_id == hash("spawn_crew") then
 		spawn_crew(message.crewID, message.x, message.y, message.z)
 	elseif message_id == hash("spawn_box") then
 		CARGO.shelves[message.x][message.y] = factory.create("/ship#box_factory", message.pos, nil, {colour = message.colour})
