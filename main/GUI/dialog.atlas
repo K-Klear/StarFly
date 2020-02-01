@@ -127,6 +127,9 @@ images {
 images {
   image: "/assets/images/ui/timeline/timeline_selector.png"
 }
+images {
+  image: "/assets/images/ui/buttons/button_tiny_highlighted.png"
+}
 margin: 1
 extrude_borders: 1
 inner_padding: 1

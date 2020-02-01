@@ -5,6 +5,7 @@ local STR = require("main/modules/strings")
 local CREW = require("main/modules/crew")
 local TALK = require("main/modules/conversation")
 local TIME = require("main/modules/time")
+local CARGO = require("main/modules/cargo")
 
 local LAY = {
 	[hash("infobox")] = {
@@ -54,7 +55,7 @@ local LAY = {
 				type = hash("label"),
 				position_x = 0.5,
 				position_y = 1,
-				text = function() return STATS.fuel end
+				text = function() return CARGO.fuel end
 			},
 			{
 				id = hash("info_food"),
@@ -255,6 +256,90 @@ local LAY = {
 			},
 		}
 	},
+
+	[hash("crew_overview")] = {
+		close_button = false,
+		background = true,
+		size_x = 6.5,
+		size_y = function() return #CREW.list + 2 end,
+		elements = {
+			{
+				type = hash("label"),
+				position_x = -2.5,
+				position_y = 1,
+				text = hash("lbl_crew_name")
+			},
+			{
+				type = hash("label"),
+				position_x = -1.5,
+				position_y = 1,
+				text = hash("lbl_crew_role")
+			},
+			{
+				type = hash("label"),
+				position_x = 1,
+				position_y = 1,
+				text = hash("lbl_crew_role")
+			},
+			{
+				type = hash("label"),
+				position_x = 2.5,
+				position_y = 1,
+				text = function() return TIME.get_time_string(STATS.leave_duration, false) end
+			},
+			{
+				repeating = function() return #CREW.list end,
+				type = hash("icon_face"),
+				image = function(id) return CREW.list[id].face end,
+				position_x = -3.1,
+				position_y = 2,
+				scale = vmath.vector3(2, 2, 2)
+			},
+			{
+				repeating = function() return #CREW.list end,
+				type = hash("label"),
+				position_x = -2.5,
+				position_y = 2,
+				text = function(id) return STR.en.names[CREW.list[id].name.gender][CREW.list[id].name.key] end
+			},
+			{
+				id = hash("crew_role"),
+				repeating = function() return #CREW.list end,
+				type = hash("label"),
+				position_x = -1.5,
+				position_y = 2,
+				text = function(id) return CREW.list[id].role end
+			},
+			{
+				id = hash("crew_talk"),
+				repeating = function() return #CREW.list end,
+				type = hash("button_main"),
+				position_x = 1.5,
+				position_y = 2,
+				props = {
+					label = hash("btn_crew_talk"),
+					callback = hash("crew_talk"),
+					enabled = true
+				},
+			},
+			{
+				id = hash("crew_confirm"),
+				type = hash("button_main"),
+				position_x = 0,
+				position_y = function() return #CREW.list + 2 end,
+				props = {
+					label = hash("btn_crew_confirm"),
+					callback = hash("crew_confirm"),
+					enabled = true
+				},
+			}
+		}
+	},
+
+
+
+
+	
 	[hash("crew")] = {
 		close_button = false,
 		background = true,

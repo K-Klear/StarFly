@@ -23,7 +23,14 @@ function spawn_crew(crewID, x, y, z)
 end
 
 function init(self)
+	TIME.button = {
+		[hash("normal")] = go.get_id("/button_scale_normal"),
+		[hash("fast")] = go.get_id("/button_scale_fast"),
+		[hash("faster")] = go.get_id("/button_scale_faster"),
+		[hash("fastest")] = go.get_id("/button_scale_fastest")
+	}
 	TIME.start()
+	
 	--[[
 	CREW.add(); CREW.add(); CREW.add()
 	CREW.list[1].role = hash("role_pilot")

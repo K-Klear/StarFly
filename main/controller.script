@@ -11,8 +11,6 @@ local TIME = require("main/modules/time")
 local DEBUG = require("main/modules/debug")
 local CARGO = require("main/modules/cargo")
 
-
-
 local centre = vmath.vector3(1280 / 2, 900 / 2, 0.8)
 
 -- note: dialog z-pos goes from 0.8. 11th level dialog will not be visible.
@@ -189,7 +187,7 @@ function on_message(self, message_id, message, sender)
 		msg.post("/main", hash("job_accepted"), {id = message.id})
 		close_all_dialogs(true)
 	elseif message_id == hash("travel_pressed") then
-		if STATS.fuel == 0 then
+		if CARGO.fuel == 0 then
 			open_dialog(hash("error"), hash("title_error_no_fuel"))
 		elseif STATS.food == 0 then
 			open_dialog(hash("error"), hash("title_error_no_food"))
@@ -390,14 +388,20 @@ function on_message(self, message_id, message, sender)
 	elseif message_id == hash("close") then
 		refresh_dialog(true)
 	elseif message_id == hash("clock_scale_normal") then
-		TIME.set_scale({freq = 0.864, jump = 1})
+		TIME.set_scale(hash("normal"))
 	elseif message_id == hash("clock_scale_fast") then
-		TIME.set_scale({freq = 0.864, jump = 100})
+		TIME.set_scale(hash("fast"))
 	elseif message_id == hash("clock_scale_faster") then
-		TIME.set_scale({freq = 0.864 / 10, jump = 100})
+		TIME.set_scale(hash("faster"))
 	elseif message_id == hash("clock_scale_fastest") then
-		TIME.set_scale({freq = 0.864 / 10, jump = 1000})
+		TIME.set_scale(hash("fastest"))
 	elseif message_id == hash("error") then
 		open_dialog(hash("error"), message.title)
+	elseif message_id == hash("debug") then
+		if #CREW.list == 0 then
+			open_dialog(hash("error"), hash("title_error_no_crew"))
+		else
+			open_dialog(hash("crew_overview"), hash("title_crew"), nil, message_id)
+		end
 	end
 end

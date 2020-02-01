@@ -2,6 +2,7 @@ go.property("type", hash("main"))
 go.property("label", hash("buy"))
 go.property("callback", hash("buy"))
 go.property("enabled", true)
+go.property("highlighted", false)
 go.property("id", 1)
 
 local STR = require("main/modules/strings")
@@ -21,7 +22,8 @@ local types = {
 		sprite = "button_tiny",
 		sprite_pressed = "button_tiny_pressed",
 		sprite_disabled = "button_tiny_disabled",
-		sprite_inactive = "button_tiny_inactive"
+		sprite_inactive = "button_tiny_inactive",
+		sprite_highlighted = "button_tiny_highlighted"
 	},
 	[hash("close")] = {
 		sprite = "button_close",
@@ -48,6 +50,9 @@ function init(self)
 	if self.enabled then
 		go.set("#label", "color", default_colour)
 		self.state = hash("up")
+		if self.highlighted then
+			sprite.play_flipbook("#sprite", types[self.type].sprite_highlighted)
+		end
 	else
 		go.set("#label", "color", disabled_colour)
 		msg.post("#co", "disable")
@@ -63,12 +68,20 @@ function on_message(self, message_id, message, sender)
 		sound.play("#pressed")
 		self.state = hash("down")
 	elseif message_id == hash("released") and self.state == hash("down") then
-		sprite.play_flipbook("#sprite", types[self.type].sprite)
+		if self.highlighted then
+			sprite.play_flipbook("#sprite", types[self.type].sprite_highlighted)
+		else
+			sprite.play_flipbook("#sprite", types[self.type].sprite)
+		end
 		go.set("#label", "color", default_colour)
 		--sound.play("#released")
 		self.state = hash("up")
 	elseif message_id == hash("activated") then
-		sprite.play_flipbook("#sprite", types[self.type].sprite)
+		if self.highlighted then
+			sprite.play_flipbook("#sprite", types[self.type].sprite_highlighted)
+		else
+			sprite.play_flipbook("#sprite", types[self.type].sprite)
+		end
 		go.set("#label", "color", default_colour)
 		--sound.play("#released")
 		self.state = hash("up")
@@ -83,23 +96,47 @@ function on_message(self, message_id, message, sender)
 	elseif message_id == hash("turn_off") then
 		go.set("#label", "color", disabled_colour)
 		msg.post("#co", "disable")
-		sprite.play_flipbook("#sprite", types[self.type].sprite_disabled)
+		if not self.highlighted then
+			sprite.play_flipbook("#sprite", types[self.type].sprite_disabled)
+		end
 		self.state = hash("disabled")
 	elseif message_id == hash("turn_on") then
 		go.set("#label", "color", default_colour)
 		msg.post("#co", "enable")
-		sprite.play_flipbook("#sprite", types[self.type].sprite)
+		if self.highlighted then
+			sprite.play_flipbook("#sprite", types[self.type].sprite_highlighted)
+		else
+			sprite.play_flipbook("#sprite", types[self.type].sprite)
+		end
 		self.state = hash("up")
 	elseif message_id == hash("deactivate") and not (self.state == hash("disabled")) then
 		go.set("#label", "color", disabled_colour)
 		msg.post("#co", "disable")
-		sprite.play_flipbook("#sprite", types[self.type].sprite_inactive)
+		if not self.highlighted then
+			sprite.play_flipbook("#sprite", types[self.type].sprite_inactive)
+		end
 		self.state = hash("inactive")
 	elseif message_id == hash("activate") and self.state == hash("inactive") then
 		go.set("#label", "color", default_colour)
 		msg.post("#co", "enable")
-		sprite.play_flipbook("#sprite", types[self.type].sprite)
+		if self.highlighted then
+			sprite.play_flipbook("#sprite", types[self.type].sprite_highlighted)
+		else
+			sprite.play_flipbook("#sprite", types[self.type].sprite)
+		end
 		self.state = hash("up")
+	elseif message_id == hash("highlight") then
+		self.highlighted = true
+		sprite.play_flipbook("#sprite", types[self.type].sprite_highlighted)
+	elseif message_id == hash("remove_highlight") then
+		self.highlighted = false
+		if self.state == hash("up") or self.state == hash("down") then
+			go.set("#label", "color", default_colour)
+			sprite.play_flipbook("#sprite", types[self.type].sprite)
+		elseif self.state == hash("disabled") then
+			go.set("#label", "color", disabled_colour)
+			sprite.play_flipbook("#sprite", types[self.type].sprite_disabled)
+		end
 	end
 end
 

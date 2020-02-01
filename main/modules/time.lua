@@ -3,11 +3,18 @@ local STR = require("main/modules/strings")
 local TIME = {
 	time = 100000,
 	runnning = false,
-	scale = {freq = 0.864, jump = 1},
+	scale = hash("normal"),
 	alarm = {}
 }
-local ticker, ticker_once
 
+local scale_data = {
+	[hash("normal")] = {freq = 0.864, jump = 1},
+	[hash("fast")] = {freq = 0.864, jump = 100},
+	[hash("faster")] = {freq = 0.864 / 10, jump = 100},
+	[hash("fastest")] = {freq = 0.864 / 10, jump = 1000}
+}
+
+local ticker, ticker_once
 
 function TIME.get_time_string(time, absolute)
 	local day, hour, min, str = tonumber(string.sub(time, 1, -6)), tonumber(string.sub(time, -5, -5)), tonumber(string.sub(time, -4, -3)), ""
@@ -62,7 +69,7 @@ local update_clock
 local function check_alarms()
 	local time_skippable = true
 	local rounded_time = math.ceil(TIME.time / 100) * 100
-	for time = rounded_time, rounded_time + math.ceil(TIME.scale.jump / 100) * 100 - 1, 100 do
+	for time = rounded_time, rounded_time + math.ceil(scale_data[TIME.scale].jump / 100) * 100 - 1, 100 do
 		for key, val in ipairs(TIME.alarm[time] or {}) do
 			local time_left = time - TIME.time
 			if val.stop then
@@ -70,7 +77,7 @@ local function check_alarms()
 					if time_skippable then
 						time_skippable = false
 						timer.cancel(ticker)
-						ticker_once = timer.delay(TIME.scale.freq, false, function() update_clock(time_left) end)
+						ticker_once = timer.delay(scale_data[TIME.scale].freq, false, function() update_clock(time_left) end)
 					end
 				else
 					time_skippable = false
@@ -80,7 +87,7 @@ local function check_alarms()
 						print("UNKNOWN ALARM:", val.type)
 					end
 					val.stop = false
-					TIME.set_scale({freq = 0.864, jump = 1})
+					TIME.set_scale(hash("normal"))
 				end
 			end
 		end
@@ -88,26 +95,41 @@ local function check_alarms()
 end
 
 function update_clock(jump)
-	TIME.time = TIME.time + (jump or TIME.scale.jump)
+	TIME.time = TIME.time + (jump or scale_data[TIME.scale].jump)
 	check_alarms()
 	label.set_text("/clock#label", STR.en.ui[hash("stardate")].."\n"..TIME.get_time_string(TIME.time, true))
 end
 
 function TIME.start(reset)
 	if reset or not TIME.running then
+		if not TIME.running then
+			for key, val in pairs(TIME.button) do
+				msg.post(val, "turn_on")
+			end
+		end
 		TIME.running = true
-		ticker = timer.delay(TIME.scale.freq, true, function() update_clock() end)
+		ticker = timer.delay(scale_data[TIME.scale].freq, true, function() update_clock() end)
 		update_clock(0)
 	end
 end
 
 function TIME.stop()
+	for key, val in pairs(TIME.button) do
+		msg.post(val, "turn_off")
+	end
 	timer.cancel(ticker)
 	TIME.running = false
 end
 
 function TIME.set_scale(scale)
 	TIME.scale = scale
+	for key, val in pairs(TIME.button) do
+		if key == scale then
+			msg.post(val, "highlight")
+		else
+			msg.post(val, "remove_highlight")
+		end
+	end
 	if TIME.running then
 		timer.cancel(ticker)
 		TIME.start(true)

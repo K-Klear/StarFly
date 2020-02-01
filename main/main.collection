@@ -108,6 +108,11 @@ instances {
       value: "true"
       type: PROPERTY_TYPE_BOOLEAN
     }
+    properties {
+      id: "highlighted"
+      value: "true"
+      type: PROPERTY_TYPE_BOOLEAN
+    }
   }
   scale3 {
     x: 1.0
