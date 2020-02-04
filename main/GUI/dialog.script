@@ -84,10 +84,9 @@ function init(self)
 				if type(pos_y) == "function" then pos_y = pos_y() end
 				object = factory.create(factory_type[val.type], vmath.vector3(pos_x * 116, half_y - (54 * (pos_y + id - 1)) - 8, 0), nil, props, val.scale)
 				go.set_parent(object, ".")
-				if val.id then
-					self.elements[val.id] = self.elements[val.id] or {}
-					table.insert(self.elements[val.id], object)
-				end
+				local id = val.id or hash("_")
+				self.elements[id] = self.elements[id] or {}
+				table.insert(self.elements[id], object)
 				if val.type == hash("label") or val.type == hash("textbox") then
 					local text = val.text
 					if type(text) == "function" then text = text(props.id) end
@@ -102,10 +101,6 @@ function init(self)
 		go.set_parent(object, ".")
 		self.elements[hash("close")] = object
 	end
-end
-
-function final(self)
-	
 end
 
 function on_message(self, message_id, message, sender)

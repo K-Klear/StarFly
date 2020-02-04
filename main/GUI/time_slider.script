@@ -17,5 +17,5 @@ function on_message(self, message_id, message, sender)
 end
 
 function final(self)
-	--msg.post("/cursor", hash("deleted"), {id = go.get_id()})
+
 end

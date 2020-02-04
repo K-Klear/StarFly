@@ -105,6 +105,18 @@ function on_message(self, message_id, message, sender)
 			table.remove(PLANET.current.recruits, message.id)
 			refresh_dialog()
 		end
+	elseif message_id == hash("crew_duty") then
+		open_dialog(hash("crew_duty"), hash("title_crew_duty"), message.id, message_id)
+	elseif message_id == hash("crew_shipbound") then
+		if CREW.list[message.id].shipbound then
+			CREW.list[message.id].shipbound = nil
+		else
+			CREW.list[message.id].shipbound = true
+		end
+		refresh_dialog()
+	elseif message_id == hash("crew_set_leave") then
+		STATS.new_time = STATS.leave_duration + TIME.time
+		open_dialog(hash("time_choice"), hash("title_leave_duration_selection"))
 	elseif message_id == hash("crew_pressed") then
 		if #CREW.list == 0 then
 			open_dialog(hash("error"), hash("title_error_no_crew"))
@@ -401,6 +413,10 @@ function on_message(self, message_id, message, sender)
 		if #CREW.list == 0 then
 			open_dialog(hash("error"), hash("title_error_no_crew"))
 		else
+			if STATS.new_time then
+				STATS.leave_duration = STATS.new_time - TIME.time
+				STATS.new_time = nil
+			end
 			open_dialog(hash("crew_overview"), hash("title_crew"), nil, message_id)
 		end
 	end

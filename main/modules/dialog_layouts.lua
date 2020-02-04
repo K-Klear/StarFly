@@ -261,7 +261,7 @@ local LAY = {
 		close_button = false,
 		background = true,
 		size_x = 6.5,
-		size_y = function() return #CREW.list + 2 end,
+		size_y = function() return #CREW.list + 3 end,
 		elements = {
 			{
 				type = hash("label"),
@@ -277,15 +277,15 @@ local LAY = {
 			},
 			{
 				type = hash("label"),
-				position_x = 1,
+				position_x = -0.5,
 				position_y = 1,
-				text = hash("lbl_crew_role")
+				text = hash("lbl_crew_duties")
 			},
 			{
 				type = hash("label"),
-				position_x = 2.5,
+				position_x = 0.5,
 				position_y = 1,
-				text = function() return TIME.get_time_string(STATS.leave_duration, false) end
+				text = hash("lbl_crew_shipbound")
 			},
 			{
 				repeating = function() return #CREW.list end,
@@ -311,6 +311,30 @@ local LAY = {
 				text = function(id) return CREW.list[id].role end
 			},
 			{
+				id = hash("crew_duty"),
+				repeating = function() return #CREW.list end,
+				type = hash("button_main"),
+				position_x = -0.5,
+				position_y = 2,
+				props = {
+					label = function(id) return hash("btn_crew_duty_none") end,
+					callback = hash("crew_duty"),
+					enabled = true
+				},
+			},
+			{
+				id = hash("crew_shipbound"),
+				repeating = function() return #CREW.list end,
+				type = hash("button_main"),
+				position_x = 0.5,
+				position_y = 2,
+				props = {
+					label = function(id) if CREW.list[id].shipbound then return hash("btn_yes") else return hash("btn_no") end end,
+					callback = hash("crew_shipbound"),
+					enabled = true
+				},
+			},
+			{
 				id = hash("crew_talk"),
 				repeating = function() return #CREW.list end,
 				type = hash("button_main"),
@@ -323,10 +347,26 @@ local LAY = {
 				},
 			},
 			{
+				type = hash("label"),
+				position_x = 0,
+				position_y = function() return #CREW.list + 2 end,
+				text = function() return {hash("lbl_crew_leave_duration"), " ", TIME.get_time_string(STATS.leave_duration, false)} end
+			},
+			{
+				type = hash("button_main"),
+				position_x = 2,
+				position_y = function() return #CREW.list + 2 end,
+				props = {
+					label = hash("btn_crew_set_leave"),
+					callback = hash("crew_set_leave"),
+					enabled = true
+				},
+			},
+			{
 				id = hash("crew_confirm"),
 				type = hash("button_main"),
 				position_x = 0,
-				position_y = function() return #CREW.list + 2 end,
+				position_y = function() return #CREW.list + 3 end,
 				props = {
 					label = hash("btn_crew_confirm"),
 					callback = hash("crew_confirm"),
@@ -335,7 +375,80 @@ local LAY = {
 			}
 		}
 	},
-
+	[hash("crew_duty")] = {
+		close_button = true,
+		background = true,
+		size_x = 3,
+		size_y = 2,
+		elements = {
+			{
+				id = hash("duty_guard"),
+				type = hash("button_main"),
+				position_x = -1,
+				position_y = 1,
+				props = {
+					label = hash("duty_guard"),
+					callback = hash("crew_duty_guard"),
+					enabled = true
+				},
+			},
+			{
+				id = hash("duty_repair"),
+				type = hash("button_main"),
+				position_x = 0,
+				position_y = 1,
+				props = {
+					label = hash("duty_repair"),
+					callback = hash("crew_duty_repair"),
+					enabled = true
+				},
+			},
+			{
+				id = hash("duty_standby"),
+				type = hash("button_main"),
+				position_x = 1,
+				position_y = 1,
+				props = {
+					label = hash("duty_standby"),
+					callback = hash("crew_duty_standby"),
+					enabled = true
+				},
+			},
+			{
+				id = hash("duty_cleaning"),
+				type = hash("button_main"),
+				position_x = -1,
+				position_y = 2,
+				props = {
+					label = hash("duty_cleaning"),
+					callback = hash("crew_duty_cleaning"),
+					enabled = true
+				},
+			},
+			{
+				id = hash("duty_other"),
+				type = hash("button_main"),
+				position_x = 0,
+				position_y = 2,
+				props = {
+					label = hash("duty_other"),
+					callback = hash("crew_duty_other"),
+					enabled = true
+				},
+			},
+			{
+				id = hash("duty_none"),
+				type = hash("button_main"),
+				position_x = 1,
+				position_y = 2,
+				props = {
+					label = hash("duty_none"),
+					callback = hash("crew_duty_none"),
+					enabled = true
+				},
+			},
+		}
+	},
 
 
 

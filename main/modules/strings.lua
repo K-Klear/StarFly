@@ -12,6 +12,14 @@ local STR = {
 			[hash("role_gunner")] = "Gunner",
 			[hash("role_passenger")] = "Passenger",
 
+			[hash("duty_guard")] = "Guard",
+			[hash("duty_repair")] = "Repair",
+			[hash("duty_standby")] = "Standby",
+			[hash("duty_cleaning")] = "Cleaning",
+			[hash("duty_other")] = "Something",
+			[hash("duty_none")] = "None",
+			
+
 			[hash("core")] = "Core",
 			[hash("frontier")] = "Frontier",
 			[hash("rim")] = "Outer rim",
@@ -31,6 +39,9 @@ local STR = {
 			[hash("espionage")] = "Espionage",
 
 			[hash("and")] = "and",
+
+			[hash("btn_yes")] = "YES",
+			[hash("btn_no")] = "NO",
 
 			-- time
 
@@ -57,6 +68,8 @@ local STR = {
 
 			[hash("btn_recruit_interview")] = "INTERVIEW",
 			[hash("btn_recruit_hire")] = "HIRE",
+
+			[hash("btn_crew_set_leave")] = "SET",
 			
 			[hash("btn_crew_background")] = "About",
 			[hash("btn_crew_talk")] = "Talk",
@@ -64,6 +77,8 @@ local STR = {
 			[hash("btn_crew_plus")] = "+",
 			[hash("btn_crew_minus")] = "-",
 			[hash("btn_crew_confirm")] = "Confirm",
+
+			[hash("btn_crew_duty_none")] = "NONE",
 
 			[hash("btn_crew_talk")] = "TALK",
 			[hash("btn_crew_role")] = "SET ROLE",
@@ -93,11 +108,15 @@ local STR = {
 			[hash("title_jobs")] = "AVAILABLE JOBS",
 			[hash("title_travel")] = "TRAVEL",
 
+			[hash("title_leave_duration_selection")] = "Set leave duration",
+
+			[hash("title_crew_duty")] = "Assign duties",
+
 			[hash("title_travel_confirm")] = "Confirm destination",
 
 			[hash("job_selection")] = "Select mission",
 
-			[hash("title_role_selection")] = "Assign a new role.",
+			[hash("title_role_selection")] = "Assign a new role",
 
 			[hash("title_departure_time_selection")] = "Choose time to depart",
 			[hash("title_departure_ready")] = "Ready for take-off",
@@ -118,6 +137,10 @@ local STR = {
 
 			[hash("lbl_recruit_name")] = "NAME",
 
+			[hash("lbl_crew_leave_duration")] = "Leave duration:",
+			[hash("lbl_crew_duties")] = "DUTIES",
+			[hash("lbl_crew_shipbound")] = "SHIPBOUND?",
+			
 			[hash("lbl_crew_name")] = "NAME",
 			[hash("lbl_crew_role")] = "ROLE",
 			[hash("lbl_crew_wage")] = "WAGE %",
@@ -453,8 +476,9 @@ function STR.STRING(input)
 		elseif type(val) == "table" then
 			str = str..val[math.random(1, #val)]
 		elseif input then
-			pprint(input)
-			error("Unexpected type in the lookup table! "..type(val))
+			print("Unknown string:", input)
+			str = str.."//bad_string//"
+			--error("Unexpected type in the lookup table! "..type(val))
 		end
 	end
 	return str
