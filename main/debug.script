@@ -23,7 +23,7 @@ function on_input(self, action_id, action)
 		DEBUG.show_controller_messages = not DEBUG.show_controller_messages
 		print("Displaying messages to #controller: "..tostring(DEBUG.show_controller_messages))
 	elseif action.pressed and action_id == hash("debug2") then
-		msg.post("#controller", hash("debug"))
+		msg.post("#controller", hash("crew_overview"))
 	elseif action.pressed and action_id == hash("debug3") then
 		print(STATS.location)
 	end

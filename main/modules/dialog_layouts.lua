@@ -260,30 +260,30 @@ local LAY = {
 	[hash("crew_overview")] = {
 		close_button = false,
 		background = true,
-		size_x = 6.5,
+		size_x = 5.5,
 		size_y = function() return #CREW.list + 3 end,
 		elements = {
 			{
 				type = hash("label"),
-				position_x = -2.5,
+				position_x = -2,
 				position_y = 1,
 				text = hash("lbl_crew_name")
 			},
 			{
 				type = hash("label"),
-				position_x = -1.5,
+				position_x = -1,
 				position_y = 1,
 				text = hash("lbl_crew_role")
 			},
 			{
 				type = hash("label"),
-				position_x = -0.5,
+				position_x = 0,
 				position_y = 1,
 				text = hash("lbl_crew_duties")
 			},
 			{
 				type = hash("label"),
-				position_x = 0.5,
+				position_x = 1,
 				position_y = 1,
 				text = hash("lbl_crew_shipbound")
 			},
@@ -291,14 +291,14 @@ local LAY = {
 				repeating = function() return #CREW.list end,
 				type = hash("icon_face"),
 				image = function(id) return CREW.list[id].face end,
-				position_x = -3.1,
+				position_x = -2.6,
 				position_y = 2,
 				scale = vmath.vector3(2, 2, 2)
 			},
 			{
 				repeating = function() return #CREW.list end,
 				type = hash("label"),
-				position_x = -2.5,
+				position_x = -2,
 				position_y = 2,
 				text = function(id) return STR.en.names[CREW.list[id].name.gender][CREW.list[id].name.key] end
 			},
@@ -306,7 +306,7 @@ local LAY = {
 				id = hash("crew_role"),
 				repeating = function() return #CREW.list end,
 				type = hash("label"),
-				position_x = -1.5,
+				position_x = -1,
 				position_y = 2,
 				text = function(id) return CREW.list[id].role end
 			},
@@ -314,10 +314,10 @@ local LAY = {
 				id = hash("crew_duty"),
 				repeating = function() return #CREW.list end,
 				type = hash("button_main"),
-				position_x = -0.5,
+				position_x = 0,
 				position_y = 2,
 				props = {
-					label = function(id) return hash("btn_crew_duty_none") end,
+					label = function(id) return CREW.list[id].duty or hash("btn_crew_duty_none") end,
 					callback = hash("crew_duty"),
 					enabled = true
 				},
@@ -326,7 +326,7 @@ local LAY = {
 				id = hash("crew_shipbound"),
 				repeating = function() return #CREW.list end,
 				type = hash("button_main"),
-				position_x = 0.5,
+				position_x = 1,
 				position_y = 2,
 				props = {
 					label = function(id) if CREW.list[id].shipbound then return hash("btn_yes") else return hash("btn_no") end end,
@@ -338,7 +338,7 @@ local LAY = {
 				id = hash("crew_talk"),
 				repeating = function() return #CREW.list end,
 				type = hash("button_main"),
-				position_x = 1.5,
+				position_x = 2,
 				position_y = 2,
 				props = {
 					label = hash("btn_crew_talk"),
@@ -354,7 +354,7 @@ local LAY = {
 			},
 			{
 				type = hash("button_main"),
-				position_x = 2,
+				position_x = 2.25,
 				position_y = function() return #CREW.list + 2 end,
 				props = {
 					label = hash("btn_crew_set_leave"),

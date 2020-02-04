@@ -105,8 +105,53 @@ function on_message(self, message_id, message, sender)
 			table.remove(PLANET.current.recruits, message.id)
 			refresh_dialog()
 		end
+	elseif message_id == hash("crew_overview") then
+		if #CREW.list == 0 then
+			open_dialog(hash("error"), hash("title_error_no_crew"))
+		else
+			if STATS.new_time then
+				STATS.leave_duration = STATS.new_time - TIME.time
+				STATS.new_time = nil
+			end
+			open_dialog(hash("crew_overview"), hash("title_crew"), nil, message_id)
+			for key, val in ipairs(CREW.list) do
+				if val.shipbound_forced then
+					msg.post(stack[#stack].dialog, "turn_button_off", {button = hash("crew_shipbound"), id = key})
+				else
+					msg.post(stack[#stack].dialog, "turn_button_on", {button = hash("crew_shipbound"), id = key})
+				end
+			end
+		end
 	elseif message_id == hash("crew_duty") then
 		open_dialog(hash("crew_duty"), hash("title_crew_duty"), message.id, message_id)
+	elseif message_id == hash("crew_duty_guard") then
+		CREW.list[message.id].duty = hash("duty_guard")
+		CREW.list[message.id].shipbound = true
+		CREW.list[message.id].shipbound_forced = true
+		refresh_dialog(true)
+	elseif message_id == hash("crew_duty_repair") then
+		CREW.list[message.id].duty = hash("duty_repair")
+		CREW.list[message.id].shipbound = true
+		CREW.list[message.id].shipbound_forced = true
+		refresh_dialog(true)
+	elseif message_id == hash("crew_duty_standby") then
+		CREW.list[message.id].duty = hash("duty_standby")
+		CREW.list[message.id].shipbound = true
+		CREW.list[message.id].shipbound_forced = true
+		refresh_dialog(true)
+	elseif message_id == hash("crew_duty_cleaning") then
+		CREW.list[message.id].duty = hash("duty_cleaning")
+		CREW.list[message.id].shipbound = true
+		CREW.list[message.id].shipbound_forced = true
+		refresh_dialog(true)
+	elseif message_id == hash("crew_duty_other") then
+		CREW.list[message.id].duty = hash("duty_other")
+		CREW.list[message.id].shipbound_forced = false
+		refresh_dialog(true)
+	elseif message_id == hash("crew_duty_none") then
+		CREW.list[message.id].duty = nil
+		CREW.list[message.id].shipbound_forced = false
+		refresh_dialog(true)
 	elseif message_id == hash("crew_shipbound") then
 		if CREW.list[message.id].shipbound then
 			CREW.list[message.id].shipbound = nil
@@ -409,15 +454,5 @@ function on_message(self, message_id, message, sender)
 		TIME.set_scale(hash("fastest"))
 	elseif message_id == hash("error") then
 		open_dialog(hash("error"), message.title)
-	elseif message_id == hash("debug") then
-		if #CREW.list == 0 then
-			open_dialog(hash("error"), hash("title_error_no_crew"))
-		else
-			if STATS.new_time then
-				STATS.leave_duration = STATS.new_time - TIME.time
-				STATS.new_time = nil
-			end
-			open_dialog(hash("crew_overview"), hash("title_crew"), nil, message_id)
-		end
 	end
 end
