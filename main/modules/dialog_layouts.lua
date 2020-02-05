@@ -350,7 +350,7 @@ local LAY = {
 				type = hash("label"),
 				position_x = 0,
 				position_y = function() return #CREW.list + 2 end,
-				text = function() return {hash("lbl_crew_leave_duration"), " ", TIME.get_time_string(STATS.leave_duration, false)} end
+				text = function() return {hash("lbl_crew_leave_duration"), " ", TIME.get_time_string((STATS.leave_end or STATS.leave_duration_default + TIME.time) - TIME.time, false)} end
 			},
 			{
 				type = hash("button_main"),

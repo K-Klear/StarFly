@@ -110,7 +110,8 @@ function on_message(self, message_id, message, sender)
 			open_dialog(hash("error"), hash("title_error_no_crew"))
 		else
 			if STATS.new_time then
-				STATS.leave_duration = STATS.new_time - TIME.time
+				STATS.leave_duration_default = STATS.new_time - TIME.time
+				STATS.leave_end = STATS.new_time
 				STATS.new_time = nil
 			end
 			open_dialog(hash("crew_overview"), hash("title_crew"), nil, message_id)
@@ -160,7 +161,7 @@ function on_message(self, message_id, message, sender)
 		end
 		refresh_dialog()
 	elseif message_id == hash("crew_set_leave") then
-		STATS.new_time = STATS.leave_duration + TIME.time
+		STATS.new_time = STATS.leave_end or (STATS.leave_duration_default + TIME.time)
 		open_dialog(hash("time_choice"), hash("title_leave_duration_selection"))
 	elseif message_id == hash("crew_pressed") then
 		if #CREW.list == 0 then

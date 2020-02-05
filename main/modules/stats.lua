@@ -7,7 +7,7 @@ local STATS = {
 	wage = 100,
 	destination = {},
 	location = hash("landed"),
-	leave_duration = 15000
+	leave_duration_default = 20000
 }
 
 return STATS
