@@ -2,13 +2,19 @@ local DICE = require("main/modules/dice")
 
 local EVENT = {}
 
-local list_space = {
-	"distress_signal_true",
---	"ambush_pirate",
---	"asteroids",
+local list = {
+	[hash("flight")] = {
+		"flight_nonevent"
+	},
+	[hash("orbit")] = {
+		"orbit_nonevent"
+	},
+	[hash("landing")] = {
+		"landing_nonevent"
+	}
 }
 
-local event_list = {[hash("space")] = {}, [hash("orbit")] = {}, [hash("landing")] = {}}
+local event_list = {[hash("flight")] = {}, [hash("orbit")] = {}, [hash("landing")] = {}}
 
 local function get_tags(stage)
 	local type, effect, test, diff
@@ -53,8 +59,10 @@ local function load_event(event, event_type)
 	event_list[event_type][event] = data
 end
 
-for key, val in ipairs(list_space) do
-	load_event(val, hash("space"))
+for event_type, data in pairs(list) do
+	for key, val in ipairs(data) do
+		load_event(val, event_type)
+	end
 end
 
 function EVENT.progress(dialog)
@@ -93,6 +101,7 @@ end
 function EVENT.new(event_type)
 	EVENT.current = event_list[event_type][EVENT.get_event(event_type)]
 	EVENT.stage = 1
+	msg.post("#controller", hash("event_progress"))
 end
 
 

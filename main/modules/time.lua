@@ -1,10 +1,12 @@
 local STR = require("main/modules/strings")
+local STATS = require("main/modules/stats")
 
 local TIME = {
 	time = 100000,
 	runnning = false,
 	scale = hash("normal"),
-	alarm = {}
+	alarm = {},
+	alarm_list = {}
 }
 
 local scale_data = {
@@ -83,6 +85,9 @@ local function check_alarms()
 					time_skippable = false
 					if val.type == hash("departure") then
 						msg.post("#controller", hash("travel_destination_pressed"))
+					elseif val.type == hash("leave_over") then
+						STATS.leave_end = nil
+						print("GET BACK TO WORK YOU LAZY SODS!")
 					else
 						print("UNKNOWN ALARM:", val.type)
 					end
@@ -136,10 +141,22 @@ function TIME.set_scale(scale)
 	end
 end
 
+function TIME.remove_alarm(type)
+	for key, val in ipairs(TIME.alarm[TIME.alarm_list[type]]) do
+		if val.type == type then
+			table.remove(TIME.alarm[TIME.alarm_list[type]], key)
+			TIME.alarm_list[type] = nil
+			return true
+		end
+	end
+end
+
 function TIME.add_alarm(time, type, stop)
+	if TIME.alarm_list[type] then TIME.remove_alarm(type) end
 	time = math.floor(time / 100) * 100
 	TIME.alarm[time] = TIME.alarm[time] or {}
 	table.insert(TIME.alarm[time], {type = type, stop = stop})
+	TIME.alarm_list[type] = time
 end
 
 return TIME

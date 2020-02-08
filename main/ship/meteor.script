@@ -15,7 +15,7 @@ function init(self)
 		msg.post("#co1", "enable"); msg.post("#co", "disable")
 		msg.post("#co1", "apply_force", {force = force, position = go.get_world_position() + vmath.vector3(math.random(-5, 5), math.random(-5, 5), 0)})
 		if math.random() > 0.5 then
-			go.set_position(go.get_position() - vmath.vector3(0, 0, 2))
+			go.set_position(go.get_position() + vmath.vector3(0, 0, 0.0001))
 		end
 	end
 	self.lifespan = timer.delay(8, false, die)

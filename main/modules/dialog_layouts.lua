@@ -55,7 +55,7 @@ local LAY = {
 				type = hash("label"),
 				position_x = 0.5,
 				position_y = 1,
-				text = function() return CARGO.fuel end
+				text = function() return math.floor(CARGO.fuel * 100).." %" end
 			},
 			{
 				id = hash("info_food"),
@@ -73,7 +73,7 @@ local LAY = {
 			},
 		}
 	},
-	[hash("main")] = {
+	[hash("landed")] = {
 		elements = {
 			{
 				id = hash("buy"),
@@ -154,7 +154,7 @@ local LAY = {
 			},
 		}
 	},
-	[hash("main_space")] = {
+	[hash("flight")] = {
 		elements = {
 			{
 				id = hash("crew"),
@@ -180,7 +180,7 @@ local LAY = {
 			},
 		}
 	},
-	[hash("main_orbit")] = {
+	[hash("orbit")] = {
 		elements = {
 			{
 				id = hash("crew"),
@@ -363,13 +363,13 @@ local LAY = {
 				},
 			},
 			{
-				id = hash("crew_confirm"),
+				id = hash("crew_overview_confirm"),
 				type = hash("button_main"),
 				position_x = 0,
 				position_y = function() return #CREW.list + 3 end,
 				props = {
 					label = hash("btn_crew_confirm"),
-					callback = hash("crew_confirm"),
+					callback = hash("crew_overview_confirm"),
 					enabled = true
 				},
 			}

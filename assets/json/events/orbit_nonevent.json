@@ -1,0 +1,21 @@
+{
+  "passages": [
+    {
+      "text": "no_event",
+      "name": "Nothing",
+      "pid": "1",
+      "position": {
+        "x": "290",
+        "y": "815"
+      },
+      "tags": [
+        "end"
+      ]
+    }
+  ],
+  "name": "nonevent",
+  "startnode": "1",
+  "creator": "Twine",
+  "creator-version": "2.3.3",
+  "ifid": "3FA56D53-7677-4F9C-9BF2-B37CF4D1D68A"
+}

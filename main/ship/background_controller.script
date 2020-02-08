@@ -1,5 +1,5 @@
-local timer_meteor
-local timer_warp
+local timer_meteor, timer_warp
+local animation_speed = 1/2
 
 local function get_sky_colour()
 	local red = math.random() / 2
@@ -14,33 +14,47 @@ function init(self)
 end
 
 function on_message(self, message_id, message, sender)
+	local ANIM = {
+		takeoff = 4 * animation_speed,
+		turn_pos = 5 * animation_speed,
+		turn_rot = 3 * animation_speed,
+		warp = 4 * animation_speed,
+		warp_delay = 0.5,
+		land = 4 * animation_speed,
+		stars_delay = 1 * animation_speed
+	}
+	
 	local function spawn_meteor()
 		local size = math.random(2, 10) / 10
-		factory.create("/background#spawn_meteor", vmath.vector3(-40, math.random(10, 880), 1), nil, nil, vmath.vector3(size, size, size))
+		factory.create("/background#spawn_meteor", vmath.vector3(-40, math.random(10, 880), 0), nil, nil, vmath.vector3(size, size, size))
 		timer_meteor = timer.delay(math.random(4, 15) / 10, false, spawn_meteor)
 	end
-	local function turn()
-		msg.post("/ground", "disable")
-		particlefx.play("/ship#engine")
-		particlefx.play("/background#stars")
-		go.animate("/sky", "euler.z", go.PLAYBACK_ONCE_FORWARD, 90, go.EASING_INOUTCUBIC, 3, 0, spawn_meteor)
-		go.animate("/sky", "position", go.PLAYBACK_ONCE_FORWARD, vmath.vector3(21280, 480, -0.5), go.EASING_INOUTCUBIC, 5, 0, function() msg.post("/main#controller", "transition_space") end)
-	end
-	
-	if message_id == hash("takeoff") then
-		msg.post("/sky", "enable")
-		go.animate("/sky", "position.y", go.PLAYBACK_ONCE_FORWARD, -900, go.EASING_INOUTCUBIC, 4, 0, turn)
-		go.animate("/ground", "position.y", go.PLAYBACK_ONCE_FORWARD, -900, go.EASING_INOUTCUBIC, 4)
-	elseif message_id == hash("warp") then
+
+	local function warp(callback)
 		particlefx.play("#warp")
 		particlefx.stop("#stars")
 		if timer_meteor then timer.cancel(timer_meteor) end
-		timer_warp = timer.delay(3, false, function()
+		timer_warp = timer.delay(ANIM.warp, false, function()
 			particlefx.stop("#warp")
-			msg.post("/main#controller", "transition_orbit")
 			particlefx.play("#stars")
 			spawn_meteor()
+			timer.delay(ANIM.warp_delay, false, function() msg.post("/main#controller", callback) end)
 		end)
+	end
+	
+	if message_id == hash("takeoff") then
+		local function turn()
+			msg.post("/ground", "disable")
+			particlefx.play("/ship#engine")
+			particlefx.play("/background#stars")
+			go.animate("/sky", "euler.z", go.PLAYBACK_ONCE_FORWARD, 90, go.EASING_INOUTCUBIC, ANIM.turn_rot, 0, spawn_meteor)
+			go.animate("/sky", "position", go.PLAYBACK_ONCE_FORWARD, vmath.vector3(21280, 480, -0.5), go.EASING_INOUTCUBIC, ANIM.turn_pos, 0, function() warp(hash("transition_space")) end)
+		end
+		msg.post("/sky", "enable")
+		go.animate("/sky", "position.y", go.PLAYBACK_ONCE_FORWARD, -900, go.EASING_INOUTCUBIC, ANIM.takeoff, 0, turn)
+		go.animate("/ground", "position.y", go.PLAYBACK_ONCE_FORWARD, -900, go.EASING_INOUTCUBIC, ANIM.takeoff)
+	elseif message_id == hash("warp") then
+		warp(hash("transition_orbit"))
 	elseif message_id == hash("land") then
 		sprite.set_constant("/sky#sprite", "tint", get_sky_colour())
 		go.set_position(vmath.vector3(640, -21280, -0.5), "/sky")
@@ -48,11 +62,11 @@ function on_message(self, message_id, message, sender)
 		msg.post("/sky", "enable")
 		msg.post("/ground", "enable")
 		go.set_position(vmath.vector3(640, -900, 0), "/ground")
-		go.animate("/sky", "position.y", go.PLAYBACK_ONCE_FORWARD, 0, go.EASING_OUTCUBIC, 4)
-		go.animate("/ground", "position.y", go.PLAYBACK_ONCE_FORWARD, 88, go.EASING_OUTCUBIC, 4)
+		go.animate("/sky", "position.y", go.PLAYBACK_ONCE_FORWARD, 0, go.EASING_OUTCUBIC, ANIM.land)
+		go.animate("/ground", "position.y", go.PLAYBACK_ONCE_FORWARD, 88, go.EASING_OUTCUBIC, ANIM.land)
 		if timer_meteor then timer.cancel(timer_meteor) end
-		timer.delay(1, false, function() particlefx.stop("#stars") end)
-		timer.delay(4, false, function() msg.post("/main#controller", "transition_planet"); particlefx.stop("/ship#engine") end)
+		timer.delay(ANIM.stars_delay, false, function() particlefx.stop("#stars") end)
+		timer.delay(ANIM.land, false, function() msg.post("/main#controller", "transition_planet"); particlefx.stop("/ship#engine") end)
 	end
 end
 

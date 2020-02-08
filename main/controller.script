@@ -20,8 +20,8 @@ local infobox
 
 local button_x, button_y = 116, 54
 
-local function open_main(main)
-	local props = {size = vmath.vector3(800, 0, 0), layout = main}
+local function open_main()
+	local props = {size = vmath.vector3(800, 0, 0), layout = STATS.location}
 	stack[1] = {dialog = factory.create("#dialog", vmath.vector3(centre.x, 100, centre.z), nil, props)}
 	local props = {size = vmath.vector3(button_x * 2.25, button_y * 3, 0), layout = hash("infobox")}
 	infobox = factory.create("#dialog", vmath.vector3(1110, 780, centre.z), nil, props)
@@ -29,7 +29,7 @@ local function open_main(main)
 end
 
 function init(self)
-	open_main(hash("main"))
+	open_main()
 end
 
 local function close_all_dialogs(main_on, main_gone)
@@ -113,6 +113,8 @@ function on_message(self, message_id, message, sender)
 				STATS.leave_duration_default = STATS.new_time - TIME.time
 				STATS.leave_end = STATS.new_time
 				STATS.new_time = nil
+			elseif not STATS.leave_end then
+				STATS.leave_end = TIME.time + STATS.leave_duration_default
 			end
 			open_dialog(hash("crew_overview"), hash("title_crew"), nil, message_id)
 			for key, val in ipairs(CREW.list) do
@@ -163,6 +165,11 @@ function on_message(self, message_id, message, sender)
 	elseif message_id == hash("crew_set_leave") then
 		STATS.new_time = STATS.leave_end or (STATS.leave_duration_default + TIME.time)
 		open_dialog(hash("time_choice"), hash("title_leave_duration_selection"))
+	elseif message_id == hash("crew_overview_confirm") then
+		if STATS.leave_end > TIME.time then
+			TIME.add_alarm(STATS.leave_end, hash("leave_over"), true)
+		end
+		refresh_dialog(true)
 	elseif message_id == hash("crew_pressed") then
 		if #CREW.list == 0 then
 			open_dialog(hash("error"), hash("title_error_no_crew"))
@@ -245,7 +252,7 @@ function on_message(self, message_id, message, sender)
 		msg.post("/main", hash("job_accepted"), {id = message.id})
 		close_all_dialogs(true)
 	elseif message_id == hash("travel_pressed") then
-		if CARGO.fuel == 0 then
+		if not (CARGO.fuel > 0) then
 			open_dialog(hash("error"), hash("title_error_no_fuel"))
 		elseif STATS.food == 0 then
 			open_dialog(hash("error"), hash("title_error_no_food"))
@@ -319,7 +326,7 @@ function on_message(self, message_id, message, sender)
 	elseif message_id == hash("travel_accept") then
 		if STATS.destination.time - TIME.time < 1 then
 			msg.post("#main", hash("travel"))
-			CARGO.fuel = CARGO.fuel - 1
+			CARGO.fuel = CARGO.fuel - math.random()
 			--STATS.food = STATS.food - #CREW.list
 			if STATS.destination.job_id then
 				PLANET.current = STATS.jobs[STATS.destination.region][STATS.destination.job_id].planet
@@ -357,17 +364,16 @@ function on_message(self, message_id, message, sender)
 			msg.post("/background", "land")
 		end
 	elseif message_id == hash("transition_space") then
-		STATS.location = hash("space")
-		EVENT.new(hash("space"))
-		msg.post(".", hash("event_progress"))
+		STATS.location = hash("flight")
+		EVENT.new(hash("flight"))
 	elseif message_id == hash("transition_orbit") then
-		open_main(hash("main_orbit"))
 		STATS.location = hash("orbit")
+		EVENT.new(hash("orbit"))
 	elseif message_id == hash("transition_planet") then
 		if STATS.current_job then msg.post("#main", hash("job_completed")) end
 		PLANET.add_jobs(PLANET.current)
-		open_main(hash("main"))
 		STATS.location = hash("landed")
+		EVENT.new(hash("landing"))
 	elseif message_id == hash("event_progress") then
 		local stage = EVENT.current[EVENT.stage]
 		EVENT.links = stage.links	
@@ -396,7 +402,7 @@ function on_message(self, message_id, message, sender)
 	elseif message_id == hash("event_end") then
 		EVENT.stage = 0; EVENT.current = nil
 		close_all_dialogs(false, true)
-		open_main(hash("main_space"))
+		open_main()
 	elseif message_id == hash("talk_progress") then
 		local stage = TALK.current[TALK.stage]
 		TALK.links = stage.links
@@ -439,7 +445,7 @@ function on_message(self, message_id, message, sender)
 		refresh_dialog(true)
 	elseif message_id == hash("time_choice_accept") then
 		refresh_dialog(true)
-	elseif message_id == hash("refresh_infobox") then
+	elseif message_id == hash("refresh_infobox") and infobox then
 		go.delete(infobox, true)
 		local props = {size = vmath.vector3(button_x * 2.25, button_y * 3, 0), layout = hash("infobox")}
 		infobox = factory.create("#dialog", vmath.vector3(1110, 780, centre.z), nil, props)

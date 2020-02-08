@@ -237,6 +237,10 @@ local STR = {
 			[hash("talk_not_implemented")] = {"This part of the conversation tree is not yet implemented, captain."},
 			
 			-- events
+			[hash("flight_nonevent/no_event")] = "Flight event happened and have been dealt with.",
+			[hash("orbit_nonevent/no_event")] = "Orbit event happened and have been dealt with.",
+			[hash("landing_nonevent/no_event")] = "Landing event happened and have been dealt with.",
+			
 			[hash("distress_signal_true/signal_detected")] = "You have detected an emergency signal from a nearby vessel. Someone may be in trouble. Or they are setting an ambush...",
 			[hash("distress_signal_true/signal_missed")] = "Nothing of importance happened during travel.",
 			[hash("distress_signal_true/signal_ignored")] = "Whoever sent the signal will have to fend for themselves.",

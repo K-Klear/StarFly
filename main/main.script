@@ -81,6 +81,6 @@ function on_message(self, message_id, message, sender)
 		end
 		table.remove(STATS.jobs[STATS.current_job.region], STATS.current_job.job_id)
 		STATS.current_job = {}
-		msg.post("#controller", hash("refresh_infobox"))
+		--msg.post("#controller", hash("refresh_infobox"))
 	end
 end
