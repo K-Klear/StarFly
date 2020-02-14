@@ -461,5 +461,7 @@ function on_message(self, message_id, message, sender)
 		TIME.set_scale(hash("fastest"))
 	elseif message_id == hash("error") then
 		open_dialog(hash("error"), message.title)
+	elseif message_id == hash("debug") then
+
 	end
 end
