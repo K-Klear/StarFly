@@ -1,16 +1,10 @@
+local PLANET = require("main/modules/planets")
+
 local timer_meteor, timer_warp
 local animation_speed = 1/2
 
-local function get_sky_colour()
-	local red = math.random() / 2
-	local green = math.random()
-	local blue = math.random() / 2 + 0.5
-	local alpha = math.random() / 2 + 0.5
-	return vmath.vector4(red, green, blue, alpha)
-end
-
 function init(self)
-	sprite.set_constant("/sky#sprite", "tint", get_sky_colour())
+	sprite.set_constant("/sky#sprite", "tint", PLANET.get("sky_colour"))
 end
 
 function on_message(self, message_id, message, sender)
@@ -56,7 +50,7 @@ function on_message(self, message_id, message, sender)
 	elseif message_id == hash("warp") then
 		warp(hash("transition_orbit"))
 	elseif message_id == hash("land") then
-		sprite.set_constant("/sky#sprite", "tint", get_sky_colour())
+		sprite.set_constant("/sky#sprite", "tint", PLANET.get("sky_colour"))
 		go.set_position(vmath.vector3(640, -21280, -0.5), "/sky")
 		go.set_rotation(vmath.quat(0, 0, 0, 1), "/sky")
 		msg.post("/sky", "enable")

@@ -16,21 +16,21 @@ local LAY = {
 				type = hash("label"),
 				position_x = -0.9,
 				position_y = 0.2,
-				text = function() return PLANET.current.region end
+				text = function() return PLANET.get("region") end
 			},
 			{
 				id = hash("info_government"),
 				type = hash("label"),
 				position_x = 0,
 				position_y = 0.2,
-				text =  function() return PLANET.current.government end
+				text =  function() return PLANET.get("government") end
 			},
 			{
 				id = hash("info_settlement"),
 				type = hash("label"),
 				position_x = 0.9,
 				position_y = 0.2,
-				text = function() return PLANET.current.settlement end
+				text = function() return PLANET.get("settlement") end
 			},
 			{
 				type = hash("label"),
@@ -62,7 +62,7 @@ local LAY = {
 				type = hash("label"),
 				position_x = 0.5,
 				position_y = 2,
-				text = function() return STATS.food end
+				text = function() return CARGO.food end
 			},
 			{
 				id = hash("info_money"),
@@ -83,7 +83,7 @@ local LAY = {
 				props = {
 					label = hash("btn_buy"),
 					callback = hash("buy_pressed"),
-					enabled = false
+					enabled = true
 				},
 			},
 			{
@@ -213,26 +213,26 @@ local LAY = {
 		close_button = true,
 		background = true,
 		size_x = 3.6,
-		size_y = function() return #PLANET.current.recruits end,
+		size_y = function() return #PLANET.get("recruits") end,
 		elements = {
 			{
-				repeating = function() return #PLANET.current.recruits end,
+				repeating = function() return #PLANET.get("recruits") end,
 				type = hash("icon_face"),
-				image = function(id) return PLANET.current.recruits[id].face end,
+				image = function(id) return PLANET.get("recruits")[id].face end,
 				position_x = -1.6,
 				position_y = 1,
 				scale = vmath.vector3(2, 2, 2)
 			},
 			{
-				repeating = function() return #PLANET.current.recruits end,
+				repeating = function() return #PLANET.get("recruits") end,
 				type = hash("label"),
 				position_x = -1,
 				position_y = 1,
-				text = function(id) return STR.en.names[PLANET.current.recruits[id].name.gender][PLANET.current.recruits[id].name.key] end
+				text = function(id) return STR.en.names[PLANET.get("recruits")[id].name.gender][PLANET.get("recruits")[id].name.key] end
 			},
 			{
 				id = hash("recruit_interview"),
-				repeating = function() return #PLANET.current.recruits end,
+				repeating = function() return #PLANET.get("recruits") end,
 				type = hash("button_main"),
 				position_x = 0,
 				position_y = 1,
@@ -244,7 +244,7 @@ local LAY = {
 			},
 			{
 				id = hash("recruit_hire"),
-				repeating = function() return #PLANET.current.recruits end,
+				repeating = function() return #PLANET.get("recruits") end,
 				type = hash("button_main"),
 				position_x = 1,
 				position_y = 1,
@@ -711,7 +711,7 @@ local LAY = {
 		close_button = true,
 		background = true,
 		size_x = 4,
-		size_y = function() return #PLANET.current.jobs + 1 end,
+		size_y = function() return #PLANET.get("jobs") + 1 end,
 		elements = {
 			{
 				type = hash("label"),
@@ -732,28 +732,28 @@ local LAY = {
 				text = hash("lbl_jobs_wage")
 			},
 			{
-				repeating = function() return #PLANET.current.jobs end,
+				repeating = function() return #PLANET.get("jobs") end,
 				type = hash("label"),
 				position_x = -1.5,
 				position_y = 2,
-				text = function(id) return PLANET.current.jobs[id].type end
+				text = function(id) return PLANET.get("jobs")[id].type end
 			},
 			{
-				repeating = function() return #PLANET.current.jobs end,
+				repeating = function() return #PLANET.get("jobs") end,
 				type = hash("label"),
 				position_x = -0.5,
 				position_y = 2,
-				text = function(id) return PLANET.current.jobs[id].region end
+				text = function(id) return PLANET.get("region", PLANET.get("jobs")[id].planet_id) end
 			},
 			{
-				repeating = function() return #PLANET.current.jobs end,
+				repeating = function() return #PLANET.get("jobs") end,
 				type = hash("label"),
 				position_x = 0.5,
 				position_y = 2,
-				text = function(id) return PLANET.current.jobs[id].wage end
+				text = function(id) return PLANET.get("jobs")[id].wage end
 			},
 			{
-				repeating = function() return #PLANET.current.jobs end,
+				repeating = function() return #PLANET.get("jobs") end,
 				type = hash("button_main"),
 				position_x = 1.5,
 				position_y = 2,
@@ -956,7 +956,7 @@ local LAY = {
 				type = hash("label"),
 				position_x = -0.5,
 				position_y = 2,
-				text = function(id) return STATS.jobs[STATS.destination.region][id].planet.name end
+				text = function(id) return PLANET.get("name", STATS.jobs[STATS.destination.region][id].planet_id) end
 			},
 			{
 				repeating = function() return #STATS.jobs[STATS.destination.region] end,

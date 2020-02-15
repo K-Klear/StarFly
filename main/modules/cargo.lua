@@ -1,7 +1,9 @@
 local total_storage = 20
 local CARGO = {
 	empty = total_storage,
-	fuel = 1
+	fuel = 1,
+	food = 20,
+	food_max = 20,
 }
 
 local pos_x, pos_y, pos_z = {131, 161.5, 195, 224}, {70, 90, 110, 130, 150}, 0.001

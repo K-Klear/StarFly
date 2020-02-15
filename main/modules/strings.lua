@@ -128,6 +128,8 @@ local STR = {
 			[hash("title_error_no_fuel")] = "You don't have enough fuel!",
 			[hash("title_error_no_food")] = "You don't have enough rations!",
 			[hash("title_error_no_pilot")] = "You must assign a pilot!",
+			[hash("title_error_not_enough_money")] = "You don't have enough money!",
+			[hash("title_error_fully_stocked")] = "You are already fully stocked!",
 			[hash("error_cargo_hold_full")] = "Cargo hold is full!",
 
 			-- dialog labels
@@ -461,16 +463,15 @@ local STR = {
 		}
 	}
 }
-	
 
-function STR.STRING(input)
+function STR.STRING(input, id)
 	local str = ""
 	if type(input) == "table" then
 		for key, val in ipairs(input) do
-			str = str..STR.STRING(val)
+			str = str..STR.STRING(val, id)
 		end
 	elseif type(input) == "function" then
-		str = str..STR.STRING({input()})
+		str = str..STR.STRING({input(id)})
 	elseif type(input) == "number" or type(input) == "string" then
 		str = str..input
 	else
@@ -486,6 +487,18 @@ function STR.STRING(input)
 		end
 	end
 	return str
+end
+
+STR.titles = {}
+
+function STR.save_title(title)
+	if title == hash("") then return title end
+	local id = 0
+	repeat
+		id = id + 1
+	until not STR.titles[hash(id)]
+	STR.titles[hash(id)] = STR.STRING(title)
+	return hash(id)
 end
 
 return STR

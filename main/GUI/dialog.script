@@ -43,15 +43,11 @@ function init(self)
 		go.set_parent(val, ".")
 		sprite.play_flipbook(val, background_sprite.enabled[key])
 	end
-
+	
 	if self.title ~= hash("") then
 		object = factory.create("#label", vmath.vector3(0, half_y - 16, 0))
 		go.set_parent(object, ".")
-		if type(self.title) == "string" then
-			label.set_text(object, self.title)
-		else
-			label.set_text(object, STR.en.ui[self.title])
-		end
+		label.set_text(object, STR.titles[self.title])
 	end
 
 	if LAY[self.layout].elements then
@@ -88,9 +84,7 @@ function init(self)
 				self.elements[id] = self.elements[id] or {}
 				table.insert(self.elements[id], object)
 				if val.type == hash("label") or val.type == hash("textbox") then
-					local text = val.text
-					if type(text) == "function" then text = text(props.id) end
-					label.set_text(object, STR.STRING(text, props.id))
+					label.set_text(object, STR.STRING(val.text, props.id))
 				end
 			end
 		end
@@ -149,4 +143,8 @@ function on_message(self, message_id, message, sender)
 			go.delete(self.elements[message.button][1])
 		end
 	end
+end
+
+function final(self)
+	STR.titles[self.title] = nil
 end

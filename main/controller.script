@@ -56,7 +56,7 @@ local function open_dialog(layout, title, id, refresh_message)
 	local size_x, size_y = LAY[layout].size_x, LAY[layout].size_y
 	if type(size_x) == "function" then size_x = size_x() end
 	if type(size_y) == "function" then size_y = size_y() end
-	local props = {size = vmath.vector3(button_x * size_x, button_y * size_y, 0), title = title, layout = layout, id = id}
+	local props = {size = vmath.vector3(button_x * size_x, button_y * size_y, 0), title = STR.save_title(title), layout = layout, id = id}
 	table.insert(stack, {dialog = factory.create("#dialog", vmath.vector3(centre.x, centre.y, 0.8 + #stack * 0.02), nil, props), refresh_message = refresh_message})
 	if stack[#stack - 1] then
 		msg.post(stack[#stack - 1].dialog, "disable_all")
@@ -82,27 +82,43 @@ local function refresh_dialog(close_first)
 	end
 end
 
+local function refresh_infobox()
+	go.delete(infobox, true)
+	local props = {size = vmath.vector3(button_x * 2.25, button_y * 3, 0), layout = hash("infobox")}
+	infobox = factory.create("#dialog", vmath.vector3(1110, 780, centre.z), nil, props)
+end
+
 function on_message(self, message_id, message, sender)
 	if DEBUG.show_controller_messages then print(message_id.." id: "..(message.id or "none")) end
 	if message_id == hash("buy_pressed") then
-
-	elseif message_id == hash("buy_pressed") then
-
+		local price = (CARGO.food_max - CARGO.food) * PLANET.get("price_food") + (1 - CARGO.fuel) * PLANET.get("price_fuel")
+		price = math.ceil(price)
+		if price == 0 then
+			open_dialog(hash("error"), hash("title_error_fully_stocked"))
+		elseif STATS.money < price then
+			open_dialog(hash("error"), hash("title_error_not_enough_money"))
+		else
+			open_dialog(hash("error"), "You paid "..price.." credits.")
+			STATS.money = STATS.money - price
+			CARGO.food = CARGO.food_max
+			CARGO.fuel = 1
+			refresh_infobox()
+		end
 	elseif message_id == hash("recruit_pressed") then
-		if #PLANET.current.recruits == 0 then
+		if #PLANET.get("recruits") == 0 then
 			open_dialog(hash("error"), hash("title_error_no_recruits"))
 		else
 			open_dialog(hash("recruit"), hash("title_recruit"), nil, message_id)
 		end
 	elseif message_id == hash("recruit_interview") then
 		msg.post(stack[#stack].dialog, "disable_all")
-		TALK.start("recruitment", PLANET.current.recruits[message.id])
+		TALK.start("recruitment", PLANET.get("recruits")[message.id])
 	elseif message_id == hash("recruit_hire") then
 		if #CREW.list >= STATS.max_crew then
 			open_dialog(hash("error"), hash("title_error_crew_full"))
 		else
-			CREW.add(PLANET.current.recruits[message.id])
-			table.remove(PLANET.current.recruits, message.id)
+			CREW.add(PLANET.get("recruits")[message.id])
+			table.remove(PLANET.get("recruits"), message.id)
 			refresh_dialog()
 		end
 	elseif message_id == hash("crew_overview") then
@@ -243,7 +259,7 @@ function on_message(self, message_id, message, sender)
 		CREW.check_issue(hash("low_wage"))
 		refresh_dialog(true)
 	elseif message_id == hash("jobs_pressed") then
-		if #PLANET.current.jobs == 0 then
+		if #PLANET.get("jobs") == 0 then
 			open_dialog(hash("error"), hash("title_error_no_jobs"))
 		else
 			open_dialog(hash("jobs"), hash("title_jobs"), nil, message_id)
@@ -254,7 +270,7 @@ function on_message(self, message_id, message, sender)
 	elseif message_id == hash("travel_pressed") then
 		if not (CARGO.fuel > 0) then
 			open_dialog(hash("error"), hash("title_error_no_fuel"))
-		elseif STATS.food == 0 then
+		elseif CARGO.food == 0 then
 			open_dialog(hash("error"), hash("title_error_no_food"))
 		elseif not CREW.get_role(hash("role_pilot")) then
 			open_dialog(hash("error"), hash("title_error_no_pilot"))
@@ -327,12 +343,12 @@ function on_message(self, message_id, message, sender)
 		if STATS.destination.time - TIME.time < 1 then
 			msg.post("#main", hash("travel"))
 			CARGO.fuel = CARGO.fuel - math.random()
-			--STATS.food = STATS.food - #CREW.list
+			CARGO.food = CARGO.food - #CREW.list
 			if STATS.destination.job_id then
-				PLANET.current = STATS.jobs[STATS.destination.region][STATS.destination.job_id].planet
+				PLANET.current_id = STATS.jobs[STATS.destination.region][STATS.destination.job_id].planet_id
 				STATS.current_job = {region = STATS.destination.region, job_id = STATS.destination.job_id}
 			else
-				PLANET.current = PLANET.new(STATS.destination.region)
+				PLANET.current_id = PLANET.new_planet({region = STATS.destination.region})
 				STATS.current_job = nil
 			end
 			STATS.destination = {}
@@ -371,7 +387,6 @@ function on_message(self, message_id, message, sender)
 		EVENT.new(hash("orbit"))
 	elseif message_id == hash("transition_planet") then
 		if STATS.current_job then msg.post("#main", hash("job_completed")) end
-		PLANET.add_jobs(PLANET.current)
 		STATS.location = hash("landed")
 		EVENT.new(hash("landing"))
 	elseif message_id == hash("event_progress") then
@@ -408,9 +423,9 @@ function on_message(self, message_id, message, sender)
 		TALK.links = stage.links
 		if stage.effect == hash("recruit") then
 			CREW.add(TALK.speaker)
-			for key, val in ipairs(PLANET.current.recruits) do
+			for key, val in ipairs(PLANET.get("recruits")) do
 				if val == TALK.speaker then
-					table.remove(PLANET.current.recruits, key); break
+					table.remove(PLANET.get("recruits"), key); break
 				end
 			end
 		elseif stage.effect == hash("pick_role") then
@@ -446,9 +461,7 @@ function on_message(self, message_id, message, sender)
 	elseif message_id == hash("time_choice_accept") then
 		refresh_dialog(true)
 	elseif message_id == hash("refresh_infobox") and infobox then
-		go.delete(infobox, true)
-		local props = {size = vmath.vector3(button_x * 2.25, button_y * 3, 0), layout = hash("infobox")}
-		infobox = factory.create("#dialog", vmath.vector3(1110, 780, centre.z), nil, props)
+		refresh_infobox()
 	elseif message_id == hash("close") then
 		refresh_dialog(true)
 	elseif message_id == hash("clock_scale_normal") then
