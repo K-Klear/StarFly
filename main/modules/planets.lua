@@ -138,6 +138,12 @@ function get_stat.price_food(id)
 	return math.random(1, 5) * 25
 end
 
+function get_stat.position(id)
+	local regions = {[hash("core")] = {width = 1, start = 0}, [hash("frontier")] = {width = 0.5, start = 1}, [hash("rim")] = {width = 2, start = 1.5}}
+	local region = PLANET.get("region", id)
+	return math.random() * regions[region].width + regions[region].start
+end
+
 function PLANET.get(stat, id)
 	id = id or PLANET.current_id
 	if PLANET.list[id][stat] then
@@ -150,5 +156,6 @@ function PLANET.get(stat, id)
 end
 
 PLANET.new_planet({region = hash("frontier"), recruits = {[1] = CREW.new(), [2] = CREW.new(), [3] = CREW.new(), [4] = CREW.new()}})
+
 
 return PLANET

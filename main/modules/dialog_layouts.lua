@@ -83,7 +83,7 @@ local LAY = {
 				props = {
 					label = hash("btn_buy"),
 					callback = hash("buy_pressed"),
-					enabled = true
+					enabled = function() return not(CARGO.fuel == 1 and CARGO.food == CARGO.food_max) end
 				},
 			},
 			{
@@ -116,7 +116,7 @@ local LAY = {
 				props = {
 					label = hash("btn_recruit"),
 					callback = hash("recruit_pressed"),
-					enabled = true
+					enabled = function() return #PLANET.get("recruits") > 0 end
 				},
 			},
 			{
@@ -127,7 +127,7 @@ local LAY = {
 				props = {
 					label = hash("btn_crew"),
 					callback = hash("crew_pressed"),
-					enabled = true
+					enabled = function() return #CREW.list > 0 end
 				},
 			},
 			{
@@ -138,7 +138,7 @@ local LAY = {
 				props = {
 					label = hash("btn_jobs"),
 					callback = hash("jobs_pressed"),
-					enabled = true
+					enabled = function() return #PLANET.get("jobs") > 0 end
 				},
 			},
 			{

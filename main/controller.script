@@ -10,6 +10,7 @@ local LAY = require("main/modules/dialog_layouts")
 local TIME = require("main/modules/time")
 local DEBUG = require("main/modules/debug")
 local CARGO = require("main/modules/cargo")
+local UPG = require("main/modules/upgrades")
 
 local centre = vmath.vector3(1280 / 2, 900 / 2, 0.8)
 
@@ -21,6 +22,11 @@ local infobox
 local button_x, button_y = 116, 54
 
 local function open_main()
+	for key, val in ipairs(stack) do
+		go.delete(val.dialog, true)
+	end
+	if infobox then go.delete(infobox, true); infobox = nil	end
+	stack = {}
 	local props = {size = vmath.vector3(800, 0, 0), layout = STATS.location}
 	stack[1] = {dialog = factory.create("#dialog", vmath.vector3(centre.x, 100, centre.z), nil, props)}
 	local props = {size = vmath.vector3(button_x * 2.25, button_y * 3, 0), layout = hash("infobox")}
@@ -32,22 +38,16 @@ function init(self)
 	open_main()
 end
 
-local function close_all_dialogs(main_on, main_gone)
-	while #stack > 1 do
-		go.delete(stack[#stack].dialog, true); stack[#stack] = nil
-	end
+local function close_all_dialogs(main_on)
 	if main_on then
-		msg.post(stack[1].dialog, "enable_all")
-		msg.post("/cursor", hash("crew_selection"), {enabled = true})
+		open_main()
 		TIME.start()
 	else
-		msg.post("/cursor", hash("crew_selection"), {enabled = false})
-	end
-	if main_gone then
-		go.delete(stack[#stack].dialog, true); stack[#stack] = nil
-		if infobox then
-			go.delete(infobox, true); infobox = nil
+		for key, val in ipairs(stack) do
+			go.delete(val.dialog, true)
 		end
+		if infobox then go.delete(infobox, true); infobox = nil	end
+		stack = {}
 		msg.post("/cursor", hash("crew_selection"), {enabled = false})
 	end
 end
@@ -74,10 +74,11 @@ local function refresh_dialog(close_first)
 		go.delete(stack[#stack].dialog, true); stack[#stack] = nil
 		msg.post("#", refresh)
 	else
-		msg.post(stack[#stack].dialog, "enable_all")
 		if #stack == 1 then
+			open_main()
 			TIME.start()
-			msg.post("/cursor", hash("crew_selection"), {enabled = true})
+		else
+			msg.post(stack[#stack].dialog, "enable_all")
 		end
 	end
 end
@@ -354,7 +355,7 @@ function on_message(self, message_id, message, sender)
 			STATS.destination = {}
 			msg.post("/background", "takeoff")
 			STATS.location = hash("takeoff")
-			close_all_dialogs(false, true)
+			close_all_dialogs(false)
 		else
 			TIME.add_alarm(STATS.destination.time, hash("departure"), true)
 			close_all_dialogs(true)
@@ -367,7 +368,7 @@ function on_message(self, message_id, message, sender)
 		if not CREW.get_role(hash("role_pilot")) then
 			open_dialog(hash("error"), hash("title_error_no_pilot"))
 		else
-			close_all_dialogs(false, true)
+			close_all_dialogs(false)
 			msg.post("/background", "warp")
 			STATS.location = hash("warp")
 		end
@@ -375,7 +376,7 @@ function on_message(self, message_id, message, sender)
 		if not CREW.get_role(hash("role_pilot")) then
 			open_dialog(hash("error"), hash("title_error_no_pilot"))
 		else
-			close_all_dialogs(false, true)
+			close_all_dialogs(false)
 			STATS.location = hash("landing")
 			msg.post("/background", "land")
 		end
@@ -416,8 +417,8 @@ function on_message(self, message_id, message, sender)
 		refresh_dialog(false)
 	elseif message_id == hash("event_end") then
 		EVENT.stage = 0; EVENT.current = nil
-		close_all_dialogs(false, true)
-		open_main()
+		close_all_dialogs(true)
+		--open_main()
 	elseif message_id == hash("talk_progress") then
 		local stage = TALK.current[TALK.stage]
 		TALK.links = stage.links
@@ -475,6 +476,21 @@ function on_message(self, message_id, message, sender)
 	elseif message_id == hash("error") then
 		open_dialog(hash("error"), message.title)
 	elseif message_id == hash("debug") then
-
+		print("CURRENT PLANET:")
+		print("Name:", PLANET.get("name"), "Region:", PLANET.get("region"))
+		print("Position:", math.floor(PLANET.get("position") * 100) / 100)
+		print("***********************************")
+		for key, val in ipairs(PLANET.get("jobs")) do
+			print("_____________________________________________________")
+			print("Name:", PLANET.get("name", val.planet_id), "Region:", PLANET.get("region", val.planet_id))
+			local distance = math.abs(PLANET.get("position", val.planet_id) - PLANET.get("position"))
+			print("Position:", math.floor(PLANET.get("position", val.planet_id) * 100) / 100, "Distance:", distance)
+			local fuel = UPG.get("jump_cost", hash("warp_drive")) + (distance * UPG.get("distance_cost", hash("warp_drive")))
+			print("Fuel needed:", math.floor(fuel * 1000) / 1000)
+			print("Cost:", (fuel * 250).."-"..fuel * 250 * 5)
+			print("_____________________________________________________")
+		end
+		-- Distance from the target after jump should be math.max(0, math.random() - PILOTSKILL)
+		-- ...but also take warp drive acuracy into account.
 	end
 end
