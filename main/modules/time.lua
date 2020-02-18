@@ -94,6 +94,10 @@ local function check_alarms()
 					val.stop = false
 					TIME.set_scale(hash("normal"))
 				end
+			else
+				if val.type == hash("warp_drive_cooldown") then
+					STATS.warp_drive_cooldown = nil
+				end
 			end
 		end
 	end

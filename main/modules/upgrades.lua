@@ -5,28 +5,6 @@ local UPG = {
 	}
 }
 
-local upgrade_list = {
-	[hash("warp_drive")] = {
-		{
-			name = hash("warp_drive_default"),
-			cost = 1000,
-			jump_cost = 0.1,
-			fuel_efficiency = 0.1,
-			range = 1/0,
-			misjump_chance = 0.1,
-			accuracy = 0.5
-		}
-	},
-	[hash("impulse_drive")] = {
-		{
-			name = hash("impulse_drive_default"),
-			cost = 1000,
-			fuel_efficiency = 1,
-			speed = 1,
-		}
-	}
-}
-
 local part_list = {
 	[hash("warp_drive_default")] = {
 		type = hash("warp_drive"),
@@ -34,13 +12,15 @@ local part_list = {
 		jump_cost = 0.1,
 		distance_cost = 1/3,
 		range = 1/0,
-		misjump_chance = 0.1
+		misjump_chance = 0.1,
+		jump_accuracy = 0.9,
+		cooldown = 5000
 	},
 	[hash("impulse_drive_default")] = {
 		type = hash("impulse_drive"),
 		cost = 1000,
 		fuel_efficiency = 1,
-		speed = 1,
+		seconds_per_distance = 10000,
 	}
 }
 

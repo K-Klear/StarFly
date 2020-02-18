@@ -342,20 +342,31 @@ function on_message(self, message_id, message, sender)
 		refresh_dialog(true)
 	elseif message_id == hash("travel_accept") then
 		if STATS.destination.time - TIME.time < 1 then
-			msg.post("#main", hash("travel"))
-			CARGO.fuel = CARGO.fuel - math.random()
-			CARGO.food = CARGO.food - #CREW.list
+			local target_planet_id
 			if STATS.destination.job_id then
-				PLANET.current_id = STATS.jobs[STATS.destination.region][STATS.destination.job_id].planet_id
-				STATS.current_job = {region = STATS.destination.region, job_id = STATS.destination.job_id}
+				target_planet_id = STATS.jobs[STATS.destination.region][STATS.destination.job_id].planet_id
 			else
-				PLANET.current_id = PLANET.new_planet({region = STATS.destination.region})
-				STATS.current_job = nil
+				target_planet_id = PLANET.new_planet({region = STATS.destination.region})
 			end
-			STATS.destination = {}
-			msg.post("/background", "takeoff")
-			STATS.location = hash("takeoff")
-			close_all_dialogs(false)
+			local distance = math.abs(PLANET.get("position", target_planet_id) - PLANET.get("position"))
+			local fuel_needed = UPG.get("jump_cost", hash("warp_drive")) + (distance * UPG.get("distance_cost", hash("warp_drive")))
+			if CARGO.fuel < fuel_needed then
+				close_all_dialogs(true)
+				open_dialog(hash("error"), hash("title_error_no_fuel"))
+			else
+				CARGO.fuel = CARGO.fuel - fuel_needed
+				CARGO.food = CARGO.food - #CREW.list
+				PLANET.current_id = target_planet_id
+				if STATS.destination.job_id then
+					STATS.current_job = {region = STATS.destination.region, job_id = STATS.destination.job_id}
+				else
+					STATS.current_job = nil
+				end
+				STATS.destination = {}
+				msg.post("/background", "takeoff")
+				STATS.location = hash("takeoff")
+				close_all_dialogs()
+			end
 		else
 			TIME.add_alarm(STATS.destination.time, hash("departure"), true)
 			close_all_dialogs(true)
@@ -381,6 +392,13 @@ function on_message(self, message_id, message, sender)
 			msg.post("/background", "land")
 		end
 	elseif message_id == hash("transition_space") then
+		STATS.warp_drive_cooldown = true
+		TIME.add_alarm(TIME.time + UPG.get("cooldown", hash("warp_drive")), hash("warp_drive_cooldown"))
+		local distance = math.max(0.1, math.random() - (UPG.get("jump_accuracy", hash("warp_drive")) * CREW.get_role(hash("role_pilot")).skills.pilot))
+		local eta = math.ceil(distance * UPG.get("seconds_per_distance", hash("impulse_drive")))
+		STATS.
+		print(TIME.get_time_string(eta))
+		
 		STATS.location = hash("flight")
 		EVENT.new(hash("flight"))
 	elseif message_id == hash("transition_orbit") then
@@ -476,21 +494,6 @@ function on_message(self, message_id, message, sender)
 	elseif message_id == hash("error") then
 		open_dialog(hash("error"), message.title)
 	elseif message_id == hash("debug") then
-		print("CURRENT PLANET:")
-		print("Name:", PLANET.get("name"), "Region:", PLANET.get("region"))
-		print("Position:", math.floor(PLANET.get("position") * 100) / 100)
-		print("***********************************")
-		for key, val in ipairs(PLANET.get("jobs")) do
-			print("_____________________________________________________")
-			print("Name:", PLANET.get("name", val.planet_id), "Region:", PLANET.get("region", val.planet_id))
-			local distance = math.abs(PLANET.get("position", val.planet_id) - PLANET.get("position"))
-			print("Position:", math.floor(PLANET.get("position", val.planet_id) * 100) / 100, "Distance:", distance)
-			local fuel = UPG.get("jump_cost", hash("warp_drive")) + (distance * UPG.get("distance_cost", hash("warp_drive")))
-			print("Fuel needed:", math.floor(fuel * 1000) / 1000)
-			print("Cost:", (fuel * 250).."-"..fuel * 250 * 5)
-			print("_____________________________________________________")
-		end
-		-- Distance from the target after jump should be math.max(0, math.random() - PILOTSKILL)
-		-- ...but also take warp drive acuracy into account.
+
 	end
 end

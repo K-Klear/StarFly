@@ -45,6 +45,10 @@ function PLANET.new_planet(table)
 	return id
 end
 
+function PLANET.remove(planet_id)
+	PLANET.list[planet_id] = nil
+end
+
 local function get_random(table)
 	return table[math.random(1, #table)]
 end
