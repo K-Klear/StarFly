@@ -84,9 +84,11 @@ local function refresh_dialog(close_first)
 end
 
 local function refresh_infobox()
-	go.delete(infobox, true)
-	local props = {size = vmath.vector3(button_x * 2.25, button_y * 3, 0), layout = hash("infobox")}
-	infobox = factory.create("#dialog", vmath.vector3(1110, 780, centre.z), nil, props)
+	if infobox then
+		go.delete(infobox, true)
+		local props = {size = vmath.vector3(button_x * 2.25, button_y * 3, 0), layout = hash("infobox")}
+		infobox = factory.create("#dialog", vmath.vector3(1110, 780, centre.z), nil, props)
+	end
 end
 
 function on_message(self, message_id, message, sender)
@@ -394,11 +396,9 @@ function on_message(self, message_id, message, sender)
 	elseif message_id == hash("transition_space") then
 		STATS.warp_drive_cooldown = true
 		TIME.add_alarm(TIME.time + UPG.get("cooldown", hash("warp_drive")), hash("warp_drive_cooldown"))
-		local distance = math.max(0.1, math.random() - (UPG.get("jump_accuracy", hash("warp_drive")) * CREW.get_role(hash("role_pilot")).skills.pilot))
-		local eta = math.ceil(distance * UPG.get("seconds_per_distance", hash("impulse_drive")))
-		STATS.
-		print(TIME.get_time_string(eta))
-		
+		STATS.distance = math.max(0.1, math.random() - (UPG.get("jump_accuracy", hash("warp_drive")) * CREW.get_role(hash("role_pilot")).skills.pilot))
+		local eta = math.ceil(STATS.distance / UPG.get("speed", hash("impulse_drive")))
+		TIME.add_alarm(TIME.time + eta, hash("space_travel"), true)
 		STATS.location = hash("flight")
 		EVENT.new(hash("flight"))
 	elseif message_id == hash("transition_orbit") then

@@ -1,12 +1,15 @@
 local STR = require("main/modules/strings")
 local STATS = require("main/modules/stats")
+local CARGO = require("main/modules/cargo")
+local UPG = require("main/modules/upgrades")
 
 local TIME = {
 	time = 100000,
 	runnning = false,
 	scale = hash("normal"),
 	alarm = {},
-	alarm_list = {}
+	alarm_list = {},
+	continuous = {}
 }
 
 local scale_data = {
@@ -85,6 +88,10 @@ local function check_alarms()
 					time_skippable = false
 					if val.type == hash("departure") then
 						msg.post("#controller", hash("travel_destination_pressed"))
+					elseif val.type == hash("space_travel") then
+						print("before")
+						TIME.remove_alarm(val.type)
+						msg.post("#controller", hash("continue_pressed"))
 					elseif val.type == hash("leave_over") then
 						STATS.leave_end = nil
 						print("GET BACK TO WORK YOU LAZY SODS!")
@@ -104,7 +111,11 @@ local function check_alarms()
 end
 
 function update_clock(jump)
-	TIME.time = TIME.time + (jump or scale_data[TIME.scale].jump)
+	jump = jump or scale_data[TIME.scale].jump
+	TIME.time = TIME.time + jump
+	for key, val in pairs(TIME.continuous) do
+		val(jump)
+	end
 	check_alarms()
 	label.set_text("/clock#label", STR.en.ui[hash("stardate")].."\n"..TIME.get_time_string(TIME.time, true))
 end
@@ -150,6 +161,7 @@ function TIME.remove_alarm(type)
 		if val.type == type then
 			table.remove(TIME.alarm[TIME.alarm_list[type]], key)
 			TIME.alarm_list[type] = nil
+			TIME.continuous[type] = nil
 			return true
 		end
 	end
@@ -157,10 +169,22 @@ end
 
 function TIME.add_alarm(time, type, stop)
 	if TIME.alarm_list[type] then TIME.remove_alarm(type) end
+	TIME.add_continuous(type)
 	time = math.floor(time / 100) * 100
 	TIME.alarm[time] = TIME.alarm[time] or {}
 	table.insert(TIME.alarm[time], {type = type, stop = stop})
 	TIME.alarm_list[type] = time
+end
+
+function TIME.add_continuous(type)
+	if type == hash("space_travel") then
+		TIME.continuous[type] = function(jump)
+			local distance = UPG.get("speed", hash("impulse_drive")) * jump
+			CARGO.fuel = CARGO.fuel - UPG.get("fuel_efficiency", hash("impulse_drive")) * distance
+			STATS.distance = STATS.distance - distance
+			msg.post("#controller", hash("refresh_infobox"))
+		end
+	end
 end
 
 return TIME
