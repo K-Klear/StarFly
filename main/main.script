@@ -3,6 +3,7 @@ local CREW = require("main/modules/crew")
 local PLANET = require("main/modules/planets")
 local TIME = require("main/modules/time")
 local CARGO = require("main/modules/cargo")
+local ROOM = require("main/modules/rooms")
 
 function spawn_crew(crewID, x, y, z)
 	if not x then x = 10 + math.random(0, 3) end
@@ -30,13 +31,15 @@ function init(self)
 		[hash("fastest")] = go.get_id("/button_scale_fastest")
 	}
 	TIME.start()
+
+	for key, val in pairs(ROOM.list) do
+		val.go = factory.create("/ship#spawn_room", nil, nil, val)
+		go.set(val.go, "id", key)
+	end
 	
-	--[[
-	CREW.add(); CREW.add(); CREW.add()
-	CREW.list[1].role = hash("role_pilot")
-	CREW.list[2].role = hash("role_comms")
-	CREW.list[3].role = hash("role_engineer")
-	--]]
+	--local room = factory.create("/ship#spawn_room", vmath.vector3(0, 0, 0.6))
+	--go.set_parent(room, "/ship")
+	--factory.create("/ship#spawn_room", vmath.vector3(640, 450, 0.6), nil, nil, vmath.vector3(2, 2, 2))
 end
 
 function on_message(self, message_id, message, sender)
@@ -81,6 +84,5 @@ function on_message(self, message_id, message, sender)
 		end
 		table.remove(STATS.jobs[STATS.current_job.region], STATS.current_job.job_id)
 		STATS.current_job = {}
-		--msg.post("#controller", hash("refresh_infobox"))
 	end
 end

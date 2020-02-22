@@ -377,14 +377,10 @@ function on_message(self, message_id, message, sender)
 		STATS.destination.job_id = message.id
 		STATS.destination.time = TIME.time
 		open_dialog(hash("travel_confirm"), hash("title_travel_confirm"), nil, hash("travel_pressed"))
-	elseif message_id == hash("continue_pressed") then
-		if not CREW.get_role(hash("role_pilot")) then
-			open_dialog(hash("error"), hash("title_error_no_pilot"))
-		else
-			close_all_dialogs(false)
-			msg.post("/background", "warp")
-			STATS.location = hash("warp")
-		end
+	elseif message_id == hash("move_to_orbit") then
+		close_all_dialogs(false)
+		msg.post("/background", "orbit")
+		STATS.location = hash("warp")
 	elseif message_id == hash("land_pressed") then
 		if not CREW.get_role(hash("role_pilot")) then
 			open_dialog(hash("error"), hash("title_error_no_pilot"))

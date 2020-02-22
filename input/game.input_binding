@@ -14,6 +14,10 @@ key_trigger {
   input: KEY_F3
   action: "debug3"
 }
+key_trigger {
+  input: KEY_F9
+  action: "debug_physics"
+}
 mouse_trigger {
   input: MOUSE_BUTTON_LEFT
   action: "click"

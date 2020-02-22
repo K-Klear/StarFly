@@ -395,6 +395,24 @@ embedded_instances {
   "    w: 1.0\n"
   "  }\n"
   "}\n"
+  "embedded_components {\n"
+  "  id: \"spawn_room\"\n"
+  "  type: \"factory\"\n"
+  "  data: \"prototype: \\\"/main/ship/room.go\\\"\\n"
+  "load_dynamically: false\\n"
+  "\"\n"
+  "  position {\n"
+  "    x: 0.0\n"
+  "    y: 0.0\n"
+  "    z: 0.0\n"
+  "  }\n"
+  "  rotation {\n"
+  "    x: 0.0\n"
+  "    y: 0.0\n"
+  "    z: 0.0\n"
+  "    w: 1.0\n"
+  "  }\n"
+  "}\n"
   ""
   position {
     x: 553.0
@@ -416,6 +434,7 @@ embedded_instances {
 embedded_instances {
   id: "background"
   children: "ground"
+  children: "planet"
   children: "sky"
   data: "components {\n"
   "  id: \"stars\"\n"
@@ -683,5 +702,45 @@ embedded_instances {
     x: 1.0
     y: 1.0
     z: 0.9
+  }
+}
+embedded_instances {
+  id: "planet"
+  data: "embedded_components {\n"
+  "  id: \"sprite\"\n"
+  "  type: \"sprite\"\n"
+  "  data: \"tile_set: \\\"/main/ship/background.atlas\\\"\\n"
+  "default_animation: \\\"planet\\\"\\n"
+  "material: \\\"/builtins/materials/sprite.material\\\"\\n"
+  "blend_mode: BLEND_MODE_ALPHA\\n"
+  "\"\n"
+  "  position {\n"
+  "    x: 0.0\n"
+  "    y: 0.0\n"
+  "    z: 0.0\n"
+  "  }\n"
+  "  rotation {\n"
+  "    x: 0.0\n"
+  "    y: 0.0\n"
+  "    z: 0.0\n"
+  "    w: 1.0\n"
+  "  }\n"
+  "}\n"
+  ""
+  position {
+    x: -300.0
+    y: 550.0
+    z: -0.9
+  }
+  rotation {
+    x: 0.0
+    y: 0.0
+    z: 0.0
+    w: 1.0
+  }
+  scale3 {
+    x: 1.0
+    y: 1.0
+    z: 1.0
   }
 }

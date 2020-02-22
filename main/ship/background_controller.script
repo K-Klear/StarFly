@@ -1,7 +1,7 @@
 local PLANET = require("main/modules/planets")
 
 local timer_meteor, timer_warp
-local animation_speed = 1/20
+local animation_speed = 1/8
 
 function init(self)
 	sprite.set_constant("/sky#sprite", "tint", PLANET.get("sky_colour"))
@@ -15,7 +15,9 @@ function on_message(self, message_id, message, sender)
 		warp = 4 * animation_speed,
 		warp_delay = 0.5,
 		land = 4 * animation_speed,
-		stars_delay = 1 * animation_speed
+		stars_delay = 1 * animation_speed,
+		orbit = 5 * animation_speed,
+		land_planet = 3 * animation_speed
 	}
 	
 	local function spawn_meteor()
@@ -35,7 +37,7 @@ function on_message(self, message_id, message, sender)
 			timer.delay(ANIM.warp_delay, false, function() msg.post("/main#controller", callback) end)
 		end)
 	end
-	
+
 	if message_id == hash("takeoff") then
 		local function turn()
 			msg.post("/ground", "disable")
@@ -49,18 +51,30 @@ function on_message(self, message_id, message, sender)
 		go.animate("/ground", "position.y", go.PLAYBACK_ONCE_FORWARD, -900, go.EASING_INOUTCUBIC, ANIM.takeoff)
 	elseif message_id == hash("warp") then
 		warp(hash("transition_orbit"))
+	elseif message_id == hash("orbit") then
+		go.set_position(vmath.vector3(-300, 550, -0.9), "/planet")
+		go.set_scale(vmath.vector3(0.5, 0.5, 0.5), "/planet")
+		msg.post("/planet", "enable")
+		sprite.set_constant("/planet#sprite", "tint", PLANET.get("sky_colour"))
+		go.animate("/planet", "scale", go.PLAYBACK_ONCE_FORWARD, vmath.vector3(1.5, 1.5, 1.5), go.EASING_OUTCUBIC, ANIM.orbit)
+		go.animate("/planet", "position.x", go.PLAYBACK_ONCE_FORWARD, 640, go.EASING_OUTCUBIC, ANIM.orbit, 0, function() msg.post("/main#controller", hash("transition_orbit")) end)
 	elseif message_id == hash("land") then
+		local function anim_sky()
+			go.animate("/sky", "position.y", go.PLAYBACK_ONCE_FORWARD, 0, go.EASING_OUTCUBIC, ANIM.land)
+			go.animate("/ground", "position.y", go.PLAYBACK_ONCE_FORWARD, 88, go.EASING_OUTCUBIC, ANIM.land)
+			timer.delay(ANIM.land, false, function() msg.post("/main#controller", "transition_planet"); particlefx.stop("/ship#engine") end)
+		end
+		
 		sprite.set_constant("/sky#sprite", "tint", PLANET.get("sky_colour"))
 		go.set_position(vmath.vector3(640, -21280, -0.5), "/sky")
 		go.set_rotation(vmath.quat(0, 0, 0, 1), "/sky")
 		msg.post("/sky", "enable")
 		msg.post("/ground", "enable")
 		go.set_position(vmath.vector3(640, -900, 0), "/ground")
-		go.animate("/sky", "position.y", go.PLAYBACK_ONCE_FORWARD, 0, go.EASING_OUTCUBIC, ANIM.land)
-		go.animate("/ground", "position.y", go.PLAYBACK_ONCE_FORWARD, 88, go.EASING_OUTCUBIC, ANIM.land)
-		if timer_meteor then timer.cancel(timer_meteor) end
 		timer.delay(ANIM.stars_delay, false, function() particlefx.stop("#stars") end)
-		timer.delay(ANIM.land, false, function() msg.post("/main#controller", "transition_planet"); particlefx.stop("/ship#engine") end)
+		if timer_meteor then timer.cancel(timer_meteor) end
+		go.animate("/planet", "scale", go.PLAYBACK_ONCE_FORWARD, vmath.vector3(5, 5, 5), go.EASING_LINEAR, ANIM.land_planet)
+		go.animate("/planet", "position.y", go.PLAYBACK_ONCE_FORWARD, -1500, go.EASING_LINEAR, ANIM.land_planet, 0, anim_sky)
 	end
 end
 

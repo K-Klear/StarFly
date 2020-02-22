@@ -19,8 +19,8 @@ local part_list = {
 	[hash("impulse_drive_default")] = {
 		type = hash("impulse_drive"),
 		cost = 1000,
-		fuel_efficiency = 1, -- distance covered per unit of fuel
-		speed = 1 / 10000, -- distance units per second
+		fuel_efficiency = 1 / 4, -- fuel needed per distance unit
+		speed = 1 / 100000, -- distance units per second
 	}
 }
 

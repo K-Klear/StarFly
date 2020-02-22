@@ -3,8 +3,10 @@ local active_button
 local mouse_pressed = false
 
 local crew_moused = {}
-local crew_highlighted
-local crew_selected
+local room_moused = {}
+local highlighted
+local selected
+
 
 local crew_selection_enabled = true
 
@@ -22,38 +24,64 @@ function on_message(self, message_id, message, sender)
 				msg.post(message.other_id, "released")
 				if active_button == message.other_id then active_button = nil end
 			end
-		elseif message.other_group == hash("crew") then
+		elseif message.other_group == hash("room") then
 			if message.enter then
-				crew_moused[message.other_id] = true
-				if crew_highlighted then msg.post(crew_highlighted, "remove_highlight") end
-				crew_highlighted = message.other_id
-				msg.post(crew_highlighted, "highlight")
-			elseif message.other_id ~= crew_selected then
-				crew_moused[message.other_id] = nil
+				room_moused[message.other_id] = true
+				if not highlighted then
+					highlighted = message.other_id
+					msg.post(highlighted, "highlight")
+				end
+			else
+				room_moused[message.other_id] = nil
 				msg.post(message.other_id, "remove_highlight")
-				if crew_highlighted == message.other_id then
+				if highlighted == message.other_id then
 					local new = next(crew_moused)
 					if new then
 						msg.post(new, "highlight")
-						crew_highlighted = new
+						highlighted = new
 					else
-						crew_highlighted = nil
+						highlighted = nil
+					end
+				end
+			end
+		elseif message.other_group == hash("crew") then
+			if message.enter then
+				crew_moused[message.other_id] = true
+				if highlighted then msg.post(highlighted, "remove_highlight") end
+				highlighted = message.other_id
+				msg.post(highlighted, "highlight")
+			elseif message.other_id ~= selected then
+				crew_moused[message.other_id] = nil
+				msg.post(message.other_id, "remove_highlight")
+				if highlighted == message.other_id then
+					local new = next(crew_moused)
+					if new then
+						msg.post(new, "highlight")
+						highlighted = new
+					else
+						new = next(room_moused)
+						if new then
+							msg.post(new, "highlight")
+							highlighted = new
+						else
+							highlighted = nil
+						end
 					end
 				end
 			end
 		end
 	elseif message_id == hash("deleted") then
 		if active_button == message.id then active_button = nil end
-		if crew_selected == message.id then crew_selected = nil end
-		if crew_moused[crew_selected] then crew_moused[crew_selected] = nil end
-		if crew_highlighted == message.id then
+		if selected == message.id then selected = nil end
+		if crew_moused[selected] then crew_moused[selected] = nil end
+		if highlighted == message.id then
 			local new = next(crew_moused)
-			if new then	msg.post(new, "highlight");	crew_highlighted = new end
+			if new then	msg.post(new, "highlight");	highlighted = new end
 		end
 	elseif message_id == hash("crew_selection") then
 		crew_selection_enabled = message.enabled
 		if not message.enabled then
-			if crew_selected then msg.post(crew_selected, hash("deselect")); crew_selected = nil end
+			if selected then msg.post(selected, hash("deselect")); selected = nil end
 		end
 	end
 end
@@ -71,14 +99,18 @@ function on_input(self, action_id, action)
 		if action.pressed then
 			mouse_pressed = true
 			if active_button then msg.post(active_button, "pressed") end
-			if crew_selection_enabled and crew_highlighted then
-				if crew_selected then msg.post(crew_selected, hash("deselect")) end
-				crew_selected = crew_highlighted
-				msg.post(crew_selected, "select")
-				crew_moused[crew_selected] = nil
-				local new = next(crew_moused)
-				if new then	msg.post(new, "highlight");	crew_highlighted = new
-				else crew_highlighted = nil	end
+			if crew_selection_enabled and highlighted then
+				if selected then msg.post(selected, hash("deselect")) end
+				if crew_moused[highlighted] then
+					selected = highlighted
+					crew_moused[selected] = nil
+					local new = next(crew_moused)
+					if new then	msg.post(new, "highlight");	highlighted = new
+					else highlighted = nil	end
+					msg.post(selected, "select")
+				elseif room_moused[highlighted] then
+					msg.post(highlighted, "clicked")
+				end
 			end
 		elseif action.released then
 			mouse_pressed = false

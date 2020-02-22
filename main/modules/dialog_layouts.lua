@@ -167,17 +167,6 @@ local LAY = {
 					enabled = true
 				},
 			},
-			{
-				id = hash("continue"),
-				type = hash("button_main"),
-				position_x = 1,
-				position_y = 0,
-				props = {
-					label = hash("btn_continue"),
-					callback = hash("continue_pressed"),
-					enabled = true
-				},
-			},
 		}
 	},
 	[hash("orbit")] = {
@@ -1029,7 +1018,7 @@ local LAY = {
 	[hash("talk")] = {
 		background = true,
 		size_x = 6,
-		size_y = function() return #TALK.links + 5 end,
+		size_y = function() return #TALK.links + 7 end,
 		elements = {
 			{
 				type = hash("textbox"),
@@ -1055,7 +1044,7 @@ local LAY = {
 				repeating = function() return #TALK.links end,
 				type = hash("button_option"),
 				position_x = 0,
-				position_y = 6,
+				position_y = 8,
 				props = {
 					label = function(id) return TALK.links[id].text end,
 					callback = hash("talk_option"),

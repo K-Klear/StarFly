@@ -1,20 +1,30 @@
 images {
   image: "/assets/images/background/meteor.png"
+  sprite_trim_mode: SPRITE_TRIM_MODE_OFF
 }
 images {
   image: "/assets/images/background/star.png"
+  sprite_trim_mode: SPRITE_TRIM_MODE_OFF
 }
 images {
   image: "/assets/images/background/exhaust.png"
+  sprite_trim_mode: SPRITE_TRIM_MODE_OFF
 }
 images {
   image: "/assets/images/background/sky.png"
+  sprite_trim_mode: SPRITE_TRIM_MODE_OFF
 }
 images {
   image: "/assets/images/background/ground.png"
+  sprite_trim_mode: SPRITE_TRIM_MODE_OFF
 }
 images {
   image: "/assets/images/background/warp_line.png"
+  sprite_trim_mode: SPRITE_TRIM_MODE_OFF
+}
+images {
+  image: "/assets/images/background/planet.png"
+  sprite_trim_mode: SPRITE_TRIM_MODE_OFF
 }
 margin: 0
 extrude_borders: 0

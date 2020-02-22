@@ -89,9 +89,9 @@ local function check_alarms()
 					if val.type == hash("departure") then
 						msg.post("#controller", hash("travel_destination_pressed"))
 					elseif val.type == hash("space_travel") then
-						print("before")
 						TIME.remove_alarm(val.type)
-						msg.post("#controller", hash("continue_pressed"))
+						STATS.distance = nil
+						msg.post("#controller", hash("move_to_orbit"))
 					elseif val.type == hash("leave_over") then
 						STATS.leave_end = nil
 						print("GET BACK TO WORK YOU LAZY SODS!")
@@ -111,12 +111,15 @@ local function check_alarms()
 end
 
 function update_clock(jump)
+	local refresh = false
 	jump = jump or scale_data[TIME.scale].jump
 	TIME.time = TIME.time + jump
 	for key, val in pairs(TIME.continuous) do
 		val(jump)
+		refresh = true
 	end
 	check_alarms()
+	if refresh then msg.post("#controller", hash("refresh_infobox")) end
 	label.set_text("/clock#label", STR.en.ui[hash("stardate")].."\n"..TIME.get_time_string(TIME.time, true))
 end
 
@@ -180,9 +183,8 @@ function TIME.add_continuous(type)
 	if type == hash("space_travel") then
 		TIME.continuous[type] = function(jump)
 			local distance = UPG.get("speed", hash("impulse_drive")) * jump
-			CARGO.fuel = CARGO.fuel - UPG.get("fuel_efficiency", hash("impulse_drive")) * distance
+			CARGO.fuel = CARGO.fuel - (UPG.get("fuel_efficiency", hash("impulse_drive")) * distance)
 			STATS.distance = STATS.distance - distance
-			msg.post("#controller", hash("refresh_infobox"))
 		end
 	end
 end
