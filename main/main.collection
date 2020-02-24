@@ -1,7 +1,7 @@
 name: "main"
 instances {
   id: "sky"
-  prototype: "/main/ship/sky.go"
+  prototype: "/main/ship/background/sky.go"
   position {
     x: 640.0
     y: 0.0
@@ -41,7 +41,7 @@ instances {
 }
 instances {
   id: "button_scale_fast"
-  prototype: "/main/GUI/button_tiny.go"
+  prototype: "/main/GUI/buttons/button_tiny.go"
   position {
     x: -16.5
     y: -50.0
@@ -79,7 +79,7 @@ instances {
 }
 instances {
   id: "button_scale_normal"
-  prototype: "/main/GUI/button_tiny.go"
+  prototype: "/main/GUI/buttons/button_tiny.go"
   position {
     x: -50.0
     y: -50.0
@@ -122,7 +122,7 @@ instances {
 }
 instances {
   id: "button_scale_fastest"
-  prototype: "/main/GUI/button_tiny.go"
+  prototype: "/main/GUI/buttons/button_tiny.go"
   position {
     x: 50.0
     y: -50.0
@@ -160,7 +160,7 @@ instances {
 }
 instances {
   id: "button_scale_faster"
-  prototype: "/main/GUI/button_tiny.go"
+  prototype: "/main/GUI/buttons/button_tiny.go"
   position {
     x: 16.5
     y: -50.0
@@ -250,7 +250,7 @@ embedded_instances {
   "embedded_components {\n"
   "  id: \"dialog\"\n"
   "  type: \"factory\"\n"
-  "  data: \"prototype: \\\"/main/GUI/dialog.go\\\"\\n"
+  "  data: \"prototype: \\\"/main/GUI/dialog/dialog.go\\\"\\n"
   "load_dynamically: false\\n"
   "\"\n"
   "  position {\n"
@@ -268,7 +268,7 @@ embedded_instances {
   "embedded_components {\n"
   "  id: \"face\"\n"
   "  type: \"factory\"\n"
-  "  data: \"prototype: \\\"/main/GUI/face_icon.go\\\"\\n"
+  "  data: \"prototype: \\\"/main/GUI/face_icon/face_icon.go\\\"\\n"
   "load_dynamically: false\\n"
   "\"\n"
   "  position {\n"
@@ -320,7 +320,7 @@ embedded_instances {
   "}\n"
   "components {\n"
   "  id: \"engine\"\n"
-  "  component: \"/main/ship/engine.particlefx\"\n"
+  "  component: \"/main/ship/background/engine.particlefx\"\n"
   "  position {\n"
   "    x: 242.0\n"
   "    y: 37.5\n"
@@ -398,7 +398,7 @@ embedded_instances {
   "embedded_components {\n"
   "  id: \"spawn_room\"\n"
   "  type: \"factory\"\n"
-  "  data: \"prototype: \\\"/main/ship/room.go\\\"\\n"
+  "  data: \"prototype: \\\"/main/ship/rooms/room.go\\\"\\n"
   "load_dynamically: false\\n"
   "\"\n"
   "  position {\n"
@@ -438,7 +438,7 @@ embedded_instances {
   children: "sky"
   data: "components {\n"
   "  id: \"stars\"\n"
-  "  component: \"/main/ship/stars.particlefx\"\n"
+  "  component: \"/main/ship/background/stars.particlefx\"\n"
   "  position {\n"
   "    x: 0.0\n"
   "    y: 0.0\n"
@@ -453,7 +453,7 @@ embedded_instances {
   "}\n"
   "components {\n"
   "  id: \"background_controller\"\n"
-  "  component: \"/main/ship/background_controller.script\"\n"
+  "  component: \"/main/ship/background/background_controller.script\"\n"
   "  position {\n"
   "    x: 0.0\n"
   "    y: 0.0\n"
@@ -468,7 +468,7 @@ embedded_instances {
   "}\n"
   "components {\n"
   "  id: \"warp\"\n"
-  "  component: \"/main/ship/warp.particlefx\"\n"
+  "  component: \"/main/ship/background/warp.particlefx\"\n"
   "  position {\n"
   "    x: 0.0\n"
   "    y: 0.0\n"
@@ -484,7 +484,7 @@ embedded_instances {
   "embedded_components {\n"
   "  id: \"spawn_meteor\"\n"
   "  type: \"factory\"\n"
-  "  data: \"prototype: \\\"/main/ship/meteor.go\\\"\\n"
+  "  data: \"prototype: \\\"/main/ship/background/meteor.go\\\"\\n"
   "load_dynamically: false\\n"
   "\"\n"
   "  position {\n"
@@ -709,7 +709,7 @@ embedded_instances {
   data: "embedded_components {\n"
   "  id: \"sprite\"\n"
   "  type: \"sprite\"\n"
-  "  data: \"tile_set: \\\"/main/ship/background.atlas\\\"\\n"
+  "  data: \"tile_set: \\\"/main/ship/background/background.atlas\\\"\\n"
   "default_animation: \\\"planet\\\"\\n"
   "material: \\\"/builtins/materials/sprite.material\\\"\\n"
   "blend_mode: BLEND_MODE_ALPHA\\n"

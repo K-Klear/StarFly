@@ -46,7 +46,7 @@ local types = {
 }
 
 function init(self)
-	label.set_text("#label", STR.en.ui[self.label] or STR.en.planets[self.label])
+	label.set_text("#label", STR.STRING(self.label))
 	if self.enabled then
 		go.set("#label", "color", default_colour)
 		self.state = hash("up")

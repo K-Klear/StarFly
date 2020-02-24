@@ -1,6 +1,6 @@
 components {
   id: "meteor"
-  component: "/main/ship/meteor.script"
+  component: "/main/ship/background/meteor.script"
   position {
     x: 0.0
     y: 0.0
@@ -16,7 +16,7 @@ components {
 embedded_components {
   id: "sprite"
   type: "sprite"
-  data: "tile_set: \"/main/ship/background.atlas\"\n"
+  data: "tile_set: \"/main/ship/background/background.atlas\"\n"
   "default_animation: \"meteor\"\n"
   "material: \"/builtins/materials/sprite.material\"\n"
   "blend_mode: BLEND_MODE_ALPHA\n"

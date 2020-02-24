@@ -11,6 +11,7 @@ local TIME = require("main/modules/time")
 local DEBUG = require("main/modules/debug")
 local CARGO = require("main/modules/cargo")
 local UPG = require("main/modules/upgrades")
+local ROOM = require("main/modules/rooms")
 
 local centre = vmath.vector3(1280 / 2, 900 / 2, 0.8)
 
@@ -475,6 +476,22 @@ function on_message(self, message_id, message, sender)
 		refresh_dialog(true)
 	elseif message_id == hash("time_choice_accept") then
 		refresh_dialog(true)
+	elseif message_id == hash("room_clicked") then
+		local use = ROOM.list[message.id].use or hash("empty")
+		if use == hash("cockpit") then
+			msg.post("#", "travel_pressed")
+		elseif use == hash("cargo_hold") then
+			if CARGO.empty < CARGO.max_storage then
+				open_dialog(hash("cargo_overview"), hash("title_cargo_overview"))
+			else
+				open_dialog(hash("cargo_overview_empty"), hash("title_cargo_overview"))
+			end
+		elseif use == hash("empty") then
+			ROOM.current = message.id
+			open_dialog(hash("assign_room"), hash("title_assign_room"))
+		end
+	elseif message_id == hash("assign_room_medbay") then
+		msg.post(ROOM.list[ROOM.current].go, "set_use", {use = hash("medbay")})
 	elseif message_id == hash("refresh_infobox") and infobox then
 		refresh_infobox()
 	elseif message_id == hash("close") then

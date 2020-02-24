@@ -1,9 +1,9 @@
-local total_storage = 20
 local CARGO = {
-	empty = total_storage,
+	empty = 20,
 	fuel = 1,
 	food = 20,
 	food_max = 20,
+	max_storage = 20
 }
 
 local pos_x, pos_y, pos_z = {131, 161.5, 195, 224}, {70, 90, 110, 130, 150}, 0.001
@@ -36,7 +36,7 @@ local function find_space(second_pass)
 end
 
 local function get_new_id()
-	for x = 1, total_storage do
+	for x = 1, CARGO.max_storage do
 		if not CARGO.goods[x] then
 			return x
 		end
@@ -50,8 +50,8 @@ function CARGO.add(size)
 	else
 		CARGO.empty = CARGO.empty - size
 		local id = get_new_id()
-		CARGO.goods[id] = {crates = {}}
 		local colour = vmath.vector4(math.random(), math.random(), math.random(), 1)
+		CARGO.goods[id] = {crates = {}, props = {colour = colour, type = 1}}
 		for count = 1, size do
 			local x, y = find_space()
 			CARGO.shelves[x][y] = true

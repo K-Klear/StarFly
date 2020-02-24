@@ -160,9 +160,9 @@ function on_message(self, message_id, message, sender)
 		msg.post("#name", hash("disable"))
 		msg.post("#role_icon", hash("disable"))
 		msg.post("#role_label", hash("disable"))
-	elseif message_id == hash("select") then
+	elseif message_id == hash("clicked") then
+		msg.post("/cursor", hash("selected"), {id = go.get_id()})
 		sound.play("#selected")
-		msg.post("#co", hash("disable"))
 		sprite.play_flipbook("#reticle", "crew_reticle_active")
 		local id
 		for key, val in ipairs(CREW.list) do
@@ -170,14 +170,15 @@ function on_message(self, message_id, message, sender)
 				id = key; break
 			end
 		end
+
 		local props = {label = hash("btn_crew_talk"), callback = hash("crew_talk"),	enabled = true, id = id}
 		self.button_talk = factory.create("#factory_button", vmath.vector3(-25, 10, 0), nil, props, vmath.vector3(0.5, 0.5, 0.5))
 		go.set_parent(self.button_talk, go.get_id())
 		local props = {label = hash("btn_crew_role"), callback = hash("crew_role"),	enabled = true, id = id}
 		self.button_role = factory.create("#factory_button", vmath.vector3(-25, 30, 0), nil, props, vmath.vector3(0.5, 0.5, 0.5))
 		go.set_parent(self.button_role, go.get_id())
+
 	elseif message_id == hash("deselect") then
-		msg.post("#co", hash("enable"))
 		sprite.play_flipbook("#reticle", "crew_reticle")
 		msg.post("#reticle", hash("disable"))
 		msg.post("#name", hash("disable"))

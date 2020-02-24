@@ -967,6 +967,179 @@ local LAY = {
 			},
 		}
 	},
+	[hash("cargo_overview")] = {
+		background = true,
+		close_button = true,
+		size_x = 4,
+		size_y = function() local count = 0; for key in pairs(CARGO.goods) do count = count + 1 end; return count + 3 end,
+		elements = {
+			{
+				type = hash("label"),
+				position_x = -0.5,
+				position_y = 1,
+				text = hash("lbl_cargo_type")
+			},
+			{
+				type = hash("label"),
+				position_x = 0.5,
+				position_y = 1,
+				text = hash("lbl_cargo_number")
+			},
+			{
+				type = hash("icon_crate"),
+				repeating = function() local count = 0; for key in pairs(CARGO.goods) do count = count + 1 end; return count end,
+				image = function(id) local count = 0; for x = 1, CARGO.max_storage do if CARGO.goods[x] then count = count + 1 end; if count == id then count = x break end; end; return CARGO.goods[count].props end,
+				position_x = -1.5,
+				position_y = 2,
+				scale = vmath.vector3(2, 2, 2)
+			},
+			{
+				repeating = function() local count = 0; for key in pairs(CARGO.goods) do count = count + 1 end; return count end,
+				type = hash("label"),
+				position_x = -0.5,
+				position_y = 2,
+				text = "Unknown",
+			},
+			{
+				repeating = function() local count = 0; for key in pairs(CARGO.goods) do count = count + 1 end; return count end,
+				type = hash("label"),
+				position_x = 0.5,
+				position_y = 2,
+				text = function(id) local count = 0; for x = 1, CARGO.max_storage do if CARGO.goods[x] then count = count + 1 end; if count == id then count = x break end; end; return #CARGO.goods[count].crates end,
+			},
+			{
+				type = hash("button_main"),
+				repeating = function() local count = 0; for key in pairs(CARGO.goods) do count = count + 1 end; return count end,
+				position_x = 1.5,
+				position_y = 2,
+				props = {
+					label = hash("btn_jettison_cargo"),
+					callback = hash("jettison_cargo"),
+					enabled = false
+				},
+			},
+			{
+				type = hash("progress_bar"),
+				position_x = 0,
+				position_y = function() local count = 0; for key in pairs(CARGO.goods) do count = count + 1 end; return count + 2 end,
+				props = {
+					max = function() return CARGO.max_storage end,
+					current = function() return CARGO.max_storage - CARGO.empty end,
+					size = 1
+				},
+			},
+			{
+				type = hash("button_main"),
+				position_x = 0,
+				position_y = function() local count = 0; for key in pairs(CARGO.goods) do count = count + 1 end; return count + 3 end,
+				props = {
+					label = hash("btn_ok"),
+					callback = hash("close"),
+					enabled = true
+				},
+			},
+		}
+	},
+	[hash("assign_room")] = {
+		background = true,
+		close_button = true,
+		size_x = 3,
+		size_y = function() return #CREW.list + 1 end,
+		elements = {
+			{
+				type = hash("button_main"),
+				position_x = -1,
+				position_y = 1,
+				props = {
+					label = hash("empty"),
+					callback = hash("assign_room_empty"),
+					enabled = true
+				}
+			},
+			{
+				type = hash("button_main"),
+				position_x = 0,
+				position_y = 1,
+				props = {
+					label = hash("medbay"),
+					callback = hash("assign_room_medbay"),
+					enabled = true
+				}
+			},
+			{
+				type = hash("button_main"),
+				position_x = 1,
+				position_y = 1,
+				props = {
+					label = hash("mess"),
+					callback = hash("assign_room_mess"),
+					enabled = false
+				}
+			},
+			{
+				repeating = function() return #CREW.list end,
+				type = hash("icon_face"),
+				image = function(id) return CREW.list[id].face end,
+				position_x = -1.5,
+				position_y = 2,
+				scale = vmath.vector3(2, 2, 2)
+			},
+			{
+				repeating = function() return #CREW.list end,
+				type = hash("label"),
+				position_x = -1,
+				position_y = 2,
+				text = function(id) return STR.en.names[CREW.list[id].name.gender][CREW.list[id].name.key] end
+			},
+			{
+				id = hash("crew_role"),
+				repeating = function() return #CREW.list end,
+				type = hash("label"),
+				position_x = 0,
+				position_y = 2,
+				text = function(id) return CREW.list[id].role end
+			},
+			{
+				type = hash("button_main"),
+				repeating = function() return #CREW.list end,
+				position_x = 1,
+				position_y = 2,
+				props = {
+					label = hash("bunk"),
+					callback = hash("assign_room_bunk"),
+					enabled = true
+				}
+			},
+		}
+	},
+	[hash("cargo_overview_empty")] = {
+		background = true,
+		close_button = true,
+		size_x = 4,
+		size_y = 2,
+		elements = {
+			{
+				type = hash("progress_bar"),
+				position_x = 0,
+				position_y = 1,
+				props = {
+					max = function() return CARGO.max_storage end,
+					current = function() return CARGO.max_storage - CARGO.empty end,
+					size = 1
+				},
+			},
+			{
+				type = hash("button_main"),
+				position_x = 0,
+				position_y = 2,
+				props = {
+					label = hash("btn_ok"),
+					callback = hash("close"),
+					enabled = true
+				},
+			}
+		}
+	},
 	[hash("event")] = {
 		background = true,
 		size_x = 6,

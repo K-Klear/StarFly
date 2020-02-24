@@ -18,6 +18,16 @@ local STR = {
 			[hash("duty_cleaning")] = "Cleaning",
 			[hash("duty_other")] = "Something",
 			[hash("duty_none")] = "None",
+
+			[hash("cockpit")] = "Cockpit",
+			[hash("cargo_hold")] = "Cargo hold",
+			[hash("engine")] = "Engine bay",
+			[hash("gun")] = "Gun emplacement",
+			[hash("comms")] = "Communications",
+			[hash("medbay")] = "Infirmary",
+			[hash("bunk")] = "Bunk",
+			[hash("empty")] = "Empty",
+			[hash("mess")] = "Mess hall",
 			
 
 			[hash("core")] = "Core",
@@ -43,6 +53,8 @@ local STR = {
 			[hash("btn_yes")] = "YES",
 			[hash("btn_no")] = "NO",
 
+			[hash("out_of")] = "out of",
+
 			-- time
 
 			[hash("stardate")] = "Stardate",
@@ -56,6 +68,8 @@ local STR = {
 
 			
 			-- buttons
+			[hash("btn_ok")] = "OK",
+			
 			[hash("btn_buy")] = "BUY",
 			[hash("btn_repair")] = "REPAIR",
 			[hash("btn_upgrade")] = "UPGRADE",
@@ -89,6 +103,8 @@ local STR = {
 			[hash("btn_travel_mission")] = "MISSION",
 			[hash("btn_travel_set_time")] = "SET TIME",
 
+			[hash("btn_jettison_cargo")] = "Jettison",
+
 			[hash("btn_error_ok")] = "OK",
 			[hash("btn_event_done")] = "DONE",
 			[hash("btn_accept")] = "ACCEPT",
@@ -113,6 +129,10 @@ local STR = {
 			[hash("title_crew_duty")] = "Assign duties",
 
 			[hash("title_travel_confirm")] = "Confirm destination",
+
+			[hash("title_cargo_overview")] = "Cargo hold",
+
+			[hash("title_assign_room")] = "Assign room",
 
 			[hash("job_selection")] = "Select mission",
 
@@ -162,6 +182,9 @@ local STR = {
 			[hash("exploration")] = "EXPLORING",
 			[hash("mission")] = "MISSION",
 			[hash("lbl_travel_in_the")] = " IN THE ",
+
+			[hash("lbl_cargo_type")] = "Type",
+			[hash("lbl_cargo_number")] = "Amount",
 
 			-- conversation
 			[hash("talk_says")] = " says:",
@@ -263,7 +286,8 @@ local STR = {
 				[hash("ace")] = "Ace", [hash("gordon")] = "Gordon", [hash("memnon")] = "Memnon", [hash("cutter")] = "Cutter",
 				[hash("mathesar")] = "Mathesar", [hash("rimmer")] = "Rimmer", [hash("lister")] = "Lister", [hash("spiff")] = "Spiff",
 				[hash("ijon")] = "Ijon", [hash("kaidan")] = "Kaidan", [hash("jacob")] = "Jacob", [hash("arthur")] = "Arthur",
-				[hash("zaphod")] = "Zaphod", [hash("marvin")] = "Marvin"
+				[hash("zaphod")] = "Zaphod", [hash("marvin")] = "Marvin", [hash("jebediah")] = "Jebediah", [hash("bill")] = "Bill",
+				[hash("bob")] = "Bob",
 			},
 			[hash("female")] = {
 				[hash("nyota")] = "Nyota", [hash("deanna")] = "Deanna", [hash("kira")] = "Kira", [hash("kim")] = "Kim",
@@ -271,7 +295,7 @@ local STR = {
 				[hash("beverley")] = "Beverley", [hash("jinx")] = "Jinx", [hash("jovia")] = "Jovia", [hash("inara")] = "Inara",
 				[hash("kaylee")] = "Kaylee", [hash("zoe")] = "Zoe", [hash("river")] = "River", [hash("tawny")] = "Tawny",
 				[hash("trishka")] = "Trishka", [hash("miranda")] = "Miranda", [hash("kasumi")] = "Kasumi", [hash("kelly")] = "Kelly",
-				[hash("tricia")] = "Tricia"
+				[hash("tricia")] = "Tricia", [hash("valentina")] = "Valentina"
 			},
 			[hash("both")] = {
 				[hash("jayne")] = "Jayne", [hash("book")] = "Book", [hash("shepard")] = "Shepard", [hash("picard")] = "Picard",

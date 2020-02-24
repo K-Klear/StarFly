@@ -1,6 +1,6 @@
 components {
   id: "time_slider"
-  component: "/main/GUI/time_slider.script"
+  component: "/main/GUI/time_slider/time_slider.script"
   position {
     x: 0.0
     y: 0.0

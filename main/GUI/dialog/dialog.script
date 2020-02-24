@@ -59,6 +59,8 @@ function init(self)
 			[hash("button_option")] = "#button_option",
 			[hash("textbox")] = "#textbox",
 			[hash("time_slider")] = "#time_slider",
+			[hash("icon_crate")] = "#icon_crate",
+			[hash("progress_bar")] = "#progress_bar",
 		}
 		for key, val in ipairs(LAY[self.layout].elements) do
 			local repeat_count = 1
@@ -66,7 +68,7 @@ function init(self)
 			for id = 1, repeat_count do
 				local props = {}
 				if self.id < 999 then props.id = self.id else props.id = id end
-				if val.type == hash("icon_face") then
+				if val.type == hash("icon_face") or val.type == hash("icon_crate") then
 					props = val.image(props.id)
 				elseif val.props then
 					for k, v in pairs(val.props) do

@@ -1,0 +1,13 @@
+go.property("max", 1)
+go.property("current", 0)
+go.property("size", 1)
+
+local x_size = 256
+local STR = require("main/modules/strings")
+
+function init(self)
+	self.bar = factory.create("#bar", vmath.vector3(-128, 0, 0.001), nil, nil, vmath.vector3(x_size * self.current / self.max, 1, 1))
+	go.set_parent(self.bar, go.get_id())
+	go.set(go.get_id(), "scale.x", self.size)
+	label.set_text("#label", self.current.." "..STR.en.ui[hash("out_of")].." "..self.max)
+end

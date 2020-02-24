@@ -14,7 +14,7 @@ emitters {
     z: -0.70710677
     w: 0.70710677
   }
-  tile_source: "/main/ship/background.atlas"
+  tile_source: "/main/ship/background/background.atlas"
   animation: "warp_line"
   material: "/assets/particlefx.material"
   blend_mode: BLEND_MODE_ADD

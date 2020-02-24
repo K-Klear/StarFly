@@ -1,0 +1,65 @@
+local STR = require("main/modules/strings")
+local ROOM = require("main/modules/rooms")
+
+go.property("id", 0)
+
+local pos = vmath.vector3(-176, -128, 0.05)
+
+function init(self)
+	self.x = ROOM.list[self.id].x
+	self.y = ROOM.list[self.id].y
+	self.use = ROOM.list[self.id].use or hash("empty")
+	self.size = ROOM.list[self.id].size
+	if not (self.size == 1) then msg.post("#co_1", hash("disable")) end
+	if not (self.size == 3) then msg.post("#co_3", hash("disable")) end
+	if not (self.size == 4) then msg.post("#co_4", hash("disable")) end
+	sprite.play_flipbook("#reticle", "room_reticle_"..self.size)
+	msg.post("#reticle", hash("disable"))
+	if self.size == 4 then self.y = self.y + 0.34 end
+	go.set_parent(go.get_id(), "/ship")
+	go.set_position(pos + vmath.vector3(self.x * 32, self.y * 96, 0))
+	label.set_text("#name", STR.en.ui[self.use])
+	msg.post("#name", hash("disable"))
+	--go.set("#role_icon", "scale", vmath.vector3(1/2, 1/2, 1/2))
+	if self.use == hash("empty") then
+		self.door = factory.create("#bunk")
+		go.set_parent(self.door, go.get_id())
+		label.set_text(msg.url(nil, self.door, "label"), "")
+	elseif self.use == hash("bunk") then
+		self.door = factory.create("#bunk")
+		go.set_parent(self.door, go.get_id())
+		label.set_text(msg.url(nil, self.door, "label"), "NAME")
+	elseif self.use == hash("medbay") then
+		self.door = factory.create("#medbay")
+		go.set_parent(self.door, go.get_id())
+		label.set_text(msg.url(nil, self.door, "label"), STR.en.ui[hash("medbay")])
+	end
+end
+
+function on_message(self, message_id, message, sender)
+	if message_id == hash("highlight") then
+		msg.post("#name", hash("enable"))
+		msg.post("#reticle", hash("enable"))
+	elseif message_id == hash("remove_highlight") then
+		msg.post("#name", hash("disable"))
+		msg.post("#reticle", hash("disable"))
+	elseif message_id == hash("clicked") then
+		msg.post("/main#controller", hash("room_clicked"), {id = self.id})
+	elseif message_id == hash("set_use") then
+		go.delete(self.door, true)
+		self.use = message.use
+		if self.use == hash("empty") then
+			self.door = factory.create("#bunk")
+			go.set_parent(self.door, go.get_id())
+			label.set_text(msg.url(nil, self.door, "label"), "")
+		elseif self.use == hash("bunk") then
+			self.door = factory.create("#bunk")
+			go.set_parent(self.door, go.get_id())
+			label.set_text(msg.url(nil, self.door, "label"), "NAME")
+		elseif self.use == hash("medbay") then
+			self.door = factory.create("#medbay")
+			go.set_parent(self.door, go.get_id())
+			label.set_text(msg.url(nil, self.door, "label"), STR.en.ui[hash("medbay")])
+		end
+	end
+end

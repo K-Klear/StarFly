@@ -1,6 +1,6 @@
 components {
   id: "button_main"
-  component: "/main/GUI/button.script"
+  component: "/main/GUI/buttons/button.script"
   position {
     x: 0.0
     y: 0.0
@@ -11,21 +11,6 @@ components {
     y: 0.0
     z: 0.0
     w: 1.0
-  }
-  properties {
-    id: "type"
-    value: "crew"
-    type: PROPERTY_TYPE_HASH
-  }
-  properties {
-    id: "label"
-    value: "talk"
-    type: PROPERTY_TYPE_HASH
-  }
-  properties {
-    id: "callback"
-    value: "crew_talk"
-    type: PROPERTY_TYPE_HASH
   }
 }
 embedded_components {
@@ -66,8 +51,8 @@ embedded_components {
   "pivot: PIVOT_CENTER\n"
   "blend_mode: BLEND_MODE_ALPHA\n"
   "line_break: false\n"
-  "text: \"TALK\"\n"
-  "font: \"/assets/fonts/crew_button.font\"\n"
+  "text: \"UPGRADE\"\n"
+  "font: \"/assets/fonts/main.font\"\n"
   "material: \"/builtins/fonts/label.material\"\n"
   ""
   position {
@@ -86,7 +71,7 @@ embedded_components {
   id: "sprite"
   type: "sprite"
   data: "tile_set: \"/main/GUI/dialog.atlas\"\n"
-  "default_animation: \"button_crew\"\n"
+  "default_animation: \"button_main\"\n"
   "material: \"/builtins/materials/sprite.material\"\n"
   "blend_mode: BLEND_MODE_ALPHA\n"
   ""
@@ -129,9 +114,9 @@ embedded_components {
   "    index: 0\n"
   "    count: 3\n"
   "  }\n"
-  "  data: 45.0\n"
-  "  data: 25.0\n"
-  "  data: 0.5\n"
+  "  data: 48.0\n"
+  "  data: 24.0\n"
+  "  data: 10.0\n"
   "}\n"
   "linear_damping: 0.0\n"
   "angular_damping: 0.0\n"

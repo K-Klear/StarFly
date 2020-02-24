@@ -1,6 +1,6 @@
 components {
   id: "face_icon"
-  component: "/main/GUI/face_icon.script"
+  component: "/main/GUI/face_icon/face_icon.script"
   position {
     x: 0.0
     y: 0.0

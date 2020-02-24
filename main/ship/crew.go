@@ -353,7 +353,7 @@ embedded_components {
 embedded_components {
   id: "factory_button"
   type: "factory"
-  data: "prototype: \"/main/GUI/button_crew.go\"\n"
+  data: "prototype: \"/main/GUI/buttons/button_crew.go\"\n"
   "load_dynamically: false\n"
   ""
   position {

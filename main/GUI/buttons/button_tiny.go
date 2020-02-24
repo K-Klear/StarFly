@@ -1,6 +1,6 @@
 components {
   id: "button"
-  component: "/main/GUI/button.script"
+  component: "/main/GUI/buttons/button.script"
   position {
     x: 0.0
     y: 0.0
