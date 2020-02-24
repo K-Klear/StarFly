@@ -32,7 +32,6 @@ function init(self)
 	elseif self.use == hash("medbay") then
 		self.door = factory.create("#medbay")
 		go.set_parent(self.door, go.get_id())
-		label.set_text(msg.url(nil, self.door, "label"), STR.en.ui[hash("medbay")])
 	end
 end
 
@@ -58,8 +57,7 @@ function on_message(self, message_id, message, sender)
 			label.set_text(msg.url(nil, self.door, "label"), "NAME")
 		elseif self.use == hash("medbay") then
 			self.door = factory.create("#medbay")
-			go.set_parent(self.door, go.get_id())
-			label.set_text(msg.url(nil, self.door, "label"), STR.en.ui[hash("medbay")])
+			go.set_parent(self.door, go.get_id(), true)
 		end
 	end
 end

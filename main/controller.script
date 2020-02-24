@@ -492,6 +492,7 @@ function on_message(self, message_id, message, sender)
 		end
 	elseif message_id == hash("assign_room_medbay") then
 		msg.post(ROOM.list[ROOM.current].go, "set_use", {use = hash("medbay")})
+		close_all_dialogs(true)
 	elseif message_id == hash("refresh_infobox") and infobox then
 		refresh_infobox()
 	elseif message_id == hash("close") then
