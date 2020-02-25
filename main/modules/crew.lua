@@ -23,41 +23,6 @@ end
 
 local used_names = {[hash("male")] = {}, [hash("female")] = {}, [hash("both")] = {}}
 
-
-local skin_colour = {
-	vmath.vector4(1, 0.85, 0.67, 1),
-	vmath.vector4(0.95, 0.76, 0.49, 1),
-	vmath.vector4(0.88, 0.67, 0.41, 1),
-	vmath.vector4(0.77, 0.52, 0.26, 1),
-	vmath.vector4(0.55, 0.33, 0.14, 1)
-}
-
-local hair_colour = {
-	vmath.vector4(0.33, 0.24, 0.20, 1),
-	vmath.vector4(0.57, 0.33, 0.24, 1),
-	vmath.vector4(0.55, 0.29, 0.26, 1),
-	vmath.vector4(0.70, 0.32, 0.22, 1),
-	vmath.vector4(0.65, 0.42, 0.27, 1),
-	vmath.vector4(0.72, 0.59, 0.47, 1),
-	vmath.vector4(0.87, 0.74, 0.60, 1),
-	vmath.vector4(1.00, 0.96, 0.88, 1),
-	vmath.vector4(0.86, 0.81, 0.73, 1),
-	vmath.vector4(0.84, 0.77, 0.76, 1),
-	vmath.vector4(0.72, 0.65, 0.62, 1),
-	vmath.vector4(0.44, 0.39, 0.35, 1),
-	vmath.vector4(0.17, 0.13, 0.17, 1),
-	vmath.vector4(0.04, 0.03, 0.02, 1),
-	vmath.vector4(0.2, 0.8, 0.2, 1),
-	vmath.vector4(0.15, 0.1, 0.7, 1)
-}
-
-local eye_colour = {
-	vmath.vector4(0.12, 0.28, 0.6, 1),
-	vmath.vector4(0.33, 0.13, 0, 1),
-	vmath.vector4(0.27, 0.72, 0.29, 1),
-	vmath.vector4(0.58, 0.68, 0.71, 1)
-}
-
 local goal_list = {
 	hash("fun"),
 	hash("travel"),
@@ -78,6 +43,7 @@ function CREW.get_role(role)
 			return val
 		end
 	end
+	return nil
 end
 
 function CREW.set_role(crewID, role, replace)
@@ -94,6 +60,39 @@ function CREW.set_role(crewID, role, replace)
 end
 
 function CREW.new()
+	local skin_colour = {
+		vmath.vector4(1, 0.85, 0.67, 1),
+		vmath.vector4(0.95, 0.76, 0.49, 1),
+		vmath.vector4(0.88, 0.67, 0.41, 1),
+		vmath.vector4(0.77, 0.52, 0.26, 1),
+		vmath.vector4(0.55, 0.33, 0.14, 1)
+	}
+
+	local hair_colour = {
+		vmath.vector4(0.33, 0.24, 0.20, 1),
+		vmath.vector4(0.57, 0.33, 0.24, 1),
+		vmath.vector4(0.55, 0.29, 0.26, 1),
+		vmath.vector4(0.70, 0.32, 0.22, 1),
+		vmath.vector4(0.65, 0.42, 0.27, 1),
+		vmath.vector4(0.72, 0.59, 0.47, 1),
+		vmath.vector4(0.87, 0.74, 0.60, 1),
+		vmath.vector4(1.00, 0.96, 0.88, 1),
+		vmath.vector4(0.86, 0.81, 0.73, 1),
+		vmath.vector4(0.84, 0.77, 0.76, 1),
+		vmath.vector4(0.72, 0.65, 0.62, 1),
+		vmath.vector4(0.44, 0.39, 0.35, 1),
+		vmath.vector4(0.17, 0.13, 0.17, 1),
+		vmath.vector4(0.04, 0.03, 0.02, 1),
+		vmath.vector4(0.2, 0.8, 0.2, 1),
+		vmath.vector4(0.15, 0.1, 0.7, 1)
+	}
+
+	local eye_colour = {
+		vmath.vector4(0.12, 0.28, 0.6, 1),
+		vmath.vector4(0.33, 0.13, 0, 1),
+		vmath.vector4(0.27, 0.72, 0.29, 1),
+		vmath.vector4(0.58, 0.68, 0.71, 1)
+	}
 	local gender = hash("male")
 	if math.random() > 0.5 then gender = hash("female") end
 	
@@ -261,15 +260,6 @@ function CREW.getWage(peep)				-- WIP
 end
 
 
-function CREW.getRole(role)				-- WIP (possibly free to delete?)
-	for key, val in ipairs(CREW.list) do
-		if val.role == role then
-			return key
-		end
-	end
-	return 0
-end
-
 local function add_issue(issue, crew)
 	local urgency = BRAIN.get_issue_urgency(crew, issue)
 	local issue_exists = false
@@ -308,7 +298,7 @@ function CREW.check_issue(issue, crew)
 		end
 		return
 	elseif not issue then
-		local issue_list = {hash("low_wage"), hash("no_role")}
+		local issue_list = {hash("low_wage"), hash("no_role"), hash("no_bunk")}
 		for key, val in ipairs(issue_list) do
 			CREW.check_issue(val, crew)
 		end
@@ -318,6 +308,10 @@ function CREW.check_issue(issue, crew)
 			if crew.wage < crew.wage_promised then issue_present = true	end
 		elseif issue == hash("no_role") then
 			if crew.role == hash("role_none") then
+				issue_present = true
+			end
+		elseif issue == hash("no_bunk") then
+			if not crew.bunk then
 				issue_present = true
 			end
 		else

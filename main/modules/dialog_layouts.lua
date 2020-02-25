@@ -1040,6 +1040,24 @@ local LAY = {
 			},
 		}
 	},
+	[hash("comms_flight")] = {
+		background = true,
+		close_button = true,
+		size_x = 2,
+		size_y = 2,
+		elements = {
+			{
+				type = hash("button_main"),
+				position_x = 0,
+				position_y = 2,
+				props = {
+					label = hash("btn_comms_distress_signal"),
+					callback = hash("comms_flight_distress_pressed"),
+					enabled = false
+				}
+			},
+		}
+	},
 	[hash("assign_room")] = {
 		background = true,
 		close_button = true,

@@ -480,18 +480,32 @@ function on_message(self, message_id, message, sender)
 		local use = ROOM.list[message.id].use or hash("empty")
 		if use == hash("cockpit") then
 			msg.post("#", "travel_pressed")
+		elseif use == hash("comms") then
+			if CREW.get_role(hash("role_comms")) then
+				if STATS.location == hash("flight") then
+					open_dialog(hash("comms_flight"), hash("comms"))
+				end
+			else
+				open_dialog(hash("error"), hash("title_error_no_comms"))
+			end
 		elseif use == hash("cargo_hold") then
 			if CARGO.empty < CARGO.max_storage then
 				open_dialog(hash("cargo_overview"), hash("title_cargo_overview"))
 			else
 				open_dialog(hash("cargo_overview_empty"), hash("title_cargo_overview"))
 			end
-		elseif use == hash("empty") then
+		elseif use == hash("empty") or use == hash("medbay") or use == hash("bunk") then
 			ROOM.current = message.id
 			open_dialog(hash("assign_room"), hash("title_assign_room"))
 		end
 	elseif message_id == hash("assign_room_medbay") then
 		msg.post(ROOM.list[ROOM.current].go, "set_use", {use = hash("medbay")})
+		close_all_dialogs(true)
+	elseif message_id == hash("assign_room_empty") then
+		msg.post(ROOM.list[ROOM.current].go, "set_use", {use = hash("empty")})
+		close_all_dialogs(true)
+	elseif message_id == hash("assign_room_bunk") then
+		msg.post(ROOM.list[ROOM.current].go, "set_use", {use = hash("bunk"), user = message.id})
 		close_all_dialogs(true)
 	elseif message_id == hash("refresh_infobox") and infobox then
 		refresh_infobox()

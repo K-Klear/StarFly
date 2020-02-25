@@ -55,13 +55,15 @@ end
 
 function BRAIN.get_issue_urgency(crew, issue)
 	local base_urgency = {
-		[hash("low_wage")] = 1.5, [hash("no_role")] = 0.7
+		[hash("low_wage")] = 1.5, [hash("no_role")] = 0.7, [hash("no_bunk")] = 5
 	}
 	if issue == hash("low_wage") then
 		local difference = (crew.wage_promised - crew.wage) / 50
 		return base_urgency[issue] + difference
 	elseif issue == hash("no_role") then
 		return base_urgency[issue] + crew.attributes.responsibility
+	elseif issue == hash("no_bunk") then
+		return base_urgency[issue]
 	else
 		error("Cannot get urgency of unknown issue: "..issue)
 	end

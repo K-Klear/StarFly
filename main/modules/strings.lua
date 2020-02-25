@@ -105,6 +105,8 @@ local STR = {
 
 			[hash("btn_jettison_cargo")] = "Jettison",
 
+			[hash("btn_comms_distress_signal")] = "Send a distress signal",
+
 			[hash("btn_error_ok")] = "OK",
 			[hash("btn_event_done")] = "DONE",
 			[hash("btn_accept")] = "ACCEPT",
@@ -148,6 +150,7 @@ local STR = {
 			[hash("title_error_no_fuel")] = "You don't have enough fuel!",
 			[hash("title_error_no_food")] = "You don't have enough rations!",
 			[hash("title_error_no_pilot")] = "You must assign a pilot!",
+			[hash("title_error_no_comms")] = "There's nobody at the radio!",
 			[hash("title_error_not_enough_money")] = "You don't have enough money!",
 			[hash("title_error_fully_stocked")] = "You are already fully stocked!",
 			[hash("error_cargo_hold_full")] = "Cargo hold is full!",

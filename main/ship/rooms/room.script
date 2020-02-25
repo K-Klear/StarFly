@@ -1,5 +1,6 @@
 local STR = require("main/modules/strings")
 local ROOM = require("main/modules/rooms")
+local CREW = require("main/modules/crew")
 
 go.property("id", 0)
 
@@ -25,10 +26,6 @@ function init(self)
 		self.door = factory.create("#bunk")
 		go.set_parent(self.door, go.get_id())
 		label.set_text(msg.url(nil, self.door, "label"), "")
-	elseif self.use == hash("bunk") then
-		self.door = factory.create("#bunk")
-		go.set_parent(self.door, go.get_id())
-		label.set_text(msg.url(nil, self.door, "label"), "NAME")
 	elseif self.use == hash("medbay") then
 		self.door = factory.create("#medbay")
 		go.set_parent(self.door, go.get_id())
@@ -46,18 +43,37 @@ function on_message(self, message_id, message, sender)
 		msg.post("/main#controller", hash("room_clicked"), {id = self.id})
 	elseif message_id == hash("set_use") then
 		go.delete(self.door, true)
+		if self.use == hash("bunk") then
+			for key, val in ipairs(CREW.list) do
+				if val.bunk == self.id then
+					val.bunk = nil; break
+				end
+			end
+		end
 		self.use = message.use
+		self.user = message.user
 		if self.use == hash("empty") then
 			self.door = factory.create("#bunk")
-			go.set_parent(self.door, go.get_id())
 			label.set_text(msg.url(nil, self.door, "label"), "")
 		elseif self.use == hash("bunk") then
 			self.door = factory.create("#bunk")
-			go.set_parent(self.door, go.get_id())
-			label.set_text(msg.url(nil, self.door, "label"), "NAME")
+			if CREW.list[message.user].bunk then
+				msg.post(ROOM.list[CREW.list[message.user].bunk].go, "set_use", {use = hash("empty")})
+			end
+			CREW.list[message.user].bunk = self.id
+			label.set_text(msg.url(nil, self.door, "label"), STR.en.names[CREW.list[message.user].name.gender][CREW.list[message.user].name.key])
 		elseif self.use == hash("medbay") then
+			for key, val in ipairs(ROOM.list) do
+				if val.use == hash("medbay") then
+					msg.post(val.go, "set_use", {use = hash("empty")})
+					break
+				end
+			end
 			self.door = factory.create("#medbay")
-			go.set_parent(self.door, go.get_id(), true)
 		end
+		go.set_parent(self.door, go.get_id(), true)
+		ROOM.list[self.id].use = self.use
+		label.set_text("#name", STR.en.ui[self.use])
+		CREW.check_issue()
 	end
 end
