@@ -22,6 +22,8 @@ local infobox
 
 local button_x, button_y = 116, 54
 
+local selection_enabled = true
+
 local function open_main()
 	for key, val in ipairs(stack) do
 		go.delete(val.dialog, true)
@@ -32,7 +34,7 @@ local function open_main()
 	stack[1] = {dialog = factory.create("#dialog", vmath.vector3(centre.x, 100, centre.z), nil, props)}
 	local props = {size = vmath.vector3(button_x * 2.25, button_y * 3, 0), layout = hash("infobox")}
 	infobox = factory.create("#dialog", vmath.vector3(1110, 780, centre.z), nil, props)
-	msg.post("/cursor", hash("crew_selection"), {enabled = true})
+	msg.post("/cursor", hash("selection_enabled"), {enabled = selection_enabled})
 end
 
 function init(self)
@@ -49,7 +51,18 @@ local function close_all_dialogs(main_on)
 		end
 		if infobox then go.delete(infobox, true); infobox = nil	end
 		stack = {}
-		msg.post("/cursor", hash("crew_selection"), {enabled = false})
+	end
+end
+
+local function hide_dialogs()
+	for key, val in ipairs(stack) do
+		msg.post(val.dialog, "hide")
+	end
+end
+
+local function show_dialogs()
+	for key, val in ipairs(stack) do
+		msg.post(val.dialog, "show")
 	end
 end
 
@@ -62,7 +75,7 @@ local function open_dialog(layout, title, id, refresh_message)
 	if stack[#stack - 1] then
 		msg.post(stack[#stack - 1].dialog, "disable_all")
 	end
-	msg.post("/cursor", hash("crew_selection"), {enabled = false})
+	msg.post("/cursor", hash("selection_enabled"), {enabled = false})
 	TIME.stop()
 end
 
@@ -380,12 +393,14 @@ function on_message(self, message_id, message, sender)
 		open_dialog(hash("travel_confirm"), hash("title_travel_confirm"), nil, hash("travel_pressed"))
 	elseif message_id == hash("move_to_orbit") then
 		close_all_dialogs(false)
+		msg.post("/cursor", hash("selection_enabled"), {enabled = false})
 		msg.post("/background", "orbit")
 		STATS.location = hash("warp")
 	elseif message_id == hash("land_pressed") then
 		if not CREW.get_role(hash("role_pilot")) then
 			open_dialog(hash("error"), hash("title_error_no_pilot"))
 		else
+			msg.post("/cursor", hash("selection_enabled"), {enabled = false})
 			close_all_dialogs(false)
 			STATS.location = hash("landing")
 			msg.post("/background", "land")
@@ -436,6 +451,7 @@ function on_message(self, message_id, message, sender)
 		--open_main()
 	elseif message_id == hash("talk_progress") then
 		local stage = TALK.current[TALK.stage]
+		local pause_for_input = false
 		TALK.links = stage.links
 		if stage.effect == hash("recruit") then
 			CREW.add(TALK.speaker)
@@ -445,25 +461,42 @@ function on_message(self, message_id, message, sender)
 				end
 			end
 		elseif stage.effect == hash("pick_role") then
-			open_dialog(hash("crew_role"), hash("title_role_selection"), CREW.get_id(TALK.speaker), hash("crew_role"))
-			error("I need to fix this")
+			if TALK.selection then
+				CREW.set_role(message.id, TALK.selection, true)
+				TALK.selection = nil
+			else
+				open_dialog(hash("talk_pick_role"), hash("title_role_selection"))
+				pause_for_input = true
+			end
+		elseif stage.effect == hash("pick_room") then
+			if TALK.selection then
+				msg.post(ROOM.list[TALK.selection].go, "set_use", {use = hash("bunk"), user = TALK.speaker.id})
+				TALK.selection = nil
+			else
+				msg.post("/cursor", hash("selection_enabled"), {enabled = {room = true}})
+				pause_for_input = true
+				TALK.selection = hash("get_bunk")
+				hide_dialogs()
+			end
 		elseif stage.effect then
 			error("Unknown conversation effect!")
 		end
-		if stage.stage_type == "choice" then
-			open_dialog(hash("talk"), nil, nil, message_id)
-		elseif stage.stage_type == "dice" then
-			if DICE.roll(stage.dice_type, stage.dice_difficulty) then
-				TALK.stage = stage.links[1].stage
-			else
-				TALK.stage = stage.links[2].stage
+		if not pause_for_input then
+			if stage.stage_type == "choice" then
+				open_dialog(hash("talk"), nil, nil, message_id)
+			elseif stage.stage_type == "dice" then
+				if DICE.roll(stage.dice_type, stage.dice_difficulty) then
+					TALK.stage = stage.links[1].stage
+				else
+					TALK.stage = stage.links[2].stage
+				end
+				msg.post(".", hash("talk_progress"))
+			elseif stage.stage_type == "brain" then
+				TALK.stage = stage.links[BRAIN.talk_test(TALK.speaker, stage.dice_type)].stage
+				msg.post(".", hash("talk_progress"))
+			elseif stage.stage_type == "end" then
+				open_dialog(hash("talk_end"), nil, nil, message_id)
 			end
-			msg.post(".", hash("talk_progress"))
-		elseif stage.stage_type == "brain" then
-			TALK.stage = stage.links[BRAIN.talk_test(TALK.speaker, stage.dice_type)].stage
-			msg.post(".", hash("talk_progress"))
-		elseif stage.stage_type == "end" then
-			open_dialog(hash("talk_end"), nil, nil, message_id)
 		end
 	elseif message_id == hash("talk_option") then
 		TALK.stage = TALK.current[TALK.stage].links[message.id].stage
@@ -471,32 +504,55 @@ function on_message(self, message_id, message, sender)
 	elseif message_id == hash("talk_end") then
 		TALK.stage = 0; TALK.current = nil; TALK.speaker = nil
 		refresh_dialog(true)
+	elseif message_id == hash("talk_role_pilot") then
+		TALK.selection = hash("role_pilot")
+		refresh_dialog(true); msg.post(".", hash("talk_progress"))
+	elseif message_id == hash("talk_role_engineer") then
+		TALK.selection = hash("role_engineer")
+		refresh_dialog(true); msg.post(".", hash("talk_progress"))
+	elseif message_id == hash("talk_role_comms") then
+		TALK.selection = hash("role_comms")
+		refresh_dialog(true); msg.post(".", hash("talk_progress"))
+	elseif message_id == hash("talk_role_medic") then
+		TALK.selection = hash("role_medic")
+		refresh_dialog(true); msg.post(".", hash("talk_progress"))
+	elseif message_id == hash("talk_role_gunner") then
+		TALK.selection = hash("role_gunner")
+		refresh_dialog(true); msg.post(".", hash("talk_progress"))
+	elseif message_id == hash("talk_role_none") then
+		TALK.selection = hash("role_none")
+		refresh_dialog(true); msg.post(".", hash("talk_progress"))
 	elseif message_id == hash("time_choice_cancel") then
 		STATS.new_time = nil
 		refresh_dialog(true)
 	elseif message_id == hash("time_choice_accept") then
 		refresh_dialog(true)
 	elseif message_id == hash("room_clicked") then
-		local use = ROOM.list[message.id].use or hash("empty")
-		if use == hash("cockpit") then
-			msg.post("#", "travel_pressed")
-		elseif use == hash("comms") then
-			if CREW.get_role(hash("role_comms")) then
-				if STATS.location == hash("flight") then
-					open_dialog(hash("comms_flight"), hash("comms"))
+		if TALK.selection == hash("get_bunk") then
+			TALK.selection = message.id; msg.post("#", hash("talk_progress"))
+			show_dialogs()
+		else
+			local use = ROOM.list[message.id].use or hash("empty")
+			if use == hash("cockpit") then
+				msg.post("#", "travel_pressed")
+			elseif use == hash("comms") then
+				if CREW.get_role(hash("role_comms")) then
+					if STATS.location == hash("flight") then
+						open_dialog(hash("comms_flight"), hash("comms"))
+					end
+				else
+					open_dialog(hash("error"), hash("title_error_no_comms"))
 				end
-			else
-				open_dialog(hash("error"), hash("title_error_no_comms"))
+			elseif use == hash("cargo_hold") then
+				if CARGO.empty < CARGO.max_storage then
+					open_dialog(hash("cargo_overview"), hash("title_cargo_overview"))
+				else
+					open_dialog(hash("cargo_overview_empty"), hash("title_cargo_overview"))
+				end
+			elseif use == hash("empty") or use == hash("medbay") or use == hash("bunk") then
+				ROOM.current = message.id
+				open_dialog(hash("assign_room"), hash("title_assign_room"))
 			end
-		elseif use == hash("cargo_hold") then
-			if CARGO.empty < CARGO.max_storage then
-				open_dialog(hash("cargo_overview"), hash("title_cargo_overview"))
-			else
-				open_dialog(hash("cargo_overview_empty"), hash("title_cargo_overview"))
-			end
-		elseif use == hash("empty") or use == hash("medbay") or use == hash("bunk") then
-			ROOM.current = message.id
-			open_dialog(hash("assign_room"), hash("title_assign_room"))
 		end
 	elseif message_id == hash("assign_room_medbay") then
 		msg.post(ROOM.list[ROOM.current].go, "set_use", {use = hash("medbay")})
@@ -521,7 +577,9 @@ function on_message(self, message_id, message, sender)
 		TIME.set_scale(hash("fastest"))
 	elseif message_id == hash("error") then
 		open_dialog(hash("error"), message.title)
-	elseif message_id == hash("debug") then
+	elseif message_id == hash("debug1") then
 
+	elseif message_id == hash("debug2") then
+		
 	end
 end

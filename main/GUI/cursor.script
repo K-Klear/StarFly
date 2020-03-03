@@ -9,24 +9,31 @@ local selected
 
 local moused = {}
 
-local ship_selection_enabled = true
+local selection_enabled = {[hash("crew")] = true, [hash("bunks")] = true, [hash("room")] = true}
 
 function init(self)
 	msg.post(".", "acquire_input_focus")
 end
 
 local function set_highlight()
-	if highlighted and highlighted ~= moused[1] and highlighted ~= selected then
-		msg.post(highlighted, "remove_highlight")
+	local moused_next
+	for key, val in ipairs(moused) do
+		if selection_enabled[val.type] then
+			moused_next = val; break
+		end
 	end
-	if moused[1] then
-		if moused[1] ~= highlighted then
-			msg.post(moused[1], "highlight")
-			highlighted = moused[1]
+
+	if highlighted and (not moused_next or highlighted.go ~= moused_next.go) and (not selected or highlighted.go ~= selected.go) then
+		msg.post(highlighted.go, "remove_highlight")
+	end
+	if moused_next then
+		if not highlighted or moused_next.go ~= highlighted.go then
+			msg.post(moused_next.go, "highlight")
+			highlighted = {go = moused_next.go, type = moused_next.type}
 		end
 	else
-		if highlighted and highlighted ~= selected then
-			msg.post(highlighted, "remove_highlight")
+		if highlighted and (not selected or highlighted.go ~= selected.go) then
+			msg.post(highlighted.go, "remove_highlight")
 			highlighted = nil
 		end
 	end
@@ -34,7 +41,7 @@ end
 
 local function delete_moused(value)
 	for key, val in ipairs(moused) do
-		if val == value then
+		if val.go == value then
 			table.remove(moused, key)
 			return
 		end
@@ -48,9 +55,9 @@ function on_message(self, message_id, message, sender)
 				active_button = message.other_id
 				if mouse_pressed then msg.post(active_button, "pressed") end
 			elseif message.other_group == hash("crew") then
-				table.insert(moused, 1, message.other_id)
-			elseif message.other_group == hash("room") then
-				table.insert(moused, message.other_id)
+				table.insert(moused, 1, {go = message.other_id, type = message.other_group})
+			elseif message.other_group == hash("room") or message.other_group == hash("bunk") then
+				table.insert(moused, {go = message.other_id, type = message.other_group})
 			end
 		else
 			if message.other_group == hash("button") then
@@ -63,16 +70,28 @@ function on_message(self, message_id, message, sender)
 		set_highlight()
 	elseif message_id == hash("deleted") then
 		if active_button == message.id then active_button = nil end
-		if selected == message.id then selected = nil end
+		if selected and selected.go == message.id then selected = nil end
 		delete_moused(message.id)
 		set_highlight()
 	elseif message_id == hash("selected") then
-		selected = message.id
+		selected = {go = message.id}
 		set_highlight()
-	elseif message_id == hash("crew_selection") then
-		ship_selection_enabled = message.enabled
-		if not message.enabled then
-			if selected then msg.post(selected, hash("deselect")); selected = nil end
+	elseif message_id == hash("selection_enabled") then
+		if message.enabled == true then
+			selection_enabled = {[hash("crew")] = true, [hash("bunks")] = true, [hash("room")] = true}
+		elseif message.enabled == false then
+			selection_enabled = {[hash("crew")] = false, [hash("bunks")] = false, [hash("room")] = false}
+		else
+			selection_enabled = {}
+			if message.enabled.crew then selection_enabled[hash("crew")] = true end
+			if message.enabled.room then selection_enabled[hash("room")] = true end
+			if message.enabled.bunk then selection_enabled[hash("bunk")] = true end
+		end
+
+		if selected then
+			if not selection_enabled[selected.type] then
+				msg.post(selected.go, hash("deselect")); selected = nil
+			end
 		end
 	end
 end
@@ -94,10 +113,10 @@ function on_input(self, action_id, action)
 			mouse_pressed = false
 			if active_button then
 				msg.post(active_button, "activated")
-			elseif ship_selection_enabled then
-				if selected then msg.post(selected, hash("deselect")) end
-				if highlighted and highlighted ~= selected then
-					msg.post(highlighted, "clicked")
+			else
+				if selected then msg.post(selected.go, hash("deselect")) end
+				if highlighted and (not selected or highlighted.go ~= selected.go) then
+					msg.post(highlighted.go, "clicked")
 				end
 				selected = nil
 			end

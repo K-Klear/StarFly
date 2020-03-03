@@ -1280,6 +1280,80 @@ local LAY = {
 			},
 		}
 	},
+	[hash("talk_pick_role")] = {
+		close_button = false,
+		background = true,
+		size_x = 3,
+		size_y = 2,
+		elements = {
+			{
+				id = hash("crew_role_pilot"),
+				type = hash("button_main"),
+				position_x = -1,
+				position_y = 1,
+				props = {
+					label = hash("role_pilot"),
+					callback = hash("talk_role_pilot"),
+					enabled = true
+				},
+			},
+			{
+				id = hash("crew_role_engineer"),
+				type = hash("button_main"),
+				position_x = 0,
+				position_y = 1,
+				props = {
+					label = hash("role_engineer"),
+					callback = hash("talk_role_engineer"),
+					enabled = true
+				},
+			},
+			{
+				id = hash("crew_role_comms"),
+				type = hash("button_main"),
+				position_x = 1,
+				position_y = 1,
+				props = {
+					label = hash("role_comms"),
+					callback = hash("talk_role_comms"),
+					enabled = true
+				},
+			},
+			{
+				id = hash("crew_role_medic"),
+				type = hash("button_main"),
+				position_x = -1,
+				position_y = 2,
+				props = {
+					label = hash("role_medic"),
+					callback = hash("talk_role_medic"),
+					enabled = true
+				},
+			},
+			{
+				id = hash("crew_role_gunner"),
+				type = hash("button_main"),
+				position_x = 0,
+				position_y = 2,
+				props = {
+					label = hash("role_gunner"),
+					callback = hash("talk_role_gunner"),
+					enabled = true
+				},
+			},
+			{
+				id = hash("crew_role_none"),
+				type = hash("button_main"),
+				position_x = 1,
+				position_y = 2,
+				props = {
+					label = hash("role_none"),
+					callback = hash("talk_role_none"),
+					enabled = true
+				},
+			},
+		}
+	},
 	[hash("error")] = {
 		close_button = true,
 		background = true,

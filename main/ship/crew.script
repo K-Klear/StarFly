@@ -1,5 +1,7 @@
 local STR = require("main/modules/strings")
 local CREW = require("main/modules/crew")
+local ROOM = require("main/modules/rooms")
+
 
 go.property("skin_colour", vmath.vector4(1, 1, 1, 1))
 go.property("hair_colour", vmath.vector4(1, 1, 1, 1))
@@ -22,14 +24,6 @@ local ladders = {
 	{down = {3}}
 }
 
-local rooms = {
-	[hash("role_pilot")] = {x = 1, y = 3},
-	[hash("role_medic")] = {x = 4, y = 2},
-	[hash("role_engineer")] = {x = 11, y = 1},
-	[hash("role_comms")] = {x = 6, y = 3},
-	[hash("role_gunner")] = {x = 2, y = 1}
-}
-
 local walk
 local function finish_step(x, y, self)
 	self.x = x; self.y = y
@@ -38,11 +32,11 @@ end
 
 local bodyparts = {"torso", "head", "hair", "legs", "hand"}
 
-local function walk_anim(self)
+local function play_crew_animation(animation, self)
 	for key, val in ipairs(bodyparts) do
-		sprite.play_flipbook("#"..val, val.."_walk_1")
+		sprite.play_flipbook("#"..val, val.."_"..animation.."_1")
 	end
-	sprite.play_flipbook("#hair", "hair_walk_"..self.hair)
+	sprite.play_flipbook("#hair", "hair_"..animation.."_"..self.hair)
 end
 
 local function move_x(target, self)
@@ -83,10 +77,7 @@ function walk(self)
 	if self.target.y == self.y then
 		if self.target.x == self.x then
 			self.target = {}
-			for key, val in ipairs(bodyparts) do
-				sprite.play_flipbook("#"..val, val.."_idle_1")
-			end
-			sprite.play_flipbook("#hair", "hair_idle_"..self.hair)
+			play_crew_animation("idle", self)
 		else
 			move_x(self.target.x, self)
 		end
@@ -103,7 +94,7 @@ end
 local function set_target(x, y, self)
 	local still = self.target.x == nil
 	self.target = {x = x, y = y}
-	walk_anim(self)
+	play_crew_animation("walk", self)
 	if still then walk(self) end
 end
 
@@ -124,7 +115,10 @@ local function set_role(self)
 		sprite.set_constant("#role_icon", "tint", vmath.vector4(1, 1, 1, 1))
 		sprite.play_flipbook("#role_icon", role_icons[self.role])
 		label.set_text("#role_label", STR.en.ui[self.role])
-		set_target(rooms[self.role].x, rooms[self.role].y, self)
+		local target_room = ROOM.get_room_from_role(self.role)
+		if target_room then
+			set_target(ROOM.list[target_room].x, ROOM.list[target_room].y, self)
+		end
 	end
 end
 
@@ -188,6 +182,10 @@ function on_message(self, message_id, message, sender)
 		go.delete(self.button_role, true)
 	elseif message_id == hash("move") then
 		if message.role then
+			local target_room = ROOM.get_room_from_role(message.role)
+			if target_room then
+				set_target(ROOM.list[target_room].x, ROOM.list[target_room].y, self)
+			end
 			set_target(rooms[message.role].x, rooms[message.role].y, self)
 		else
 			set_target(message.x, message.y, self)

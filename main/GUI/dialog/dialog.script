@@ -144,6 +144,10 @@ function on_message(self, message_id, message, sender)
 		else
 			go.delete(self.elements[message.button][1])
 		end
+	elseif message_id == hash("hide") then
+		go.set(".", "position.z", go.get_position(".").z + 2)
+	elseif message_id == hash("show") then
+		go.set(".", "position.z", go.get_position(".").z - 2)
 	end
 end
 
