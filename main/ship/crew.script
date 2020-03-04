@@ -18,17 +18,6 @@ local pos = vmath.vector3(-176, -128, 0.05)
 local speed = 0.02
 local speed_climb = 0.015
 
-local ladders = {
-	{up = {5, 7}},
-	{up = {3}, down = {5, 7}},
-	{down = {3}}
-}
-
-local walk
-local function finish_step(x, y, self)
-	self.x = x; self.y = y
-	walk(self)
-end
 
 local bodyparts = {"torso", "head", "hair", "legs", "hand"}
 
@@ -39,6 +28,7 @@ local function play_crew_animation(animation, self)
 	sprite.play_flipbook("#hair", "hair_"..animation.."_"..self.hair)
 end
 
+--[[
 local function move_x(target, self)
 	local dir = (target - self.x) / math.abs(target - self.x)
 	for key, val in ipairs(bodyparts) do
@@ -55,72 +45,19 @@ local function move_y(target, self)
 	local duration = math.abs(go.get_position().y - new_y) * speed_climb
 	go.animate(go.get_id(), "position.y", go.PLAYBACK_ONCE_FORWARD, new_y, go.EASING_LINEAR, duration, 0, function() finish_step(self.x, self.y + dir, self) end)
 end
+--]]
 
-local function get_best_ladder(self)
-	local dir
-	if self.target.y > self.y then dir = "up" else dir = "down"	end
-	if #ladders[self.y][dir] == 1 then
-		return ladders[self.y][dir][1]
-	else
-		local one, two = math.abs(ladders[self.y][dir][1] - self.x), math.abs(ladders[self.y][dir][2] - self.x)
-		if one == two then
-			return ladders[self.y][dir][math.random(1, 2)]
-		elseif one < two then
-			return ladders[self.y][dir][1]
-		else
-			return ladders[self.y][dir][2]
-		end
-	end
+local function walk(x, y, self)
+	-- store new location
+	
+	-- get route
+	print(go.get_position() + pos)
+	print(x, y)
+	print(self.x, self.y)
+	-- 208 = 12, 64 = 2
+	-- go.set_position(pos + vmath.vector3(self.x * 32, self.y * 96, self.z * 0.05))
 end
 
-function walk(self)
-	if self.target.y == self.y then
-		if self.target.x == self.x then
-			self.target = {}
-			play_crew_animation("idle", self)
-		else
-			move_x(self.target.x, self)
-		end
-	else
-		local target_x = get_best_ladder(self)
-		if target_x == self.x then
-			move_y(self.target.y, self)
-		else
-			move_x(target_x, self)
-		end
-	end
-end
-
-local function set_target(x, y, self)
-	local still = self.target.x == nil
-	self.target = {x = x, y = y}
-	play_crew_animation("walk", self)
-	if still then walk(self) end
-end
-
-local role_icons = {
-	[hash("role_pilot")] = "pilot",
-	[hash("role_medic")] = "medic",
-	[hash("role_engineer")] = "mech",
-	[hash("role_comms")] = "comms",
-	[hash("role_gunner")] = "gunner",
-	[hash("role_passenger")] = "none",
-}
-
-local function set_role(self)
-	if self.role == hash("role_none") or self.role == hash("role_passenger") then
-		sprite.set_constant("#role_icon", "tint", vmath.vector4(1, 1, 1, 0))
-		label.set_text("#role_label", "")
-	else
-		sprite.set_constant("#role_icon", "tint", vmath.vector4(1, 1, 1, 1))
-		sprite.play_flipbook("#role_icon", role_icons[self.role])
-		label.set_text("#role_label", STR.en.ui[self.role])
-		local target_room = ROOM.get_room_from_role(self.role)
-		if target_room then
-			set_target(ROOM.list[target_room].x, ROOM.list[target_room].y, self)
-		end
-	end
-end
 
 function init(self)
 	go.set_parent(go.get_id(), "/ship")
@@ -132,7 +69,6 @@ function init(self)
 	sprite.play_flipbook("#hair", "hair_idle_"..self.hair)
 	go.set_position(pos + vmath.vector3(self.x * 32, self.y * 96, self.z * 0.05))
 	msg.post("#reticle", hash("disable"))
-	self.target = {}
 	label.set_text("#name", STR.en.names[self.name_gender][self.name_key])
 	msg.post("#name", hash("disable"))
 	msg.post("#role_icon", hash("disable"))
@@ -140,7 +76,7 @@ function init(self)
 	msg.post("#speech_bubble", hash("disable"))
 	go.set("#speech_bubble", "scale", vmath.vector3(0.5, 0.5, 0.5))
 	go.set("#role_icon", "scale", vmath.vector3(1/2, 1/2, 1/2))
-	set_role(self)
+	msg.post("#", hash("set_role"), {role = self.role})
 end
 
 function on_message(self, message_id, message, sender)
@@ -180,19 +116,29 @@ function on_message(self, message_id, message, sender)
 		msg.post("#role_label", hash("disable"))
 		go.delete(self.button_talk, true)
 		go.delete(self.button_role, true)
-	elseif message_id == hash("move") then
-		if message.role then
-			local target_room = ROOM.get_room_from_role(message.role)
-			if target_room then
-				set_target(ROOM.list[target_room].x, ROOM.list[target_room].y, self)
-			end
-			set_target(rooms[message.role].x, rooms[message.role].y, self)
-		else
-			set_target(message.x, message.y, self)
-		end
 	elseif message_id == hash("set_role") then
 		self.role = message.role
-		set_role(self)
+		if self.role == hash("role_none") or self.role == hash("role_passenger") then
+			sprite.set_constant("#role_icon", "tint", vmath.vector4(1, 1, 1, 0))
+			label.set_text("#role_label", "")
+		else
+			local role_icons = {
+				[hash("role_pilot")] = "pilot",
+				[hash("role_medic")] = "medic",
+				[hash("role_engineer")] = "mech",
+				[hash("role_comms")] = "comms",
+				[hash("role_gunner")] = "gunner",
+				[hash("role_passenger")] = "none",
+			}
+			sprite.set_constant("#role_icon", "tint", vmath.vector4(1, 1, 1, 1))
+			sprite.play_flipbook("#role_icon", role_icons[self.role])
+			label.set_text("#role_label", STR.en.ui[self.role])
+
+			local target_room = ROOM.get_room_from_role(self.role)
+			if target_room then
+				walk(ROOM.list[target_room].x, ROOM.list[target_room].y, self)
+			end
+		end
 	elseif message_id == hash("dismiss") then
 		msg.post("/cursor", "deleted", {id = go.get_id()})
 		go.delete(true)
