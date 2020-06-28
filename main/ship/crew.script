@@ -2,7 +2,6 @@ local STR = require("main/modules/strings")
 local CREW = require("main/modules/crew")
 local ROOM = require("main/modules/rooms")
 
-
 go.property("skin_colour", vmath.vector4(1, 1, 1, 1))
 go.property("hair_colour", vmath.vector4(1, 1, 1, 1))
 go.property("clothes_colour", vmath.vector4(1, 1, 1, 1))
@@ -47,14 +46,81 @@ local function move_y(target, self)
 end
 --]]
 
-local function walk(x, y, self)
-	-- store new location
-	
+local function set_position(self)
+	local position = go.get_position() - pos
+	self.x, self.y = position.x / 32, position.y / 96
+end
+
+local function walk(target_x, target_y, self)
+	set_position(self)
+	self.route = {{x = self.x, y = self.y}}
 	-- get route
-	print(go.get_position() + pos)
-	print(x, y)
-	print(self.x, self.y)
-	-- 208 = 12, 64 = 2
+	-- finish climb
+	if self.state == hash("climbing") then
+		if target_y > self.y then
+			table.insert(self.route, {x = self.x, y = math.ceil(self.y)})
+		else
+			table.insert(self.route, {x = self.x, y = math.floor(self.y)})
+		end
+	end
+	local count = 0
+	repeat
+		local next_stop = self.route[#self.route]
+		if target_y == next_stop.y then
+			table.insert(self.route, {x = target_x, y = target_y})
+		else
+			if target_y > next_stop.y then
+				local dist, ladder = 1/0
+				for key, val in ipairs(ROOM.ladders) do
+					if val.dir == hash("up") and val.y == next_stop.y then
+						local distance = math.abs(next_stop.x - val.x) + math.abs(val.x - target_x)
+						if distance < dist then dist = distance; ladder = key end
+					end
+				end
+				table.insert(self.route, {x = ROOM.ladders[ladder].x, y = next_stop.y})
+				table.insert(self.route, {x = ROOM.ladders[ladder].x, y = next_stop.y + 1})
+			else
+				local dist, ladder = 1/0
+				for key, val in ipairs(ROOM.ladders) do
+					if val.dir == hash("down") and val.y == next_stop.y then
+						local distance = math.abs(next_stop.x - val.x) + math.abs(val.x - target_x)
+						if distance < dist then dist = distance; ladder = key end
+					end
+				end
+				table.insert(self.route, {x = ROOM.ladders[ladder].x, y = next_stop.y})
+				table.insert(self.route, {x = ROOM.ladders[ladder].x, y = next_stop.y - 1})
+			end
+		end
+		count = count + 1
+		if count > 30 then error("infinite loop in pathfinding") end
+	until self.route[#self.route].x == target_x and self.route[#self.route].y == target_y
+	play_crew_animation("walk", self)
+	local function animate(self)
+		set_position(self)
+		if #self.route == 0 then
+			play_crew_animation("idle", self)
+			self.state = hash("idle")
+			return
+		end
+		if self.route[1].x == self.x and self.route[1].y == self.y then
+			table.remove(self.route, 1)
+		end
+		if self.route[1].x == self.x then
+			local duration = math.abs(go.get_position().y - (pos.y + self.route[1].y * 96)) * speed_climb
+			go.animate(go.get_id(), "position.y", go.PLAYBACK_ONCE_FORWARD, pos.y + self.route[1].y * 96, go.EASING_LINEAR, duration, 0, animate)
+			table.remove(self.route, 1)
+			self.state = hash("climbing")
+		else
+			for key, val in ipairs(bodyparts) do
+				sprite.set_hflip("#"..val, self.route[1].x > self.x)
+			end
+			local duration = math.abs(go.get_position().x - (pos.x + self.route[1].x * 32)) * speed
+			go.animate(go.get_id(), "position.x", go.PLAYBACK_ONCE_FORWARD, pos.x + self.route[1].x * 32, go.EASING_LINEAR, duration, 0, animate)
+			table.remove(self.route, 1)
+			self.state = hash("walking")
+		end
+	end
+	animate(self)
 	-- go.set_position(pos + vmath.vector3(self.x * 32, self.y * 96, self.z * 0.05))
 end
 
@@ -77,6 +143,7 @@ function init(self)
 	go.set("#speech_bubble", "scale", vmath.vector3(0.5, 0.5, 0.5))
 	go.set("#role_icon", "scale", vmath.vector3(1/2, 1/2, 1/2))
 	msg.post("#", hash("set_role"), {role = self.role})
+	self.state = hash("idle")
 end
 
 function on_message(self, message_id, message, sender)
